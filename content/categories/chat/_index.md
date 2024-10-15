@@ -1,6 +1,6 @@
 ---
-title: Example Category
-description: A description of this category
+title: 杂谈
+description: 一些闲聊
 image:
 
 # Badge style

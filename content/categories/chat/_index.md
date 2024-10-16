@@ -1,7 +1,7 @@
 ---
 title: 杂谈
 description: 一些闲聊
-image:
+image: img.png
 
 # Badge style
 style:

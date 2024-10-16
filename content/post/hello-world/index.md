@@ -2,7 +2,7 @@
 title: Hello World
 description: 如你所见，一个小developer的blog建成了。
 slug: hello-world
-date: 2024-10-15 00:00:00+0000
+date: 2024-10-15 08:00:00+0000
 image: cover.jpg
 categories:
     - chat

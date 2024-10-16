@@ -1,7 +1,7 @@
 ---
 title: 置顶
 description: 可能是些重要的文章罢
-image:
+image: img.png
 
 # Badge style
 style:

@@ -7,4 +7,6 @@ image: img.png
 style:
     background: "#EE2C2C"
     color: "#fff"
+
+weight: 1
 ---

@@ -277,6 +277,53 @@ int main()
 }
 ```
 
+## map
+
+map本质上就是一个键值对，位于头文件map中 
+
+```cpp
+#include <map>
+```
+
+它的定义形式为map<T1,T2>，T1为键的类型，T2为值的类型。
+
+一个确定的键对应一个确定的值。
+
+例如：
+
+```cpp
+map<string,int> test;
+test["a"] = 1;
+test["b"] = 2;
+test["a"] = 3;
+```
+
+该段代码中先是定义了一个map变量。
+
+然后去添加键值对。由于键与值是一一对应的，现在map中实际上只存在两个键值对，即a->3，b->2。
+
+该例子很好的体现了键值对的操作方法。即变量名[键] = 值的方法进行操作。
+
+用于判断map中是否存在特定的键，提供了count方法，可以或许对应键的数量。（其实也只有1和0，因为一个键只对应一个值。~~所以为什么不设计成exist的形式呢~~）
+
+下面是示例代码
+
+```cpp
+#include <iostream>
+#include <map>
+using namespace std;
+int main()
+{
+    map<string,int> test;
+    test["a"] = 1;
+    test["b"] = 2;
+    test["a"] = 3;
+    cout << test.count("a") << endl;
+    cout << test["a"] << endl;
+    return 0;
+}
+```
+
 ## 相关练习
 
 ### uva442

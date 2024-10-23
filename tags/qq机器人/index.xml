@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>QQ机器人 on Dinglz 's Blog</title><link>https://dingdinglz.github.io/tags/qq%E6%9C%BA%E5%99%A8%E4%BA%BA/</link><description>Recent content in QQ机器人 on Dinglz 's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 16 Oct 2024 02:00:00 +0000</lastBuildDate><atom:link href="https://dingdinglz.github.io/tags/qq%E6%9C%BA%E5%99%A8%E4%BA%BA/index.xml" rel="self" type="application/rss+xml"/><item><title>dingbot v2</title><link>https://dingdinglz.github.io/p/dingbot-v2/</link><pubDate>Wed, 16 Oct 2024 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/dingbot-v2/</guid><description>&lt;h2 id="简述">简述
+&lt;/h2>&lt;p>自从酷Q时代开始乃至更早时期，QQ机器人便出现在大家的视野里，由于被使用于一些不正当领域&lt;del>以及某些不可告人的原因&lt;/del>，QQ Robot被QQ官方ban了很长时间，直到最近官方放出了部分机器人权限，以及onebot等对于协议的贡献，QQ Robot恢复了部分功能，dingbot便由于本作者的需求重构出了v2版本。&lt;/p>
+&lt;p>链接：&lt;strong>&lt;a class="link" href="https://github.com/dingdinglz/dingbot" target="_blank" rel="noopener"
+>https://github.com/dingdinglz/dingbot&lt;/a>&lt;/strong>&lt;/p>
+&lt;h2 id="实现功能">实现功能
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>&lt;input checked="" disabled="" type="checkbox"> 扫码登录及后续自动登录&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;input checked="" disabled="" type="checkbox"> 关键词回复&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;input checked="" disabled="" type="checkbox"> 违禁词系统&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;input disabled="" type="checkbox"> 插件系统（blockly + lua）&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="实现方法">实现方法
+&lt;/h2>&lt;p>golang + html&lt;/p>
+&lt;p>golang下对接&lt;a class="link" href="https://github.com/LagrangeDev/LagrangeGo" target="_blank" rel="noopener"
+>Lagrange&lt;/a>，以&lt;a class="link" href="https://github.com/gofiber/fiber" target="_blank" rel="noopener"
+>fiber&lt;/a>框架作为web框架，html以&lt;a class="link" href="https://layui.dev" target="_blank" rel="noopener"
+>layui&lt;/a>构建前端界面&lt;/p>
+&lt;h2 id="画廊">画廊
+&lt;/h2>&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/1.png"
+width="1503"
+height="918"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/1_hu13048009443205620027.png 480w, https://dingdinglz.github.io/p/dingbot-v2/1_hu13248750685671215961.png 1024w"
+loading="lazy"
+alt="1"
+class="gallery-image"
+data-flex-grow="163"
+data-flex-basis="392px"
+>&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/2.png"
+width="2234"
+height="569"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/2_hu12028518649318034909.png 480w, https://dingdinglz.github.io/p/dingbot-v2/2_hu1477725104333592365.png 1024w"
+loading="lazy"
+alt="2"
+class="gallery-image"
+data-flex-grow="392"
+data-flex-basis="942px"
+>&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/3.png"
+width="744"
+height="633"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/3_hu508171640013300236.png 480w, https://dingdinglz.github.io/p/dingbot-v2/3_hu15781530821313783882.png 1024w"
+loading="lazy"
+alt="3"
+class="gallery-image"
+data-flex-grow="117"
+data-flex-basis="282px"
+>&lt;/p></description></item></channel></rss>

@@ -21,3 +21,7 @@ weight: 1       # You can add weight to some posts to override the default sorti
 ## 联系我
 
 mail: dinglz@mail.dlut.edu.cn
+
+## 友链
+
+- [荷雨头上插着薄荷🍀](http://blog.soilzhu.su/)

@@ -1,6 +1,6 @@
 ---
 title: JWT的应用
-description: cpp中二叉树的实现和应用
+description: JWT的生成与使用，在golang中的应用
 date: 2024-11-29 02:00:00+0000
 categories:
     - go

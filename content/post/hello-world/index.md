@@ -25,3 +25,4 @@ mail: dinglz@mail.dlut.edu.cn
 ## 友链
 
 - [荷雨头上插着薄荷🍀](http://blog.soilzhu.su/)
+- [℡傲雪&星火ぴ](https://aoxuexinghuo.github.io/)

@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Github项目分享 on Dinglz 's Blog</title><link>https://dingdinglz.github.io/categories/github/</link><description>Recent content in Github项目分享 on Dinglz 's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 10 Jan 2025 02:00:00 +0000</lastBuildDate><atom:link href="https://dingdinglz.github.io/categories/github/index.xml" rel="self" type="application/rss+xml"/><item><title>部署国内gemini</title><link>https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/</link><pubDate>Fri, 10 Jan 2025 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/</guid><description>&lt;h2 id="本文最终实现效果">本文最终实现效果
+&lt;/h2>&lt;p>搭建出一个在&lt;strong>国内可访问的&lt;/strong>gemini api(符合openai api规范)，并绑定到自定义域名上。&lt;/p>
+&lt;p>全文free of charge，伟大！感谢提供服务的公司们。&lt;/p>
+&lt;p>如果不想手动部署的兄弟们，可以访问我部署好的api。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-http" data-lang="http">&lt;span class="line">&lt;span class="cl">&lt;span class="err">https://gemini.dinglz.us.kg/v1
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="本文包含内容">本文包含内容
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>在us.kg上注册一个域名并托管到cloudflare上&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>部署openai-gemini到cloudflare workers上&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>申请gemini apikey并测试可用性&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>若已有域名并且已经托管到cloudflare上可以跳过第一步。&lt;/p>
+&lt;h2 id="注册域名">注册域名
+&lt;/h2>&lt;p>&lt;a class="link" href="https://nic.us.kg/" target="_blank" rel="noopener"
+>US.KG – A Free name for everyone&lt;/a> 是一个为开发者们免费提供域名的网站，通过申请，你可以获得一个免费的&amp;quot;*.us.kg&amp;quot;的域名&lt;/p>
+&lt;p>正如你所见，我的blog便是通过github pages部署在dinglz.us.kg上&lt;/p>
+&lt;h3 id="注册账号并发送issue">注册账号，并发送issue
+&lt;/h3>&lt;p>进入上面的网址注册一个账号，然后按照要求为该平台的github项目点上star，并发送一个issue（网站内说明非常详细，在此不在赘述）&lt;/p>
+&lt;h3 id="创建域名">创建域名
+&lt;/h3>&lt;p>创建一个没被占用的域名&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/1.png"
+width="2556"
+height="1351"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/1_hu2783472457143819059.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/1_hu10122663982392730079.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="454px"
+>&lt;/p>
+&lt;h3 id="前往cloudflare创建域名">前往cloudflare创建域名
+&lt;/h3>&lt;p>&lt;a class="link" href="https://dash.cloudflare.com/" target="_blank" rel="noopener"
+>Cloudflare | Web Performance &amp;amp; Security&lt;/a> 进入该网站注册一个账号&lt;/p>
+&lt;p>创建一个域&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/2.png"
+width="2559"
+height="1359"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/2_hu669233686905118447.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/2_hu3470087005387405167.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="188"
+data-flex-basis="451px"
+>&lt;/p>
+&lt;p>输入刚刚注册的域名，点击继续，比如gemini.us.kg&lt;/p>
+&lt;p>选择free计划&lt;/p>
+&lt;p>点继续前往激活&lt;/p>
+&lt;p>然后我们就能看到给我们提供的名称服务器&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/3.png"
+width="2559"
+height="1365"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/3_hu10680562387749455591.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/3_hu13538598639944090683.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="187"
+data-flex-basis="449px"
+>&lt;/p>
+&lt;p>将它们复制到刚刚创建域名所需要的Name Server1和Name Server2&lt;/p>
+&lt;p>注册！&lt;/p>
+&lt;p>在cloudflare中点击立即检查名称服务器，等待几分钟或者几小时后，即可在cloudflare里管理注册的域名，包括可以解析到你的服务器上，解析到github pages上等，我们下面的操作需要将该域名绑定到cloudflare worker上。&lt;/p>
+&lt;blockquote>
+&lt;p>你可能会遇到解析到自己的服务器上但无法使用的情况，这是因为国内服务器使用域名需要提前备案，域名备案后即可使用，本文无需进行备案（cloudflare是国外厂商，嘻嘻）&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="部署openai-gemini">部署openai-gemini
+&lt;/h2>&lt;p>很好，目前为止我们已经成功白嫖了一个域名，并把它托管到了cloudflare上&lt;/p>
+&lt;p>下面我们利用github-actions和cloudflare workers来创建我们的api&lt;/p>
+&lt;p>首先打开该项目&lt;a class="link" href="https://github.com/PublicAffairs/openai-gemini" target="_blank" rel="noopener"
+>GitHub - PublicAffairs/openai-gemini: Gemini ➜ OpenAI API proxy. Serverless!&lt;/a>&lt;/p>
+&lt;p>往下划，找到deploy to cloudflare，deploy with workers按钮（本文只介绍cloudflare workers部署方法，托管到其他平台也是ok的，比如vercel，不过vercel同样不能在国内访问，不符合我们的使用需求）&lt;/p>
+&lt;p>按照顺序往下即可&lt;/p>
+&lt;p>其中获取account id和apikey都是cloudflare的&lt;/p>
+&lt;p>这一步进行下说明。&lt;/p>
+&lt;h3 id="account-id">account id
+&lt;/h3>&lt;p>点进它提供给你的链接，右侧即可看到account id&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/4.png"
+width="2543"
+height="1362"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/4_hu7889925732263491226.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/4_hu3178563049734463902.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="186"
+data-flex-basis="448px"
+>&lt;/p>
+&lt;p>如果你看不到的话，随便创建一个workers，就能看到，获取到id后删了随便创建的即可。&lt;/p>
+&lt;h3 id="apikey">apikey
+&lt;/h3>&lt;p>点击创建令牌&lt;/p>
+&lt;p>点击编辑 Cloudflare Workers的模版&lt;/p>
+&lt;p>用户资源选择所有资源&lt;/p>
+&lt;p>区域资源选择所有区域&lt;/p>
+&lt;p>点击继续，即可获得apikey&lt;/p>
+&lt;p>好的，完成上述步骤后，来到cloudflare workers面板，可以看到gemini服务已经成功部署啦！&lt;/p>
+&lt;p>点进去，点击设置，添加一个域名&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/5.png"
+width="2559"
+height="1349"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/5_hu6626481679208476264.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/5_hu18215907559592458842.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="455px"
+>&lt;/p>
+&lt;p>添加的域名可以是你刚刚第一步托管进cloudflare的域名，也可以是该域名的子域名。&lt;/p>
+&lt;p>祝贺！你添加的域名即为符合openai范式的api。&lt;/p>
+&lt;h2 id="调用并测试">调用并测试
+&lt;/h2>&lt;p>好的，目前我们已经有了一个gemini的国内oepnai范式的api。&lt;/p>
+&lt;p>下面我们需要申请一个gemini的apikey，&lt;a class="link" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener"
+>Gemini 控制台&lt;/a>，前往其中申请即可。&lt;/p>
+&lt;p>下面让我们来调用吧。&lt;/p>
+&lt;p>我之前为知易设计了一个调用支持openai范式的ai的微服务，我直接利用它进行测试&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/6.png"
+width="1770"
+height="1199"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/6_hu15660272710142874282.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/6_hu16532079474128330927.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="147"
+data-flex-basis="354px"
+>&lt;/p>
+&lt;p>太好了，我们成功了！&lt;/p>
+&lt;h3 id="py调用">py调用
+&lt;/h3>&lt;p>顺便给出一个python调用的demo&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">openai&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">OpenAI&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">client&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">OpenAI&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">api_key&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;刚刚申请的gemini的apikey&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">base_url&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;https://你添加的域名/v1&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">completion&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">client&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">chat&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">completions&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">create&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">model&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;模型名&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">messages&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>&lt;span class="s2">&amp;#34;role&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;system&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;content&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;提示词&amp;#34;&lt;/span>&lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>&lt;span class="s2">&amp;#34;role&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;user&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;content&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;问题&amp;#34;&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">temperature&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">0.3&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">completion&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">choices&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">message&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="支持的模型列表">支持的模型列表
+&lt;/h3>&lt;p>可以用获取模型列表的api查看，也可以上gemini的官网查看。&lt;/p>
+&lt;h2 id="参考资料">参考资料
+&lt;/h2>&lt;p>&lt;a class="link" href="https://github.com/PublicAffairs/openai-gemini" target="_blank" rel="noopener"
+>GitHub - PublicAffairs/openai-gemini: Gemini ➜ OpenAI API proxy. Serverless!&lt;/a> 伟大的gemini转openai格式的api中间件，支持部署到各种托管平台上&lt;/p>
+&lt;p>&lt;a class="link" href="https://cloudflare.com" target="_blank" rel="noopener"
+>cloudflare&lt;/a> 感谢伟大的cloudflare提供cloudflare workers&lt;/p>
+&lt;p>&lt;a class="link" href="https://nic.us.kg/" target="_blank" rel="noopener"
+>US.KG – A Free name for everyone&lt;/a> 感谢伟大的us.kg为开发者们提供免费的域名&lt;/p>
+&lt;p>&lt;a class="link" href="https://www.bilibili.com/video/BV1xS66YAEwm/?share_source=copy_web&amp;amp;vd_source=48d9e62f9891701ebeb6dd853a402b14" target="_blank" rel="noopener"
+>【Cloudflare中转顶级大模型API，国内免费爽用，Gemini编程，音视频，多模态能力测试】&lt;/a> 感谢伟大的博主分享出搭建方法，为本文提供基本思路&lt;/p></description></item><item><title>PowerShell的美化</title><link>https://dingdinglz.github.io/p/powershell%E7%9A%84%E7%BE%8E%E5%8C%96/</link><pubDate>Tue, 17 Dec 2024 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/powershell%E7%9A%84%E7%BE%8E%E5%8C%96/</guid><description>&lt;h2 id="简介">简介
+&lt;/h2>&lt;p>本文将借助&lt;a class="link" href="https://ohmyposh.dev/" target="_blank" rel="noopener"
+>Oh My Posh&lt;/a>美化终端，有多款皮肤可选。&lt;/p>
+&lt;p>最终大概能达到这个效果（一种）：&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/powershell%E7%9A%84%E7%BE%8E%E5%8C%96/1.png"
+width="1346"
+height="743"
+srcset="https://dingdinglz.github.io/p/powershell%E7%9A%84%E7%BE%8E%E5%8C%96/1_hu255061065965788300.png 480w, https://dingdinglz.github.io/p/powershell%E7%9A%84%E7%BE%8E%E5%8C%96/1_hu15160749138882590880.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="181"
+data-flex-basis="434px"
+>&lt;/p>
+&lt;p>&lt;strong>注意&lt;/strong>：本文仅介绍powershell的安装方式，cmd、bash等可前往官网找到安装方式。&lt;/p>
+&lt;h2 id="安装">安装
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-powershell" data-lang="powershell">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">Set-ExecutionPolicy&lt;/span> &lt;span class="n">Bypass&lt;/span> &lt;span class="n">-Scope&lt;/span> &lt;span class="k">Process&lt;/span> &lt;span class="n">-Force&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="nb">Invoke-Expression&lt;/span> &lt;span class="p">((&lt;/span>&lt;span class="nb">New-Object&lt;/span> &lt;span class="n">System&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="py">Net&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">WebClient&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="py">DownloadString&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;https://ohmyposh.dev/install.ps1&amp;#39;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>为了使 &lt;code>PATH&lt;/code> 重新加载，建议重启您的终端。如果 oh-my-posh 未被识别为命令，您可以再次运行安装程序，或者手动将其添加到 &lt;code>PATH&lt;/code> 中。例如：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-powershell" data-lang="powershell">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$env:Path&lt;/span> &lt;span class="p">+=&lt;/span> &lt;span class="s2">&amp;#34;;C:\Users\user\AppData\Local\Programs\oh-my-posh\bin&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="挑选皮肤">挑选皮肤
+&lt;/h2>&lt;p>安装完成后，前往&lt;a class="link" href="https://ohmyposh.dev/docs/themes" target="_blank" rel="noopener"
+>本页面&lt;/a>挑选一款心仪的皮肤，将其下载下来，保存至一个JSON文件&lt;/p>
+&lt;h2 id="配置终端">配置终端
+&lt;/h2>&lt;p>打开终端脚本配置文件&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-powershell" data-lang="powershell">&lt;span class="line">&lt;span class="cl">&lt;span class="n">notepad&lt;/span> &lt;span class="nv">$PROFILE&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>当上述命令出现错误时，请确保先创建配置文件，即执行下面的语句，顺利执行则不用执行下面的语句。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-powershell" data-lang="powershell">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">New-Item&lt;/span> &lt;span class="n">-Path&lt;/span> &lt;span class="nv">$PROFILE&lt;/span> &lt;span class="n">-Type&lt;/span> &lt;span class="n">File&lt;/span> &lt;span class="n">-Force&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>在打开的记事本的末尾加上&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-powershell" data-lang="powershell">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">oh-my&lt;/span>&lt;span class="n">-posh&lt;/span> &lt;span class="n">init&lt;/span> &lt;span class="n">pwsh&lt;/span> &lt;span class="p">-&lt;/span>&lt;span class="n">-config&lt;/span> &lt;span class="s2">&amp;#34;你刚刚下载下来的那个json文件的绝对地址&amp;#34;&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nb">Invoke-Expression&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>保存，并重启终端，你就能得到一个好看的终端啦。&lt;/p>
+&lt;p>&lt;strong>Enjoy it&lt;/strong>&lt;/p></description></item><item><title>JWT的应用</title><link>https://dingdinglz.github.io/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/</link><pubDate>Fri, 29 Nov 2024 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/</guid><description>&lt;h2 id="什么是jwt">什么是JWT
+&lt;/h2>&lt;p>jwt，全称&lt;a class="link" href="https://datatracker.ietf.org/doc/html/rfc7519" target="_blank" rel="noopener"
+>JSON Web Token&lt;/a>，是一种开放标准（RFC 7519），用于在网络应用环境间安全地传输信息。这些信息可以被验证和信任，因为它们是数字签名的。JWT可以使用秘密（使用HMAC算法）或使用RSA或ECDSA的公钥/私钥对进行签名。&lt;/p>
+&lt;h2 id="jwt的用途">JWT的用途
+&lt;/h2>&lt;p>JWT的主要目的是在各方之间传递声明。声明是对实体（通常是用户）的某些属性的断言，例如身份、访问权限等。这些声明以紧凑的形式编码为一个字符串，非常适合在Web环境中使用，尤其是在HTTP头部中作为承载令牌（Bearer Token）。&lt;/p>
+&lt;p>在我们设计网站时，经常应用jwt用来鉴权，判断用户的登录状态，今天主要介绍利用&lt;a class="link" href="https://github.com/golang-jwt/jwt" target="_blank" rel="noopener"
+>GitHub - golang-jwt/jwt: Go implementation of JSON Web Tokens (JWT).&lt;/a>包，实现Go语言下的jwt生成和解析。&lt;/p>
+&lt;p>例如，在中间件中，我们可以通过设置过期日期，然后解析jwt，来判断用户的登录状态。&lt;/p>
+&lt;h2 id="安装">安装
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">go get -u github.com/golang-jwt/jwt/v5
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="生成">生成
+&lt;/h2>&lt;p>本文介绍如何编码和解码一个自定义结构体&lt;/p>
+&lt;p>为模拟真实使用环境，我们首先定义一个结构体类型，如下，包含用户名和id字段&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">type&lt;/span> &lt;span class="nx">UserJWTModel&lt;/span> &lt;span class="kd">struct&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ID&lt;/span> &lt;span class="kt">int&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Username&lt;/span> &lt;span class="kt">string&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RegisteredClaims&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;strong>jwt.RegisteredClaims&lt;/strong>里包含了一些jwt约定好的字段，比如&lt;strong>ExpiresAt&lt;/strong>，可以约定jwt的过期时间。以及其他字段，下面我们仅仅用到了&lt;strong>ExpiresAt&lt;/strong>，更详细的请查阅jwt的文档。&lt;/p>
+&lt;p>然后新建一个token，填入数据&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">token&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewWithClaims&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">SigningMethodHS256&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">UserJWTModel&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;dinglz&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RegisteredClaims&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ExpiresAt&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewNumericDate&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Now&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nf">Add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Minute&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="mi">10&lt;/span>&lt;span class="p">)),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这里约定好过期时间是十分钟后&lt;/p>
+&lt;p>然后用一个password生成jwt&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">_&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">token&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">SignedString&lt;/span>&lt;span class="p">([]&lt;/span>&lt;span class="nb">byte&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;password&amp;#34;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">t&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="完整示例">完整示例
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nx">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;fmt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;time&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/golang-jwt/jwt/v5&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">type&lt;/span> &lt;span class="nx">UserJWTModel&lt;/span> &lt;span class="kd">struct&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ID&lt;/span> &lt;span class="kt">int&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Username&lt;/span> &lt;span class="kt">string&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RegisteredClaims&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">func&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">token&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewWithClaims&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">SigningMethodHS256&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">UserJWTModel&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;dinglz&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RegisteredClaims&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ExpiresAt&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewNumericDate&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Now&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nf">Add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Minute&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="mi">10&lt;/span>&lt;span class="p">)),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">_&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">token&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">SignedString&lt;/span>&lt;span class="p">([]&lt;/span>&lt;span class="nb">byte&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;password&amp;#34;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">t&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="解析">解析
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">tokenAfter&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ParseWithClaims&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">UserJWTModel&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">t&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Token&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kd">interface&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="kt">error&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="p">[]&lt;/span>&lt;span class="nb">byte&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;password&amp;#34;&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="kc">nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Error&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>t是我们上面生成的字符串，然后选择解析的模型，最后在传回加密时的密码，即可得到解析后的token，如果过期或者密码错误等会使&lt;strong>e!=nil&lt;/strong>，因此可以通过是否错误来判断登录是否过期。&lt;/p>
+&lt;p>取回我们解析后的结构体&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">cliamAfter&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">tokenAfter&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Claims&lt;/span>&lt;span class="p">.(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">UserJWTModel&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>经验证，我们取出了传进去的数据。&lt;/p>
+&lt;h3 id="完整示例-1">完整示例
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nx">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;fmt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;time&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/golang-jwt/jwt/v5&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">type&lt;/span> &lt;span class="nx">UserJWTModel&lt;/span> &lt;span class="kd">struct&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ID&lt;/span> &lt;span class="kt">int&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Username&lt;/span> &lt;span class="kt">string&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RegisteredClaims&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">func&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">token&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewWithClaims&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">SigningMethodHS256&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">UserJWTModel&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;dinglz&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">RegisteredClaims&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ExpiresAt&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewNumericDate&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Now&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nf">Add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Minute&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="mi">10&lt;/span>&lt;span class="p">)),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">_&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">token&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">SignedString&lt;/span>&lt;span class="p">([]&lt;/span>&lt;span class="nb">byte&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;password&amp;#34;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">t&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">tokenAfter&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ParseWithClaims&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">UserJWTModel&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="kd">func&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">t&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="nx">jwt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Token&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kd">interface&lt;/span>&lt;span class="p">{},&lt;/span> &lt;span class="kt">error&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="p">[]&lt;/span>&lt;span class="nb">byte&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;password&amp;#34;&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="kc">nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Error&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">cliamAfter&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">tokenAfter&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Claims&lt;/span>&lt;span class="p">.(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">UserJWTModel&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">cliamAfter&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="实际应用">实际应用
+&lt;/h2>&lt;p>比如我们可以在登录后往cookie中存入jwt，然后在需要鉴权的地方用中间件解析他，如果能成功则不用验证其他内容，因为在某种程度上我们可以认为jwt不会被伪造。&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/code.png"
+width="1372"
+height="2992"
+srcset="https://dingdinglz.github.io/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/code_hu12339575156293060034.png 480w, https://dingdinglz.github.io/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/code_hu1836534231745251428.png 1024w"
+loading="lazy"
+alt="code"
+class="gallery-image"
+data-flex-grow="45"
+data-flex-basis="110px"
+>&lt;/p></description></item></channel></rss>

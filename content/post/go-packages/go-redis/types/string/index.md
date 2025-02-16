@@ -6,7 +6,7 @@ categories:
     - go
 tags:
     - golang
-
+    - redis
 ---
 
 ## 前言

@@ -12,6 +12,10 @@ tags:
 weight: 1       # You can add weight to some posts to override the default sorting (date descending)
 ---
 
+## 本周工作状态
+
+<figure><embed src="https://wakatime.com/share/@bb9c9f77-c49d-4b46-86a3-b8b0767638f7/b829bb7e-ba13-4df6-9e0d-ad7d03d1ce33.svg"></embed></figure>
+
 ## 关于
 
 或许我会写些开发方面的小技巧，也许我正计划着做些关于golang和c的教程for初学者们。

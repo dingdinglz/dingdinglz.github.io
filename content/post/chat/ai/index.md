@@ -52,3 +52,22 @@ tags:
 ### 界面截图
 
 ![](trae.png)
+
+## Cursor
+
+### Features
+
+#### Bad Points
+
+- 收费，20美刀一个月
+- mcp配置对新手来说较难，但是使用AI IDE的同志可能都是开发者？所以涉及到该产品的定位如何。
+
+#### Good Points
+
+- 代码生成结果和审美相较于trae有显著提高
+- 支持agent + mcp
+- 对vscode插件兼容性好，就算不用ai功能，也可以当成vscode使用
+
+### 界面截图
+
+![](cursor.png)

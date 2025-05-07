@@ -31,3 +31,4 @@ mail: dinglz@mail.dlut.edu.cn
 - [荷雨头上插着薄荷🍀](http://blog.soilzhu.su/)
 - [℡傲雪&星火ぴ](https://aoxuexinghuo.github.io/)
 - [Java之父のblog（牢万）](https://luciuswan.github.io/)
+- [印象平凡](https://www.easyimpr.com/)

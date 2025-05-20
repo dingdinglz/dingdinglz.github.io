@@ -134,7 +134,7 @@ func main() {
 
 ## XGROUP CREATE
 
-新建一个监听组，用法是`XGROUP CREATE 流名 开始监听的id`, 这个id可以填成$，表示监听从新建以后新增的id。
+新建一个监听组，用法是`XGROUP CREATE 流名 组名 开始监听的id`, 这个id可以填成$，表示监听从新建以后新增的id。
 
 配合下面要说的XREADGROUP命令可以完成对消息的监听
 

@@ -15,5 +15,7 @@ hasCJKLanguage = false
 disqusShortname = "hugo-theme-stack"
 enableEmoji = true
 
+timeout = 600
+
 [pagination]
 pagerSize = 5

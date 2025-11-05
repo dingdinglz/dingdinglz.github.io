@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ai on Dinglz 's Blog</title><link>https://dingdinglz.github.io/tags/ai/</link><description>Recent content in Ai on Dinglz 's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 29 Apr 2025 02:00:00 +0000</lastBuildDate><atom:link href="https://dingdinglz.github.io/tags/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>思维导图绘制（mcp版）</title><link>https://dingdinglz.github.io/p/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%BB%98%E5%88%B6mcp%E7%89%88/</link><pubDate>Tue, 29 Apr 2025 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%BB%98%E5%88%B6mcp%E7%89%88/</guid><description>&lt;h2 id="intro">Intro
+&lt;/h2>&lt;p>本文章主要介绍如何用golang的eino框架，加上mcp，实现一个绘制思维导图的小工具，项目目前已经开源在：https://github.com/dingdinglz/mind-maker ，实现的效果可以进入仓库查看readme， 本文主要聊聊设计思路，什么是mcp，如何调用mcp&lt;/p>
+&lt;h2 id="mcp">mcp
+&lt;/h2>&lt;h3 id="什么是mcp">什么是mcp
+&lt;/h3>&lt;p>MCP 是一个开放协议，它标准化了应用程序如何向大型语言模型（LLMs）提供上下文。可以将MCP想象成AI应用的USB-C端口。正如USB-C提供了一种标准化的方式来连接你的设备到各种外围设备和配件，MCP提供了一种标准化的方式来连接AI模型到不同的数据源和工具。&lt;/p>
+&lt;p>其实也就是为llm提供三方工具，让llm获得更多的能力，但这似乎听起来很像tool call，mcp与tool call相比，在于将工具整合起来，并且提供了标准的协议进行通信。在调用的底层，其实也就是将mcp的每个函数加载成tool的形式提供给llm。&lt;/p>
+&lt;p>但是，mcp可以由提供服务的厂家开发，而并非使用llm的人自己，方便了快速集成工具。&lt;/p>
+&lt;h3 id="为什么mcp">为什么mcp
+&lt;/h3>&lt;p>MCP 帮助你在大型语言模型（LLM）之上构建代理和复杂的工作流程。LLM 经常需要与数据和工具集成，MCP 提供：&lt;/p>
+&lt;ul>
+&lt;li>一个不断增长的工具集成列表，你的 LLM 可以直接接入&lt;/li>
+&lt;li>在不同的 LLM 提供商和供应商之间可以灵活切换&lt;/li>
+&lt;li>在您的基础设施内保护您的隐私数据&lt;/li>
+&lt;/ul>
+&lt;h3 id="怎么mcp">怎么mcp
+&lt;/h3>&lt;p>mcp的调用形式目前分为两种，一种是stdio，一种是sse，前者是通过类似于调用命令行的方法去传递数据和取得结果，后者是利用sse进行通信。&lt;/p>
+&lt;p>大部分语言目前已经有了三方实现的mcp-client包，因此我们对于实现的技术细节可以不那么关心。&lt;/p>
+&lt;p>我们在项目中用到的，调用mcp的golang包是mcp-go，它同样可以作为server的开发工具包&lt;/p>
+&lt;h2 id="eino">eino
+&lt;/h2>&lt;p>&lt;a class="link" href="https://www.cloudwego.io/zh/docs/eino/" target="_blank" rel="noopener"
+>https://www.cloudwego.io/zh/docs/eino/&lt;/a>&lt;/p>
+&lt;p>看该blog之前把eino的用法看一遍&lt;/p>
+&lt;h3 id="什么是eino">什么是eino
+&lt;/h3>&lt;p>Eino 是基于 Golang 的 AI 应用开发框架 ， 类似于python的langchain&lt;/p>
+&lt;h3 id="eino的优势">eino的优势
+&lt;/h3>&lt;ul>
+&lt;li>eino集成了相当多的大模型调用协议&lt;/li>
+&lt;li>eino提供了一种以图的形式，进行ai调用能力编排的功能&lt;/li>
+&lt;li>eino提供了几种ai的封装好的开发模式，例如muli-agent，react&lt;/li>
+&lt;/ul>
+&lt;p>当然，目前eino也支持了集成mcp，因此，我们的代码中要做的更多就是设计方面的考虑，在实现上相对来说较为简单。&lt;/p>
+&lt;h2 id="项目流程">项目流程
+&lt;/h2>&lt;p>让我们梳理一下项目流程，首先，拿到知识点，然后给llm，让他帮我们画即可，然后把生成的内容保存。&lt;/p>
+&lt;p>这非常简单，但我们需要引入下列能力：&lt;/p>
+&lt;ol>
+&lt;li>联网搜索，让llm可以获得到最新的知识点（因此本项目可以对近期的热点事件进行思维导图的绘制），且避免出现幻觉。使用方法，eino提供了搜索的工具，比如google、duckduckgo，我们用他的duckduckgo提供搜索服务。&lt;/li>
+&lt;li>绘制思维导图的能力，我们用到了mindmap-mcp-server&lt;/li>
+&lt;li>我们可以手动保存文件，也可以让ai保存，为了演示mcp的用法，我们用@modelcontextprotocol/server-filesystem来实现llm对文件的操作&lt;/li>
+&lt;/ol>
+&lt;h2 id="mcp调用部分">Mcp调用部分
+&lt;/h2>&lt;p>首先，我们的配置文件需要自主配置mcp，以支持mcp的拓展，因此我们采用了以下格式:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;mcps&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;command&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;uvx&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;env&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;args&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;mindmap-mcp-server&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;--return-type&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;html&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;command&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;npx&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;env&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;args&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;-y&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;@modelcontextprotocol/server-filesystem&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;填上运行项目的地址！！！&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>写在配置文件里，这与市面上大部分三方MCP的设置形式都是相同的，加载mcp的代码如下，其实就是将mcp全部转换成了tool call。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nx">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;context&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;fmt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;time&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">einomcp&lt;/span> &lt;span class="s">&amp;#34;github.com/cloudwego/eino-ext/components/tool/mcp&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/cloudwego/eino/components/tool&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/mark3labs/mcp-go/client&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/mark3labs/mcp-go/mcp&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">func&lt;/span> &lt;span class="nf">GenerateTools&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">[]&lt;/span>&lt;span class="nx">tool&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">BaseTool&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">startTime&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Now&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ctx&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">var&lt;/span> &lt;span class="nx">res&lt;/span> &lt;span class="p">[]&lt;/span>&lt;span class="nx">tool&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">BaseTool&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">initRequest&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">mcp&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">InitializeRequest&lt;/span>&lt;span class="p">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">initRequest&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Params&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ProtocolVersion&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">mcp&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">LATEST_PROTOCOL_VERSION&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">initRequest&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Params&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ClientInfo&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">mcp&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Implementation&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Name&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s">&amp;#34;mind-maker-client&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Version&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s">&amp;#34;1.0.0&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="nx">_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">item&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="k">range&lt;/span> &lt;span class="nx">ActivateConfig&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Mcps&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">cli&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewStdioMCPClient&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Command&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Env&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Args&lt;/span>&lt;span class="o">...&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">cli&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Initialize&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">initRequest&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 将mcp转换为工具
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">tools&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">einomcp&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">GetTools&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">einomcp&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Cli&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">cli&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">res&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nb">append&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">res&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">tools&lt;/span>&lt;span class="o">...&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">timeLast&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Since&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">startTime&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;生成mcp工具列表用时:&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">timeLast&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">res&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="大模型调用部分">大模型调用部分
+&lt;/h2>&lt;p>由于eino已经支持了react模式，因此我们直接拿过来用即可，因此要设计的核心点是prompt，目前项目中的prompt如下&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">下面，你需要对用户给出的知识点进行思维导图的绘制，然后将结果保存在mind.html，要求思维导图结构清晰，逻辑正确，覆盖面广，生成的内容的语言应当使用中文
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">制作前你需要进行搜索收集相关信息，如果收集到的信息不是中文，请翻译成中文，结果一定要是中文，记住，一定要将结果保存到mind.html，生成的内容的语言应当使用中文
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>主要做的内容其实也就是对语言的限制，以及嘱咐ai记得调用相关能力。&lt;/p>
+&lt;p>完整调用过程：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt"> 10
+&lt;/span>&lt;span class="lnt"> 11
+&lt;/span>&lt;span class="lnt"> 12
+&lt;/span>&lt;span class="lnt"> 13
+&lt;/span>&lt;span class="lnt"> 14
+&lt;/span>&lt;span class="lnt"> 15
+&lt;/span>&lt;span class="lnt"> 16
+&lt;/span>&lt;span class="lnt"> 17
+&lt;/span>&lt;span class="lnt"> 18
+&lt;/span>&lt;span class="lnt"> 19
+&lt;/span>&lt;span class="lnt"> 20
+&lt;/span>&lt;span class="lnt"> 21
+&lt;/span>&lt;span class="lnt"> 22
+&lt;/span>&lt;span class="lnt"> 23
+&lt;/span>&lt;span class="lnt"> 24
+&lt;/span>&lt;span class="lnt"> 25
+&lt;/span>&lt;span class="lnt"> 26
+&lt;/span>&lt;span class="lnt"> 27
+&lt;/span>&lt;span class="lnt"> 28
+&lt;/span>&lt;span class="lnt"> 29
+&lt;/span>&lt;span class="lnt"> 30
+&lt;/span>&lt;span class="lnt"> 31
+&lt;/span>&lt;span class="lnt"> 32
+&lt;/span>&lt;span class="lnt"> 33
+&lt;/span>&lt;span class="lnt"> 34
+&lt;/span>&lt;span class="lnt"> 35
+&lt;/span>&lt;span class="lnt"> 36
+&lt;/span>&lt;span class="lnt"> 37
+&lt;/span>&lt;span class="lnt"> 38
+&lt;/span>&lt;span class="lnt"> 39
+&lt;/span>&lt;span class="lnt"> 40
+&lt;/span>&lt;span class="lnt"> 41
+&lt;/span>&lt;span class="lnt"> 42
+&lt;/span>&lt;span class="lnt"> 43
+&lt;/span>&lt;span class="lnt"> 44
+&lt;/span>&lt;span class="lnt"> 45
+&lt;/span>&lt;span class="lnt"> 46
+&lt;/span>&lt;span class="lnt"> 47
+&lt;/span>&lt;span class="lnt"> 48
+&lt;/span>&lt;span class="lnt"> 49
+&lt;/span>&lt;span class="lnt"> 50
+&lt;/span>&lt;span class="lnt"> 51
+&lt;/span>&lt;span class="lnt"> 52
+&lt;/span>&lt;span class="lnt"> 53
+&lt;/span>&lt;span class="lnt"> 54
+&lt;/span>&lt;span class="lnt"> 55
+&lt;/span>&lt;span class="lnt"> 56
+&lt;/span>&lt;span class="lnt"> 57
+&lt;/span>&lt;span class="lnt"> 58
+&lt;/span>&lt;span class="lnt"> 59
+&lt;/span>&lt;span class="lnt"> 60
+&lt;/span>&lt;span class="lnt"> 61
+&lt;/span>&lt;span class="lnt"> 62
+&lt;/span>&lt;span class="lnt"> 63
+&lt;/span>&lt;span class="lnt"> 64
+&lt;/span>&lt;span class="lnt"> 65
+&lt;/span>&lt;span class="lnt"> 66
+&lt;/span>&lt;span class="lnt"> 67
+&lt;/span>&lt;span class="lnt"> 68
+&lt;/span>&lt;span class="lnt"> 69
+&lt;/span>&lt;span class="lnt"> 70
+&lt;/span>&lt;span class="lnt"> 71
+&lt;/span>&lt;span class="lnt"> 72
+&lt;/span>&lt;span class="lnt"> 73
+&lt;/span>&lt;span class="lnt"> 74
+&lt;/span>&lt;span class="lnt"> 75
+&lt;/span>&lt;span class="lnt"> 76
+&lt;/span>&lt;span class="lnt"> 77
+&lt;/span>&lt;span class="lnt"> 78
+&lt;/span>&lt;span class="lnt"> 79
+&lt;/span>&lt;span class="lnt"> 80
+&lt;/span>&lt;span class="lnt"> 81
+&lt;/span>&lt;span class="lnt"> 82
+&lt;/span>&lt;span class="lnt"> 83
+&lt;/span>&lt;span class="lnt"> 84
+&lt;/span>&lt;span class="lnt"> 85
+&lt;/span>&lt;span class="lnt"> 86
+&lt;/span>&lt;span class="lnt"> 87
+&lt;/span>&lt;span class="lnt"> 88
+&lt;/span>&lt;span class="lnt"> 89
+&lt;/span>&lt;span class="lnt"> 90
+&lt;/span>&lt;span class="lnt"> 91
+&lt;/span>&lt;span class="lnt"> 92
+&lt;/span>&lt;span class="lnt"> 93
+&lt;/span>&lt;span class="lnt"> 94
+&lt;/span>&lt;span class="lnt"> 95
+&lt;/span>&lt;span class="lnt"> 96
+&lt;/span>&lt;span class="lnt"> 97
+&lt;/span>&lt;span class="lnt"> 98
+&lt;/span>&lt;span class="lnt"> 99
+&lt;/span>&lt;span class="lnt">100
+&lt;/span>&lt;span class="lnt">101
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nx">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;bufio&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;context&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;errors&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;fmt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;io&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;os&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;strings&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;time&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/cloudwego/eino-ext/components/model/openai&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/cloudwego/eino-ext/components/tool/duckduckgo&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/cloudwego/eino/compose&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/cloudwego/eino/flow/agent&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/cloudwego/eino/flow/agent/react&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;github.com/cloudwego/eino/schema&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">func&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ctx&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;mind-maker by dinglz&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;https://github.com/dingdinglz/mind-maker&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nf">LoadConfig&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nf">FileExist&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;mind.html&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">os&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Remove&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;mind.html&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;请输入要生成思维导图的知识点:&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">reader&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">bufio&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewReader&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">os&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Stdin&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">question&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">reader&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ReadString&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sc">&amp;#39;\n&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">question&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">strings&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ReplaceAll&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">question&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34; &amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">question&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">strings&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">ReplaceAll&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">question&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;\n&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;开始对知识点&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">question&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;绘制思维导图&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">chatModel&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">openai&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewChatModel&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">openai&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ChatModelConfig&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">BaseURL&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">ActivateConfig&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Model&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">BaseURL&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">APIKey&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">ActivateConfig&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Model&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ApiKey&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Model&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">ActivateConfig&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Model&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Model&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">tools&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nf">GenerateTools&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ducktool&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">duckduckgo&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewTool&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">duckduckgo&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">tools&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nb">append&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">tools&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">ducktool&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ragent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">react&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">NewAgent&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">react&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">AgentConfig&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Model&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">chatModel&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ToolsConfig&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">compose&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ToolsNodeConfig&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Tools&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">tools&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">startTime&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Now&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">sr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">ragent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Stream&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">[]&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="nx">schema&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Message&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Role&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">schema&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">System&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Content&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s">&amp;#34;下面，你需要对用户给出的知识点进行思维导图的绘制，然后将结果保存在mind.html，要求思维导图结构清晰，逻辑正确，覆盖面广，生成的内容的语言应当使用中文\n\n制作前你需要进行搜索收集相关信息，如果收集到的信息不是中文，请翻译成中文，结果一定要是中文，记住，一定要将结果保存到mind.html，生成的内容的语言应当使用中文&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Role&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">schema&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">User&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Content&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nx">question&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span> &lt;span class="nx">agent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithComposeOptions&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">compose&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithCallbacks&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="nx">LoggerCallback&lt;/span>&lt;span class="p">{})))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">defer&lt;/span> &lt;span class="nx">sr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Close&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">msg&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">sr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Recv&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">errors&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Is&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">io&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">EOF&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">break&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">panic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">msg&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Content&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;生成思维导图用时：&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Since&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">startTime&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nf">FileExist&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;mind.html&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;生成思维导图已保存到：mind.html&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span> &lt;span class="k">else&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;生成失败！请重试&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="总结">总结
+&lt;/h2>&lt;p>这只是一个相当于一个简单的llm集成mcp的示例 + eino的示例，完整代码请去github查看&lt;/p>
+&lt;h2 id="结语">结语
+&lt;/h2>&lt;p>近期拿到了一个生成ui原型图的prompt，还挺有意思的，也挺强，基于此开发了个ui原型图生成的网页，有时间就发篇blog唠唠&lt;/p></description></item><item><title>AI IDE杂谈</title><link>https://dingdinglz.github.io/p/ai-ide%E6%9D%82%E8%B0%88/</link><pubDate>Mon, 28 Apr 2025 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/ai-ide%E6%9D%82%E8%B0%88/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>由于我曾经对ai写代码这一概念并不是很认同，觉得他会很快从历史舞台上推出，因此并没有在cursor刚出的时候就体验（事实证明我是对的，强的是agent而不是chat），但随着claude以及gemini新模型的不断发布，似乎vibe编程越来越热，加上国产大厂字节的trae也开始加入市场，直接引爆了我的好奇心。&lt;/p>
+&lt;p>所以，我亲身体验了cursor和trae，先上结论&lt;/p>
+&lt;h2 id="结论">结论
+&lt;/h2>&lt;ul>
+&lt;li>对于已有idea，快速成型，trae和cursor均有非常强的能力，能理解人的需求，并能在一定程度上读懂网页上的文档或者markdown文档。（似乎可以进行某些优化，让文档变成ai更易懂的方式），但是，生成的代码并不易读&lt;/li>
+&lt;li>此外，生成的代码项目结构意识并不强，通常只会生成几个文件，然后堆积一大堆代码（可以理解，涉及到工具调用，尽量减少调用次数），但是，这就导致代码质量极速下降，很多代码仅仅是为了完成功能，并没有考虑复用性和性能问题，生成大量重复的代码，例如前端部分不用layout统一做界面，每个子界面都把layout重新生成一遍，目前有prompt对于该问题做了提升，但还是不尽人意&lt;/li>
+&lt;li>对于现有成体系的代码，新增功能或者修改bug的能力并不强，尤其是项目文件较多的时候，可能与上下文长度限制有关，而且，新增的代码代码风格并不能与老代码对齐，增加了审核和修改的难度&lt;/li>
+&lt;li>所以，短期内，重要的项目仍然选择手敲的形式比较好，我甚至&lt;strong>刻意&lt;/strong>地去关闭tab，避免ai的思路对我造成干扰&lt;/li>
+&lt;li>但是，一些需要快速完成的项目（比如拿到ppt上展示），生成原型图等，ai ide就可以完全发挥出他的功力，这一部分可能我也只需要他完成功能即可，后期不需要额外修改，不需要上线，也不需要注意他的代码质量&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>这里是我的建议！！！&lt;/p>
+&lt;ol>
+&lt;li>新手请慎重使用AI IDE，你应该清楚代码在做什么，只让AI写会迷失你自己，这不能让你的coding水平得到任何的提升&lt;/li>
+&lt;li>AI完成代码后，对于重要的部分，一定要review一遍！一定要review一遍！&lt;/li>
+&lt;li>让AI这颗子弹再飞一会，不行我们先自己code吧，相信你的生产力！&lt;/li>
+&lt;/ol>
+&lt;/blockquote>
+&lt;hr>
+&lt;p>下面是对两款IDE的评测&lt;/p>
+&lt;h2 id="trae">Trae
+&lt;/h2>&lt;h3 id="features">Features
+&lt;/h3>&lt;h4 id="bad-points">Bad Points
+&lt;/h4>&lt;ul>
+&lt;li>暂时效果上仍然不如cursor（同模型下对比），期待字节持续发力&lt;/li>
+&lt;li>排队等待AI响应时间过长&lt;/li>
+&lt;li>这几天失去了对vscode插件市场的支持，导致开发时需要开启两个IDE（trae + vscode 一个生成一个写）&lt;/li>
+&lt;/ul>
+&lt;h4 id="good-points">Good Points
+&lt;/h4>&lt;ul>
+&lt;li>界面对中文用户更加友好，我觉得相比于cursor更加美观（也可能是理工男审美发力了）&lt;/li>
+&lt;li>目前已经支持agent模式，支持mcp，甚至还自带了一个mcp市场&lt;/li>
+&lt;/ul>
+&lt;h3 id="界面截图">界面截图
+&lt;/h3>&lt;p>&lt;img src="https://dingdinglz.github.io/p/ai-ide%E6%9D%82%E8%B0%88/trae.png"
+width="1920"
+height="1055"
+srcset="https://dingdinglz.github.io/p/ai-ide%E6%9D%82%E8%B0%88/trae_hu15203659255281216253.png 480w, https://dingdinglz.github.io/p/ai-ide%E6%9D%82%E8%B0%88/trae_hu5079723274214087069.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="181"
+data-flex-basis="436px"
+>&lt;/p>
+&lt;h2 id="cursor">Cursor
+&lt;/h2>&lt;h3 id="features-1">Features
+&lt;/h3>&lt;h4 id="bad-points-1">Bad Points
+&lt;/h4>&lt;ul>
+&lt;li>收费，20美刀一个月&lt;/li>
+&lt;li>mcp配置对新手来说较难，但是使用AI IDE的同志可能都是开发者？所以涉及到该产品的定位如何。&lt;/li>
+&lt;/ul>
+&lt;h4 id="good-points-1">Good Points
+&lt;/h4>&lt;ul>
+&lt;li>代码生成结果和审美相较于trae有显著提高&lt;/li>
+&lt;li>支持agent + mcp&lt;/li>
+&lt;li>对vscode插件兼容性好，就算不用ai功能，也可以当成vscode使用&lt;/li>
+&lt;/ul>
+&lt;h3 id="界面截图-1">界面截图
+&lt;/h3>&lt;p>&lt;img src="https://dingdinglz.github.io/p/ai-ide%E6%9D%82%E8%B0%88/cursor.png"
+width="1920"
+height="1055"
+srcset="https://dingdinglz.github.io/p/ai-ide%E6%9D%82%E8%B0%88/cursor_hu2131558034299854985.png 480w, https://dingdinglz.github.io/p/ai-ide%E6%9D%82%E8%B0%88/cursor_hu5995952046191500864.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="181"
+data-flex-basis="436px"
+>&lt;/p></description></item><item><title>部署国内gemini</title><link>https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/</link><pubDate>Fri, 10 Jan 2025 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/</guid><description>&lt;h2 id="本文最终实现效果">本文最终实现效果
+&lt;/h2>&lt;p>搭建出一个在&lt;strong>国内可访问的&lt;/strong>gemini api(符合openai api规范)，并绑定到自定义域名上。&lt;/p>
+&lt;p>全文free of charge，伟大！感谢提供服务的公司们。&lt;/p>
+&lt;p>如果不想手动部署的兄弟们，可以访问我部署好的api。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-http" data-lang="http">&lt;span class="line">&lt;span class="cl">&lt;span class="err">https://gemini.dinglz.us.kg/v1
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="本文包含内容">本文包含内容
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>在us.kg上注册一个域名并托管到cloudflare上&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>部署openai-gemini到cloudflare workers上&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>申请gemini apikey并测试可用性&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>若已有域名并且已经托管到cloudflare上可以跳过第一步。&lt;/p>
+&lt;h2 id="注册域名">注册域名
+&lt;/h2>&lt;p>&lt;a class="link" href="https://nic.us.kg/" target="_blank" rel="noopener"
+>US.KG – A Free name for everyone&lt;/a> 是一个为开发者们免费提供域名的网站，通过申请，你可以获得一个免费的&amp;quot;*.us.kg&amp;quot;的域名&lt;/p>
+&lt;p>正如你所见，我的blog便是通过github pages部署在dinglz.us.kg上&lt;/p>
+&lt;h3 id="注册账号并发送issue">注册账号，并发送issue
+&lt;/h3>&lt;p>进入上面的网址注册一个账号，然后按照要求为该平台的github项目点上star，并发送一个issue（网站内说明非常详细，在此不在赘述）&lt;/p>
+&lt;h3 id="创建域名">创建域名
+&lt;/h3>&lt;p>创建一个没被占用的域名&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/1.png"
+width="2556"
+height="1351"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/1_hu2783472457143819059.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/1_hu10122663982392730079.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="454px"
+>&lt;/p>
+&lt;h3 id="前往cloudflare创建域名">前往cloudflare创建域名
+&lt;/h3>&lt;p>&lt;a class="link" href="https://dash.cloudflare.com/" target="_blank" rel="noopener"
+>Cloudflare | Web Performance &amp;amp; Security&lt;/a> 进入该网站注册一个账号&lt;/p>
+&lt;p>创建一个域&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/2.png"
+width="2559"
+height="1359"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/2_hu669233686905118447.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/2_hu3470087005387405167.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="188"
+data-flex-basis="451px"
+>&lt;/p>
+&lt;p>输入刚刚注册的域名，点击继续，比如gemini.us.kg&lt;/p>
+&lt;p>选择free计划&lt;/p>
+&lt;p>点继续前往激活&lt;/p>
+&lt;p>然后我们就能看到给我们提供的名称服务器&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/3.png"
+width="2559"
+height="1365"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/3_hu10680562387749455591.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/3_hu13538598639944090683.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="187"
+data-flex-basis="449px"
+>&lt;/p>
+&lt;p>将它们复制到刚刚创建域名所需要的Name Server1和Name Server2&lt;/p>
+&lt;p>注册！&lt;/p>
+&lt;p>在cloudflare中点击立即检查名称服务器，等待几分钟或者几小时后，即可在cloudflare里管理注册的域名，包括可以解析到你的服务器上，解析到github pages上等，我们下面的操作需要将该域名绑定到cloudflare worker上。&lt;/p>
+&lt;blockquote>
+&lt;p>你可能会遇到解析到自己的服务器上但无法使用的情况，这是因为国内服务器使用域名需要提前备案，域名备案后即可使用，本文无需进行备案（cloudflare是国外厂商，嘻嘻）&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="部署openai-gemini">部署openai-gemini
+&lt;/h2>&lt;p>很好，目前为止我们已经成功白嫖了一个域名，并把它托管到了cloudflare上&lt;/p>
+&lt;p>下面我们利用github-actions和cloudflare workers来创建我们的api&lt;/p>
+&lt;p>首先打开该项目&lt;a class="link" href="https://github.com/PublicAffairs/openai-gemini" target="_blank" rel="noopener"
+>GitHub - PublicAffairs/openai-gemini: Gemini ➜ OpenAI API proxy. Serverless!&lt;/a>&lt;/p>
+&lt;p>往下划，找到deploy to cloudflare，deploy with workers按钮（本文只介绍cloudflare workers部署方法，托管到其他平台也是ok的，比如vercel，不过vercel同样不能在国内访问，不符合我们的使用需求）&lt;/p>
+&lt;p>按照顺序往下即可&lt;/p>
+&lt;p>其中获取account id和apikey都是cloudflare的&lt;/p>
+&lt;p>这一步进行下说明。&lt;/p>
+&lt;h3 id="account-id">account id
+&lt;/h3>&lt;p>点进它提供给你的链接，右侧即可看到account id&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/4.png"
+width="2543"
+height="1362"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/4_hu7889925732263491226.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/4_hu3178563049734463902.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="186"
+data-flex-basis="448px"
+>&lt;/p>
+&lt;p>如果你看不到的话，随便创建一个workers，就能看到，获取到id后删了随便创建的即可。&lt;/p>
+&lt;h3 id="apikey">apikey
+&lt;/h3>&lt;p>点击创建令牌&lt;/p>
+&lt;p>点击编辑 Cloudflare Workers的模版&lt;/p>
+&lt;p>用户资源选择所有资源&lt;/p>
+&lt;p>区域资源选择所有区域&lt;/p>
+&lt;p>点击继续，即可获得apikey&lt;/p>
+&lt;p>好的，完成上述步骤后，来到cloudflare workers面板，可以看到gemini服务已经成功部署啦！&lt;/p>
+&lt;p>点进去，点击设置，添加一个域名&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/5.png"
+width="2559"
+height="1349"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/5_hu6626481679208476264.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/5_hu18215907559592458842.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="189"
+data-flex-basis="455px"
+>&lt;/p>
+&lt;p>添加的域名可以是你刚刚第一步托管进cloudflare的域名，也可以是该域名的子域名。&lt;/p>
+&lt;p>祝贺！你添加的域名即为符合openai范式的api。&lt;/p>
+&lt;h2 id="调用并测试">调用并测试
+&lt;/h2>&lt;p>好的，目前我们已经有了一个gemini的国内oepnai范式的api。&lt;/p>
+&lt;p>下面我们需要申请一个gemini的apikey，&lt;a class="link" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener"
+>Gemini 控制台&lt;/a>，前往其中申请即可。&lt;/p>
+&lt;p>下面让我们来调用吧。&lt;/p>
+&lt;p>我之前为知易设计了一个调用支持openai范式的ai的微服务，我直接利用它进行测试&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/6.png"
+width="1770"
+height="1199"
+srcset="https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/6_hu15660272710142874282.png 480w, https://dingdinglz.github.io/p/%E9%83%A8%E7%BD%B2%E5%9B%BD%E5%86%85gemini/6_hu16532079474128330927.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="147"
+data-flex-basis="354px"
+>&lt;/p>
+&lt;p>太好了，我们成功了！&lt;/p>
+&lt;h3 id="py调用">py调用
+&lt;/h3>&lt;p>顺便给出一个python调用的demo&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">openai&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">OpenAI&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">client&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">OpenAI&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">api_key&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;刚刚申请的gemini的apikey&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">base_url&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;https://你添加的域名/v1&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">completion&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">client&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">chat&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">completions&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">create&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">model&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;模型名&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">messages&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>&lt;span class="s2">&amp;#34;role&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;system&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;content&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;提示词&amp;#34;&lt;/span>&lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>&lt;span class="s2">&amp;#34;role&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;user&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;content&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;问题&amp;#34;&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">temperature&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">0.3&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">completion&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">choices&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">message&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="支持的模型列表">支持的模型列表
+&lt;/h3>&lt;p>可以用获取模型列表的api查看，也可以上gemini的官网查看。&lt;/p>
+&lt;h2 id="参考资料">参考资料
+&lt;/h2>&lt;p>&lt;a class="link" href="https://github.com/PublicAffairs/openai-gemini" target="_blank" rel="noopener"
+>GitHub - PublicAffairs/openai-gemini: Gemini ➜ OpenAI API proxy. Serverless!&lt;/a> 伟大的gemini转openai格式的api中间件，支持部署到各种托管平台上&lt;/p>
+&lt;p>&lt;a class="link" href="https://cloudflare.com" target="_blank" rel="noopener"
+>cloudflare&lt;/a> 感谢伟大的cloudflare提供cloudflare workers&lt;/p>
+&lt;p>&lt;a class="link" href="https://nic.us.kg/" target="_blank" rel="noopener"
+>US.KG – A Free name for everyone&lt;/a> 感谢伟大的us.kg为开发者们提供免费的域名&lt;/p>
+&lt;p>&lt;a class="link" href="https://www.bilibili.com/video/BV1xS66YAEwm/?share_source=copy_web&amp;amp;vd_source=48d9e62f9891701ebeb6dd853a402b14" target="_blank" rel="noopener"
+>【Cloudflare中转顶级大模型API，国内免费爽用，Gemini编程，音视频，多模态能力测试】&lt;/a> 感谢伟大的博主分享出搭建方法，为本文提供基本思路&lt;/p></description></item></channel></rss>

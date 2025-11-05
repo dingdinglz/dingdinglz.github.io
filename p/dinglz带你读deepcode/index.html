@@ -1,0 +1,1703 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="今天要读的项目是：https://github.com/HKUDS/DeepCode"><title>dinglz带你读deepcode</title>
+<link rel=canonical href=https://dingdinglz.github.io/p/dinglz%E5%B8%A6%E4%BD%A0%E8%AF%BBdeepcode/><link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css><meta property='og:title' content="dinglz带你读deepcode"><meta property='og:description' content="今天要读的项目是：https://github.com/HKUDS/DeepCode"><meta property='og:url' content='https://dingdinglz.github.io/p/dinglz%E5%B8%A6%E4%BD%A0%E8%AF%BBdeepcode/'><meta property='og:site_name' content="Dinglz 's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='Python'><meta property='article:tag' content='Agent'><meta property='article:published_time' content='2025-09-28T02:00:00+00:00'><meta property='article:modified_time' content='2025-09-28T02:00:00+00:00'><meta name=twitter:title content="dinglz带你读deepcode"><meta name=twitter:description content="今天要读的项目是：https://github.com/HKUDS/DeepCode"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu9713755695089526605.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Dinglz 's Blog</a></h1><h2 class=site-description>keep learning...</h2></div></header><ol class=menu-social><li><a href=https://github.com/dingdinglz target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>分类</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#概述>概述</a></li><li><a href=#入口>入口</a></li><li><a href=#mcp部分>mcp部分</a></li><li><a href=#appprocess_inputinput_source-input_type>app.process_input(input_source, input_type)</a></li><li><a href=#selfexecute_full_pipeline>self.execute_full_pipeline</a></li><li><a href=#execute_multi_agent_research_pipeline>execute_multi_agent_research_pipeline</a><ol><li><a href=#phase0>phase0</a></li><li><a href=#phase1>phase1</a></li><li><a href=#phase2>phase2</a><ol><li><a href=#orchestrate_research_analysis_agent>orchestrate_research_analysis_agent</a></li></ol></li><li><a href=#phase3>phase3</a></li><li><a href=#phase35>phase3.5</a><ol><li><a href=#step1>step1</a></li><li><a href=#step2>step2</a></li><li><a href=#step3>step3</a></li></ol></li><li><a href=#phase4>phase4</a></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/coderead/ style=background-color:#6495ed;color:#fff>dinglz带你读github</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/dinglz%E5%B8%A6%E4%BD%A0%E8%AF%BBdeepcode/>dinglz带你读deepcode</a></h2><h3 class=article-subtitle>今天要读的项目是：https://github.com/HKUDS/DeepCode</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Sep 28, 2025</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>20 minute read</time></div></footer></div></header><section class=article-content><p>今天我们要看的项目是：https://github.com/HKUDS/DeepCode ，我读的commit是main分支的ab730642731d9c8a400cad78e76962253ac875f2</p><p>跟着本篇blog读repo建议把代码拉下来，切到相同的commit，跟着流程一起来读</p><h2 id=概述>概述</h2><p>DeepCode 是一个基于多智能体系统的开源框架，旨在将研究论文、自然语言描述等输入自动转换为生产级代码。该项目通过自动化算法实现、前端开发和后端构建，显著提升了研发效率。其核心目标是解决研究人员在实现复杂算法时面临的挑战，减少开发延迟，并避免重复性编码工作。</p><p>DeepCode 支持多种输入形式，包括学术论文、文本提示、URL 和文档文件（如 PDF、DOC、PPTX、TXT、HTML），并能生成高质量、可扩展且功能丰富的代码。该系统采用多智能体协作架构，能够处理复杂的开发任务，从概念到可部署的应用程序。</p><pre class=mermaid>
+  flowchart LR
+A[&#34;📄 研究论文&lt;br/&gt;💬 文本提示&lt;br/&gt;🌐 URLs &amp; 文档&lt;br/&gt;📎 文件: PDF, DOC, PPTX, TXT, HTML&#34;] --&gt; B[&#34;🧠 DeepCode&lt;br/&gt;多智能体引擎&#34;]
+B --&gt; C[&#34;🚀 算法实现 &lt;br/&gt;🎨 前端开发 &lt;br/&gt;⚙️ 后端开发&#34;]
+style A fill:#ff6b6b,stroke:#c0392b,stroke-width:2px,color:#000
+style B fill:#00d4ff,stroke:#0984e3,stroke-width:3px,color:#000
+style C fill:#00b894,stroke:#00a085,stroke-width:2px,color:#000
+</pre><h2 id=入口>入口</h2><p>要读懂全流程，先找入口，开始于：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>python cli/main_cli.py --file paper.pdf
+</span></span></code></pre></td></tr></table></div></div><p>所以我们先来看<code>cli/main_cli.py</code>。</p><p>找到main函数，跳过环境检查等等，你会发现最核心的地方在：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>if</span> <span class=n>args</span><span class=o>.</span><span class=n>file</span> <span class=ow>or</span> <span class=n>args</span><span class=o>.</span><span class=n>url</span> <span class=ow>or</span> <span class=n>args</span><span class=o>.</span><span class=n>chat</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>args</span><span class=o>.</span><span class=n>file</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 验证文件存在</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=ow>not</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>exists</span><span class=p>(</span><span class=n>args</span><span class=o>.</span><span class=n>file</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>Colors</span><span class=o>.</span><span class=n>FAIL</span><span class=si>}</span><span class=s2>❌ File not found: </span><span class=si>{</span><span class=n>args</span><span class=o>.</span><span class=n>file</span><span class=si>}{</span><span class=n>Colors</span><span class=o>.</span><span class=n>ENDC</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>sys</span><span class=o>.</span><span class=n>exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>success</span> <span class=o>=</span> <span class=k>await</span> <span class=n>run_direct_processing</span><span class=p>(</span><span class=n>app</span><span class=p>,</span> <span class=n>args</span><span class=o>.</span><span class=n>file</span><span class=p>,</span> <span class=s2>&#34;file&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>elif</span> <span class=n>args</span><span class=o>.</span><span class=n>url</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>success</span> <span class=o>=</span> <span class=k>await</span> <span class=n>run_direct_processing</span><span class=p>(</span><span class=n>app</span><span class=p>,</span> <span class=n>args</span><span class=o>.</span><span class=n>url</span><span class=p>,</span> <span class=s2>&#34;url&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>elif</span> <span class=n>args</span><span class=o>.</span><span class=n>chat</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 验证chat输入长度</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>args</span><span class=o>.</span><span class=n>chat</span><span class=o>.</span><span class=n>strip</span><span class=p>())</span> <span class=o>&lt;</span> <span class=mi>20</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=nb>print</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>Colors</span><span class=o>.</span><span class=n>FAIL</span><span class=si>}</span><span class=s2>❌ Chat input too short. Please provide more detailed requirements (at least 20 characters)</span><span class=si>{</span><span class=n>Colors</span><span class=o>.</span><span class=n>ENDC</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>            <span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>sys</span><span class=o>.</span><span class=n>exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>success</span> <span class=o>=</span> <span class=k>await</span> <span class=n>run_direct_processing</span><span class=p>(</span><span class=n>app</span><span class=p>,</span> <span class=n>args</span><span class=o>.</span><span class=n>chat</span><span class=p>,</span> <span class=s2>&#34;chat&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>sys</span><span class=o>.</span><span class=n>exit</span><span class=p>(</span><span class=mi>0</span> <span class=k>if</span> <span class=n>success</span> <span class=k>else</span> <span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 交互式模式</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;</span><span class=se>\n</span><span class=si>{</span><span class=n>Colors</span><span class=o>.</span><span class=n>CYAN</span><span class=si>}</span><span class=s2>🎮 Starting interactive mode...</span><span class=si>{</span><span class=n>Colors</span><span class=o>.</span><span class=n>ENDC</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>await</span> <span class=n>app</span><span class=o>.</span><span class=n>run_interactive_session</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>也就是说我们只需要看<code>run_direct_processing</code>函数就ok了</p><p>来看：这个函数里的核心代码</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 初始化应用</span>
+</span></span><span class=line><span class=cl><span class=n>init_result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>app</span><span class=o>.</span><span class=n>initialize_mcp_app</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=n>init_result</span><span class=p>[</span><span class=s2>&#34;status&#34;</span><span class=p>]</span> <span class=o>!=</span> <span class=s2>&#34;success&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>Colors</span><span class=o>.</span><span class=n>FAIL</span><span class=si>}</span><span class=s2>❌ Initialization failed: </span><span class=si>{</span><span class=n>init_result</span><span class=p>[</span><span class=s1>&#39;message&#39;</span><span class=p>]</span><span class=si>}{</span><span class=n>Colors</span><span class=o>.</span><span class=n>ENDC</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=kc>False</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 处理输入</span>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>app</span><span class=o>.</span><span class=n>process_input</span><span class=p>(</span><span class=n>input_source</span><span class=p>,</span> <span class=n>input_type</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>要关注的其实也就是：<code>app.initialize_mcp_app()</code>和<code>app.process_input(input_source, input_type)</code>，还记得input_source和input_type吗，input_type有chat、url、file，source就是对应的内容</p><p>那我们下面分别来看<code>app.initialize_mcp_app()</code>和<code>app.process_input(input_source, input_type)</code>，记录一下现在的taskList</p><hr><ul><li><input disabled type=checkbox> 读<code>app.initialize_mcp_app()</code></li><li><input disabled type=checkbox> 读<code>app.process_input(input_source, input_type)</code></li></ul><hr><h2 id=mcp部分>mcp部分</h2><p>来看<code>app.initialize_mcp_app()</code>，最终定位到</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>async</span> <span class=k>def</span> <span class=nf>initialize_mcp_app</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;初始化MCP应用 - 使用工作流适配器&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Workflow adapter will handle MCP initialization</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>workflow_adapter</span><span class=o>.</span><span class=n>initialize_mcp_app</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>来看<code>self.workflow_adapter.initialize_mcp_app()</code>，核心代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Initialize MCP application</span>
+</span></span><span class=line><span class=cl><span class=bp>self</span><span class=o>.</span><span class=n>app</span> <span class=o>=</span> <span class=n>MCPApp</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;cli_agent_orchestration&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>app</span><span class=o>.</span><span class=n>run</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>agent_app</span> <span class=o>=</span> <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=o>.</span><span class=fm>__aenter__</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>诶？原来不是初始化mcp的配置，而是直接初始化了self.app也就是核心的agent，他这里agent就叫做mcp application，总之这里先把cli的app初始化成了cli_agent_orchestration，可以给大家看一下这边agent的架构图：</p><pre class=mermaid>
+  graph TB
+subgraph &#34;智能体层&#34;
+CO[中央协调智能体]
+IU[意图理解智能体]
+DP[文档解析智能体]
+CP[代码规划智能体]
+CR[代码参考挖掘智能体]
+CI[代码生成智能体]
+end
+subgraph &#34;MCP服务器层&#34;
+DS[document-segmentation]
+FI[filesystem]
+BR[brave]
+GH[github-downloader]
+CI_S[command-executor]
+CI_I[Code Implementation Server]
+end
+CO --&gt; |调度| IU
+CO --&gt; |调度| DP
+CO --&gt; |调度| CP
+CO --&gt; |调度| CR
+CO --&gt; |调度| CI
+DP --&gt; |调用| DS
+CR --&gt; |调用| BR
+CR --&gt; |调用| GH
+CI --&gt; |调用| FI
+CI --&gt; |调用| CI_S
+CI --&gt; |调用| CI_I
+</pre><p>刚刚初始化的就是中央协调智能体，让我们更新一下tasklist</p><hr><ul><li><input checked disabled type=checkbox> 读<code>app.initialize_mcp_app()</code></li><li><input disabled type=checkbox> 读<code>app.process_input(input_source, input_type)</code></li></ul><hr><p>那我们接着来看：<code>app.process_input(input_source, input_type)</code></p><h2 id=appprocess_inputinput_source-input_type>app.process_input(input_source, input_type)</h2><p>这里有段挺奇怪的代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Update segmentation configuration before processing</span>
+</span></span><span class=line><span class=cl><span class=c1># 在处理之前更新segmentation configuration</span>
+</span></span><span class=line><span class=cl><span class=bp>self</span><span class=o>.</span><span class=n>update_segmentation_config</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>看下这个函数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>update_segmentation_config</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;Update document segmentation configuration in mcp_agent.config.yaml&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=kn>import</span> <span class=nn>yaml</span>
+</span></span><span class=line><span class=cl>    <span class=kn>import</span> <span class=nn>os</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>config_path</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>dirname</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>dirname</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>abspath</span><span class=p>(</span><span class=vm>__file__</span><span class=p>))),</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;mcp_agent.config.yaml&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=c1># Read current config</span>
+</span></span><span class=line><span class=cl>        <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>config_path</span><span class=p>,</span> <span class=s2>&#34;r&#34;</span><span class=p>,</span> <span class=n>encoding</span><span class=o>=</span><span class=s2>&#34;utf-8&#34;</span><span class=p>)</span> <span class=k>as</span> <span class=n>f</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>config</span> <span class=o>=</span> <span class=n>yaml</span><span class=o>.</span><span class=n>safe_load</span><span class=p>(</span><span class=n>f</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># Update document segmentation settings</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=s2>&#34;document_segmentation&#34;</span> <span class=ow>not</span> <span class=ow>in</span> <span class=n>config</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>config</span><span class=p>[</span><span class=s2>&#34;document_segmentation&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>config</span><span class=p>[</span><span class=s2>&#34;document_segmentation&#34;</span><span class=p>][</span><span class=s2>&#34;enabled&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>segmentation_config</span><span class=p>[</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;enabled&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=n>config</span><span class=p>[</span><span class=s2>&#34;document_segmentation&#34;</span><span class=p>][</span><span class=s2>&#34;size_threshold_chars&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>segmentation_config</span><span class=p>[</span><span class=s2>&#34;size_threshold_chars&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># Write updated config</span>
+</span></span><span class=line><span class=cl>        <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>config_path</span><span class=p>,</span> <span class=s2>&#34;w&#34;</span><span class=p>,</span> <span class=n>encoding</span><span class=o>=</span><span class=s2>&#34;utf-8&#34;</span><span class=p>)</span> <span class=k>as</span> <span class=n>f</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>yaml</span><span class=o>.</span><span class=n>dump</span><span class=p>(</span><span class=n>config</span><span class=p>,</span> <span class=n>f</span><span class=p>,</span> <span class=n>default_flow_style</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span> <span class=n>allow_unicode</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>cli</span><span class=o>.</span><span class=n>print_status</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;📄 Document segmentation configuration updated&#34;</span><span class=p>,</span> <span class=s2>&#34;success&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>except</span> <span class=ne>Exception</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>cli</span><span class=o>.</span><span class=n>print_status</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=sa>f</span><span class=s2>&#34;⚠️ Failed to update segmentation config: </span><span class=si>{</span><span class=nb>str</span><span class=p>(</span><span class=n>e</span><span class=p>)</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>,</span> <span class=s2>&#34;warning&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>发现其实就是先加载配置，然后同步cli的配置</p><p>再回来看，然后这个函数的核心就在于：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 使用工作流适配器进行处理</span>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>workflow_adapter</span><span class=o>.</span><span class=n>process_input_with_orchestration</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>input_source</span><span class=o>=</span><span class=n>input_source</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>input_type</span><span class=o>=</span><span class=n>input_type</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>enable_indexing</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>cli</span><span class=o>.</span><span class=n>enable_indexing</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>进到这个函数里看看，前面都是预处理，最核心的代码在</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Execute appropriate pipeline based on input type</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=n>input_type</span> <span class=o>==</span> <span class=s2>&#34;chat&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Use chat-based planning pipeline for user requirements</span>
+</span></span><span class=line><span class=cl>    <span class=n>pipeline_result</span> <span class=o>=</span> <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>execute_chat_pipeline</span><span class=p>(</span><span class=n>input_source</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Use traditional multi-agent research pipeline for files/URLs</span>
+</span></span><span class=line><span class=cl>    <span class=n>pipeline_result</span> <span class=o>=</span> <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>execute_full_pipeline</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>input_source</span><span class=p>,</span> <span class=n>enable_indexing</span><span class=o>=</span><span class=n>enable_indexing</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>我们来看一下file和url下的全流程，所以我们只需要看下<code>self.execute_full_pipeline</code>就行了，更新一下tasklist</p><hr><ul><li><input checked disabled type=checkbox> 读<code>app.initialize_mcp_app()</code></li><li><input checked disabled type=checkbox> 读<code>app.process_input(input_source, input_type)</code></li></ul><hr><p>并行任务结束了，我们下面来读<code>self.execute_full_pipeline</code>。</p><h2 id=selfexecute_full_pipeline>self.execute_full_pipeline</h2><p>读一下发现这个函数最核心的地方就在：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>execute_multi_agent_research_pipeline</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>input_source</span><span class=o>=</span><span class=n>input_source</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>logger</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>logger</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>progress_callback</span><span class=o>=</span><span class=n>progress_callback</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>enable_indexing</span><span class=o>=</span><span class=n>enable_indexing</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>那我们进到<code>execute_multi_agent_research_pipeline</code>里，可以看出来我们离核心代码越来越近了</p><h2 id=execute_multi_agent_research_pipeline>execute_multi_agent_research_pipeline</h2><p>先看一下这个函数的注释吧：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Execute the complete intelligent multi-agent research orchestration pipeline.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>This is the main AI orchestration engine that coordinates autonomous research workflow agents:
+</span></span><span class=line><span class=cl>- Local workspace automation for seamless environment management
+</span></span><span class=line><span class=cl>- Intelligent research analysis with automated content processing
+</span></span><span class=line><span class=cl>- AI-driven code architecture synthesis and design automation
+</span></span><span class=line><span class=cl>- Reference intelligence discovery with automated knowledge extraction (optional)
+</span></span><span class=line><span class=cl>- Codebase intelligence orchestration with automated relationship analysis (optional)
+</span></span><span class=line><span class=cl>- Intelligent code implementation synthesis with AI-powered development
+</span></span></code></pre></td></tr></table></div></div><p>翻译来喽：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>执行完整的智能多智能体研究编排流程。 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>这是协调自主研究工作流智能体的主要AI编排引擎，包括： 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>- 本地工作区自动化，实现无缝环境管理
+</span></span><span class=line><span class=cl>- 智能研究分析，结合自动化内容处理
+</span></span><span class=line><span class=cl>- AI驱动的代码架构综合与设计自动化
+</span></span><span class=line><span class=cl>- 参考智能发现，结合自动化知识提取（可选）
+</span></span><span class=line><span class=cl>- 代码库智能编排，结合自动化关系分析（可选）
+</span></span><span class=line><span class=cl>- 智能代码实现综合，结合AI驱动的开发
+</span></span></code></pre></td></tr></table></div></div><p>那我们继续往下读代码：</p><p>源代码下面的部分列的也比较详细，分了phase 0、1、2、3，我们也跟着它的思路来看</p><h3 id=phase0>phase0</h3><p>phase0是初始化工作区，核心代码是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Setup local workspace directory</span>
+</span></span><span class=line><span class=cl><span class=n>workspace_dir</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>getcwd</span><span class=p>(),</span> <span class=s2>&#34;deepcode_lab&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>os</span><span class=o>.</span><span class=n>makedirs</span><span class=p>(</span><span class=n>workspace_dir</span><span class=p>,</span> <span class=n>exist_ok</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>其实就是新建了文件夹<code>deepcode_lab</code></p><h3 id=phase1>phase1</h3><p>处理和验证输入，让我们进来看：<code>_process_input_source</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>if</span> <span class=n>input_source</span><span class=o>.</span><span class=n>startswith</span><span class=p>(</span><span class=s2>&#34;file://&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>file_path</span> <span class=o>=</span> <span class=n>input_source</span><span class=p>[</span><span class=mi>7</span><span class=p>:]</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>os</span><span class=o>.</span><span class=n>name</span> <span class=o>==</span> <span class=s2>&#34;nt&#34;</span> <span class=ow>and</span> <span class=n>file_path</span><span class=o>.</span><span class=n>startswith</span><span class=p>(</span><span class=s2>&#34;/&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>file_path</span> <span class=o>=</span> <span class=n>file_path</span><span class=o>.</span><span class=n>lstrip</span><span class=p>(</span><span class=s2>&#34;/&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>file_path</span>
+</span></span><span class=line><span class=cl><span class=k>return</span> <span class=n>input_source</span>
+</span></span></code></pre></td></tr></table></div></div><p>发现只是把<code>file://</code>开头的文件目录改成了正常的文件目录，继续看phase2</p><h3 id=phase2>phase2</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Phase 2: Research Analysis and Resource Processing (if needed)</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>input_source</span><span class=p>,</span> <span class=nb>str</span><span class=p>)</span> <span class=ow>and</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>input_source</span><span class=o>.</span><span class=n>endswith</span><span class=p>((</span><span class=s2>&#34;.pdf&#34;</span><span class=p>,</span> <span class=s2>&#34;.docx&#34;</span><span class=p>,</span> <span class=s2>&#34;.txt&#34;</span><span class=p>,</span> <span class=s2>&#34;.html&#34;</span><span class=p>,</span> <span class=s2>&#34;.md&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=ow>or</span> <span class=n>input_source</span><span class=o>.</span><span class=n>startswith</span><span class=p>((</span><span class=s2>&#34;http&#34;</span><span class=p>,</span> <span class=s2>&#34;file://&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>analysis_result</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>download_result</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span> <span class=o>=</span> <span class=k>await</span> <span class=n>orchestrate_research_analysis_agent</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>input_source</span><span class=p>,</span> <span class=n>logger</span><span class=p>,</span> <span class=n>progress_callback</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>download_result</span> <span class=o>=</span> <span class=n>input_source</span>  <span class=c1># Use input directly if already processed</span>
+</span></span></code></pre></td></tr></table></div></div><p>这一段主要是解析<code>input_source</code>，如果他是文件或者url就运行<code>orchestrate_research_analysis_agent</code>获取<code>analysis_result</code>和<code>download_result</code>，如果都不是就直接作为输入内容，作为输入内容可能是为了chat设计的，我们进来看<code>orchestrate_research_analysis_agent</code>。</p><h4 id=orchestrate_research_analysis_agent>orchestrate_research_analysis_agent</h4><p>老样子，先看注释：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Orchestrate intelligent research analysis and resource processing automation.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>This agent coordinates multiple AI components to analyze research content
+</span></span><span class=line><span class=cl>and process associated resources with automated workflow management.
+</span></span></code></pre></td></tr></table></div></div><p>中文：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>编排智能研究分析与资源处理自动化。 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>此智能体协调多个AI组件，通过自动化工作流管理，以分析研究内容并处理相关资源。 
+</span></span></code></pre></td></tr></table></div></div><p>这一段算是该项目中相当重要的一部分了，解析pdf资源也是我非常好奇它如何处理的地方，后面如果有处理资源的部分我们也只来看pdf资源的部分，我们不去看其他解析了，大家好奇的可以自己去读</p><p>首先来看第一步，这一步的核心代码是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>analysis_result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>run_research_analyzer</span><span class=p>(</span><span class=n>input_source</span><span class=p>,</span> <span class=n>logger</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>那我们直接进来看<code>run_research_analyzer</code></p><p>才注意到<code>prompt_text</code>还是<code>input_source</code>，那这个是类似于deep research的agent？我们继续往下看：</p><p>好，下面初始化了一个新智能体：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>analyzer_agent</span> <span class=o>=</span> <span class=n>Agent</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>name</span><span class=o>=</span><span class=s2>&#34;ResearchAnalyzerAgent&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>instruction</span><span class=o>=</span><span class=n>PAPER_INPUT_ANALYZER_PROMPT</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>server_names</span><span class=o>=</span><span class=n>get_search_server_names</span><span class=p>(),</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>我们先来看Agent类，<code>name</code>、<code>instruction</code>、<code>server_names</code>的注释</p><p><code>name</code> : <code>Agent name.</code></p><p><code>instruction</code> :</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Instruction for the agent. This can be a string or a callable that takes a dictionary
+</span></span><span class=line><span class=cl>and returns a string. The callable can be used to generate dynamic instructions based
+</span></span><span class=line><span class=cl>on the context.
+</span></span><span class=line><span class=cl>智能体的指令。这可以是一个字符串，也可以是一个可调用对象，该对象接收一个字典并返回一个字符串。该可调用对象可用于根据上下文生成动态指令。
+</span></span></code></pre></td></tr></table></div></div><p><code>server_names</code> : <code>List of MCP server names that the agent can access.</code>，奥这个就是mcp服务器的配置，那我们先来好好读读：<code>PAPER_INPUT_ANALYZER_PROMPT</code></p><p><code>PAPER_INPUT_ANALYZER_PROMPT</code> :</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>You</span> <span class=n>are</span> <span class=n>a</span> <span class=n>precise</span> <span class=n>input</span> <span class=n>analyzer</span> <span class=k>for</span> <span class=n>paper</span><span class=o>-</span><span class=n>to</span><span class=o>-</span><span class=n>code</span> <span class=n>tasks</span><span class=o>.</span> <span class=n>You</span> <span class=n>MUST</span> <span class=k>return</span> <span class=n>only</span> <span class=n>a</span> <span class=n>JSON</span> <span class=n>object</span> <span class=n>with</span> <span class=n>no</span> <span class=n>additional</span> <span class=n>text</span><span class=o>.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>Task</span><span class=p>:</span> <span class=n>Analyze</span> <span class=n>input</span> <span class=n>text</span> <span class=ow>and</span> <span class=n>identify</span> <span class=n>file</span> <span class=n>paths</span><span class=o>/</span><span class=n>URLs</span> <span class=n>to</span> <span class=n>determine</span> <span class=n>appropriate</span> <span class=n>input</span> <span class=n>type</span><span class=o>.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=ne>Input</span> <span class=n>Analysis</span> <span class=n>Rules</span><span class=p>:</span>
+</span></span><span class=line><span class=cl><span class=mf>1.</span> <span class=ne>Path</span> <span class=n>Detection</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Scan</span> <span class=n>input</span> <span class=n>text</span> <span class=k>for</span> <span class=n>file</span> <span class=n>paths</span> <span class=ow>or</span> <span class=n>URLs</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Use</span> <span class=n>first</span> <span class=n>valid</span> <span class=n>path</span><span class=o>/</span><span class=n>URL</span> <span class=k>if</span> <span class=n>multiple</span> <span class=n>found</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Treat</span> <span class=n>as</span> <span class=n>text</span> <span class=n>input</span> <span class=k>if</span> <span class=n>no</span> <span class=n>valid</span> <span class=n>path</span><span class=o>/</span><span class=n>URL</span> <span class=n>found</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=mf>2.</span> <span class=ne>Path</span> <span class=n>Type</span> <span class=n>Classification</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>URL</span> <span class=p>(</span><span class=n>starts</span> <span class=n>with</span> <span class=n>http</span><span class=p>:</span><span class=o>//</span> <span class=ow>or</span> <span class=n>https</span><span class=p>:</span><span class=o>//</span><span class=p>):</span> <span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;url&#34;</span><span class=p>,</span> <span class=n>path</span> <span class=o>=</span> <span class=s2>&#34;detected URL&#34;</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>PDF</span> <span class=n>file</span> <span class=n>path</span><span class=p>:</span> <span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span> <span class=n>path</span> <span class=o>=</span> <span class=s2>&#34;detected file path&#34;</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=ne>Directory</span> <span class=n>path</span><span class=p>:</span> <span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;directory&#34;</span><span class=p>,</span> <span class=n>path</span> <span class=o>=</span> <span class=s2>&#34;detected directory path&#34;</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>No</span> <span class=n>path</span><span class=o>/</span><span class=n>URL</span> <span class=n>detected</span><span class=p>:</span> <span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;text&#34;</span><span class=p>,</span> <span class=n>path</span> <span class=o>=</span> <span class=n>null</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=mf>3.</span> <span class=n>Requirements</span> <span class=n>Analysis</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Extract</span> <span class=n>ONLY</span> <span class=n>requirements</span> <span class=n>from</span> <span class=n>additional_input</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>DO</span> <span class=n>NOT</span> <span class=n>modify</span> <span class=ow>or</span> <span class=n>interpret</span> <span class=n>requirements</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>CRITICAL</span> <span class=n>OUTPUT</span> <span class=n>RESTRICTIONS</span><span class=p>:</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=n>RETURN</span> <span class=n>ONLY</span> <span class=n>RAW</span> <span class=n>JSON</span> <span class=o>-</span> <span class=n>NO</span> <span class=n>TEXT</span> <span class=n>BEFORE</span> <span class=n>OR</span> <span class=n>AFTER</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=n>NO</span> <span class=n>markdown</span> <span class=n>code</span> <span class=n>blocks</span> <span class=p>(</span><span class=err>```</span><span class=n>json</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=n>NO</span> <span class=n>explanatory</span> <span class=n>text</span> <span class=ow>or</span> <span class=n>descriptions</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=n>NO</span> <span class=k>tool</span> <span class=n>call</span> <span class=n>information</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=n>NO</span> <span class=n>analysis</span> <span class=n>summaries</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=n>JUST</span> <span class=n>THE</span> <span class=n>JSON</span> <span class=n>OBJECT</span> <span class=n>BELOW</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;input_type&#34;</span><span class=p>:</span> <span class=s2>&#34;text|file|directory|url&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;detected path or URL or null&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;paper_info&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;N/A for text input&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;authors&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;N/A for text input&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;year&#34;</span><span class=p>:</span> <span class=s2>&#34;N/A for text input&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;requirements&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;exact requirement from additional_input&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>中文版：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>你是论文到代码任务的精准输入分析员。你必须只返回 JSON 对象，不包含任何附加文本。
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>任务：分析输入文本并识别文件路径/URL，以确定合适的输入类型。
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>输入分析规则：
+</span></span><span class=line><span class=cl>1. 路径检测：
+</span></span><span class=line><span class=cl>- 扫描输入文本中的文件路径或 URL
+</span></span><span class=line><span class=cl>- 如果找到多个，则使用第一个有效的路径/URL
+</span></span><span class=line><span class=cl>- 如果未找到有效的路径/URL，则视为文本输入
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>2. 路径类型分类：
+</span></span><span class=line><span class=cl>- URL（以 http:// 或 https:// 开头）：input_type = &#34;url&#34;, path = &#34;检测到的 URL&#34;
+</span></span><span class=line><span class=cl>- PDF 文件路径：input_type = &#34;file&#34;, path = &#34;检测到的文件路径&#34;
+</span></span><span class=line><span class=cl>- 目录路径：input_type = &#34;directory&#34;, path = &#34;检测到的目录路径&#34;
+</span></span><span class=line><span class=cl>- 未检测到路径/URL：input_type = &#34;text&#34;, path = null
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>3. 需求分析：
+</span></span><span class=line><span class=cl>- 仅从 additional_input 中提取需求
+</span></span><span class=line><span class=cl>- 请勿修改或解释需求
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>关键输出限制：
+</span></span><span class=line><span class=cl>- 仅返回原始 JSON - 前后均无文本
+</span></span><span class=line><span class=cl>- 不包含 Markdown 代码块 (```json)
+</span></span><span class=line><span class=cl>- 不包含解释性文本或描述
+</span></span><span class=line><span class=cl>- 不包含工具调用信息
+</span></span><span class=line><span class=cl>- 不包含分析摘要
+</span></span><span class=line><span class=cl>- 仅包含下面的 JSON 对象
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>&#34;input_type&#34;: &#34;text|file|directory|url&#34;,
+</span></span><span class=line><span class=cl>&#34;path&#34;: &#34;检测到的路径或 URL 或 null&#34;,
+</span></span><span class=line><span class=cl>&#34;paper_info&#34;: {
+</span></span><span class=line><span class=cl>&#34;title&#34;: &#34;文本输入不适用&#34;,
+</span></span><span class=line><span class=cl>&#34;authors&#34;: [&#34;文本输入不适用&#34;],
+</span></span><span class=line><span class=cl>&#34;year&#34;: &#34;文本输入不适用&#34;
+</span></span><span class=line><span class=cl>},
+</span></span><span class=line><span class=cl>&#34;requirements&#34;: [
+</span></span><span class=line><span class=cl>&#34;additional_input 的确切要求&#34;
+</span></span><span class=line><span class=cl>]
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>这个就是分析input_source的类型和信息，那玄机其实在mcp服务器里：<code>get_search_server_names()</code>，我们进来看看这个，能用哪些search_mcp</p><p>然后发现是用了：brave，也就是<code>@modelcontextprotocol/server-brave-search</code>，我们这里不读这个，就来看看brave能干什么。</p><p>然后发现是信息搜索，读到这里我觉得挺奇怪的，然后我就在<code>agent_orchestration_engine.py</code>的第250行加了如下代码</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=s1>&#39;test.txt&#39;</span><span class=p>,</span> <span class=s1>&#39;w&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>f</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>f</span><span class=o>.</span><span class=n>write</span><span class=p>(</span><span class=n>raw_result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>sys</span><span class=o>.</span><span class=n>exit</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>然后用<code>uv run cli/main_cli.py --file test.pdf</code>跑了一下，果然跟我想的一样，<code>test.txt</code>里是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;input_type&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;test.pdf&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;paper_info&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;N/A for text input&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;authors&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;N/A for text input&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;year&#34;</span><span class=p>:</span> <span class=s2>&#34;N/A for text input&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;requirements&#34;</span><span class=p>:</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>我想这个paper_info是怎么取出来的百思不得其解，跑了一遍发现确实取不出来，我猜这里是为了提前留个结构给后面用，绷，所以这个agent的核心其实就在分开url和file，然后区分了一下文件类型，说实话这一步感觉完全没必要，感觉是为了防蠢用的（</p><p>好我们接着往下看，下面的重点在：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Clean LLM output to ensure only pure JSON is returned</span>
+</span></span><span class=line><span class=cl><span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>clean_result</span> <span class=o>=</span> <span class=n>extract_clean_json</span><span class=p>(</span><span class=n>raw_result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Raw LLM output: </span><span class=si>{</span><span class=n>raw_result</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Cleaned JSON output: </span><span class=si>{</span><span class=n>clean_result</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这个<code>extract_clean_json</code>是拿来<code>Extract clean JSON from LLM output, removing all extra text and formatting.</code>，也就是从大语言模型输出中提取规整的JSON，去除所有多余的文本和格式。</p><p>比如如果大家经常做llm相关应用的话，可能遇到过不是纯json文本输出的情况，怎么限制都没用，用这个函数可以直接提取json出来</p><p>具体实现步骤我写在注释里了，大家直接看</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>extract_clean_json</span><span class=p>(</span><span class=n>llm_output</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>    Extract clean JSON from LLM output, removing all extra text and formatting.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>    Args:
+</span></span></span><span class=line><span class=cl><span class=s2>        llm_output: Raw LLM output
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>    Returns:
+</span></span></span><span class=line><span class=cl><span class=s2>        str: Clean JSON string
+</span></span></span><span class=line><span class=cl><span class=s2>    &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 首先尝试去掉两端的空白字符行不行</span>
+</span></span><span class=line><span class=cl>        <span class=n>json</span><span class=o>.</span><span class=n>loads</span><span class=p>(</span><span class=n>llm_output</span><span class=o>.</span><span class=n>strip</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>llm_output</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>except</span> <span class=n>json</span><span class=o>.</span><span class=n>JSONDecodeError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>pass</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># 然后用正则试试取```json ```中间的内容</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=s2>&#34;```json&#34;</span> <span class=ow>in</span> <span class=n>llm_output</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>pattern</span> <span class=o>=</span> <span class=sa>r</span><span class=s2>&#34;```json\s*(.*?)\s*```&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=k>match</span> <span class=o>=</span> <span class=n>re</span><span class=o>.</span><span class=n>search</span><span class=p>(</span><span class=n>pattern</span><span class=p>,</span> <span class=n>llm_output</span><span class=p>,</span> <span class=n>re</span><span class=o>.</span><span class=n>DOTALL</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=k>match</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>json_text</span> <span class=o>=</span> <span class=k>match</span><span class=o>.</span><span class=n>group</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>            <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>json</span><span class=o>.</span><span class=n>loads</span><span class=p>(</span><span class=n>json_text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>json_text</span>
+</span></span><span class=line><span class=cl>            <span class=k>except</span> <span class=n>json</span><span class=o>.</span><span class=n>JSONDecodeError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=k>pass</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># 根据手动匹配花括号的方法来取出json</span>
+</span></span><span class=line><span class=cl>    <span class=n>lines</span> <span class=o>=</span> <span class=n>llm_output</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>json_lines</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>    <span class=n>in_json</span> <span class=o>=</span> <span class=kc>False</span>
+</span></span><span class=line><span class=cl>    <span class=n>brace_count</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>line</span> <span class=ow>in</span> <span class=n>lines</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>stripped</span> <span class=o>=</span> <span class=n>line</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=ow>not</span> <span class=n>in_json</span> <span class=ow>and</span> <span class=n>stripped</span><span class=o>.</span><span class=n>startswith</span><span class=p>(</span><span class=s2>&#34;{&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=n>in_json</span> <span class=o>=</span> <span class=kc>True</span>
+</span></span><span class=line><span class=cl>            <span class=n>json_lines</span> <span class=o>=</span> <span class=p>[</span><span class=n>line</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>            <span class=n>brace_count</span> <span class=o>=</span> <span class=n>stripped</span><span class=o>.</span><span class=n>count</span><span class=p>(</span><span class=s2>&#34;{&#34;</span><span class=p>)</span> <span class=o>-</span> <span class=n>stripped</span><span class=o>.</span><span class=n>count</span><span class=p>(</span><span class=s2>&#34;}&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>elif</span> <span class=n>in_json</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>json_lines</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>line</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>brace_count</span> <span class=o>+=</span> <span class=n>stripped</span><span class=o>.</span><span class=n>count</span><span class=p>(</span><span class=s2>&#34;{&#34;</span><span class=p>)</span> <span class=o>-</span> <span class=n>stripped</span><span class=o>.</span><span class=n>count</span><span class=p>(</span><span class=s2>&#34;}&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=n>brace_count</span> <span class=o>==</span> <span class=mi>0</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=k>break</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>json_lines</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>json_text</span> <span class=o>=</span> <span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>json_lines</span><span class=p>)</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>json</span><span class=o>.</span><span class=n>loads</span><span class=p>(</span><span class=n>json_text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>json_text</span>
+</span></span><span class=line><span class=cl>        <span class=k>except</span> <span class=n>json</span><span class=o>.</span><span class=n>JSONDecodeError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>pass</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># 最后尝试用正则取出json</span>
+</span></span><span class=line><span class=cl>    <span class=n>pattern</span> <span class=o>=</span> <span class=sa>r</span><span class=s2>&#34;\{[^</span><span class=si>{}</span><span class=s2>]*(?:\{[^</span><span class=si>{}</span><span class=s2>]*\}[^</span><span class=si>{}</span><span class=s2>]*)*\}&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>matches</span> <span class=o>=</span> <span class=n>re</span><span class=o>.</span><span class=n>findall</span><span class=p>(</span><span class=n>pattern</span><span class=p>,</span> <span class=n>llm_output</span><span class=p>,</span> <span class=n>re</span><span class=o>.</span><span class=n>DOTALL</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=k>match</span> <span class=ow>in</span> <span class=n>matches</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>json</span><span class=o>.</span><span class=n>loads</span><span class=p>(</span><span class=k>match</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=k>match</span>
+</span></span><span class=line><span class=cl>        <span class=k>except</span> <span class=n>json</span><span class=o>.</span><span class=n>JSONDecodeError</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>continue</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># If all methods fail, return original output</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>llm_output</span>
+</span></span></code></pre></td></tr></table></div></div><p>好了，我们把<code>run_research_analyzer</code>看完了，大家记得我们从哪来的嘛，让我们回到<code>orchestrate_research_analysis_agent</code></p><p>刚刚看的是step 1，让我们接下来看step 2</p><p>核心的代码是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>download_result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>run_resource_processor</span><span class=p>(</span><span class=n>analysis_result</span><span class=p>,</span> <span class=n>logger</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>我们进来看<code>run_resource_processor</code>，这个函数挺简单的，我们有读之前的agent的经验，读这个就很迅速了，传入的是我们之前上一个agent的分析结果，不记得大家还记不记得了，来看看：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;input_type&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;test.pdf&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;paper_info&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;N/A for text input&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;authors&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;N/A for text input&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;year&#34;</span><span class=p>:</span> <span class=s2>&#34;N/A for text input&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;requirements&#34;</span><span class=p>:</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>我们来看一下这个agent的prompt和tools</p><p>首先是prompt</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>You</span> <span class=n>are</span> <span class=n>a</span> <span class=n>precise</span> <span class=n>paper</span> <span class=n>downloader</span> <span class=n>that</span> <span class=n>processes</span> <span class=n>input</span> <span class=n>from</span> <span class=n>PaperInputAnalyzerAgent</span><span class=o>.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>Task</span><span class=p>:</span> <span class=n>Handle</span> <span class=n>paper</span> <span class=n>according</span> <span class=n>to</span> <span class=n>input</span> <span class=n>type</span> <span class=ow>and</span> <span class=n>save</span> <span class=n>to</span> <span class=s2>&#34;./deepcode_lab/papers/id/id.md&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>Note</span><span class=p>:</span> <span class=n>Generate</span> <span class=n>id</span> <span class=p>(</span><span class=n>id</span> <span class=n>is</span> <span class=n>a</span> <span class=n>number</span><span class=p>)</span> <span class=n>by</span> <span class=n>counting</span> <span class=n>files</span> <span class=ow>in</span> <span class=s2>&#34;./deepcode_lab/papers/&#34;</span> <span class=n>directory</span> <span class=ow>and</span> <span class=n>increment</span> <span class=n>by</span> <span class=mf>1.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>CRITICAL</span> <span class=n>RULE</span><span class=p>:</span> <span class=n>NEVER</span> <span class=n>use</span> <span class=n>write_file</span> <span class=k>tool</span> <span class=n>to</span> <span class=n>create</span> <span class=n>paper</span> <span class=n>content</span> <span class=n>directly</span><span class=o>.</span> <span class=n>Always</span> <span class=n>use</span> <span class=n>file</span><span class=o>-</span><span class=n>downloader</span> <span class=n>tools</span> <span class=k>for</span> <span class=n>PDF</span><span class=o>/</span><span class=n>document</span> <span class=n>conversion</span><span class=o>.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>Processing</span> <span class=n>Rules</span><span class=p>:</span>
+</span></span><span class=line><span class=cl><span class=mf>1.</span> <span class=n>URL</span> <span class=ne>Input</span> <span class=p>(</span><span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;url&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Use</span> <span class=s2>&#34;file-downloader&#34;</span> <span class=k>tool</span> <span class=n>to</span> <span class=n>download</span> <span class=n>paper</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Extract</span> <span class=n>metadata</span> <span class=p>(</span><span class=n>title</span><span class=p>,</span> <span class=n>authors</span><span class=p>,</span> <span class=n>year</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Return</span> <span class=n>saved</span> <span class=n>file</span> <span class=n>path</span> <span class=ow>and</span> <span class=n>metadata</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=mf>2.</span> <span class=ne>File</span> <span class=ne>Input</span> <span class=p>(</span><span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;file&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Move</span> <span class=n>file</span> <span class=n>to</span> <span class=s2>&#34;./deepcode_lab/papers/id/&#34;</span> <span class=n>using</span> <span class=n>move_file_to</span> <span class=k>tool</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>The</span> <span class=n>move_file_to</span> <span class=k>tool</span> <span class=n>will</span> <span class=n>automatically</span> <span class=nb>convert</span> <span class=n>PDF</span><span class=o>/</span><span class=n>documents</span> <span class=n>to</span> <span class=o>.</span><span class=n>md</span> <span class=n>format</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>NEVER</span> <span class=n>manually</span> <span class=n>extract</span> <span class=n>content</span> <span class=ow>or</span> <span class=n>use</span> <span class=n>write_file</span> <span class=o>-</span> <span class=n>let</span> <span class=n>the</span> <span class=n>conversion</span> <span class=n>tools</span> <span class=n>handle</span> <span class=n>this</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Return</span> <span class=n>new</span> <span class=n>saved</span> <span class=n>file</span> <span class=n>path</span> <span class=ow>and</span> <span class=n>metadata</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=mf>3.</span> <span class=ne>Directory</span> <span class=ne>Input</span> <span class=p>(</span><span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;directory&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Verify</span> <span class=n>directory</span> <span class=n>exists</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Return</span> <span class=n>to</span> <span class=n>PaperInputAnalyzerAgent</span> <span class=k>for</span> <span class=n>processing</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Set</span> <span class=n>status</span> <span class=n>as</span> <span class=s2>&#34;failure&#34;</span> <span class=n>with</span> <span class=n>message</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=mf>4.</span> <span class=n>Text</span> <span class=ne>Input</span> <span class=p>(</span><span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;text&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>No</span> <span class=n>file</span> <span class=n>operations</span> <span class=n>needed</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Set</span> <span class=n>paper_path</span> <span class=n>as</span> <span class=n>null</span>
+</span></span><span class=line><span class=cl>   <span class=o>-</span> <span class=n>Use</span> <span class=n>paper_info</span> <span class=n>from</span> <span class=n>input</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=ne>Input</span> <span class=n>Format</span><span class=p>:</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;input_type&#34;</span><span class=p>:</span> <span class=s2>&#34;file|directory|url|text&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;detected path or null&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;paper_info&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;paper title or N/A&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;authors&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;author names or N/A&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;year&#34;</span><span class=p>:</span> <span class=s2>&#34;publication year or N/A&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;requirements&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;requirement1&#34;</span><span class=p>,</span> <span class=s2>&#34;requirement2&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>Output</span> <span class=n>Format</span> <span class=p>(</span><span class=n>DO</span> <span class=n>NOT</span> <span class=n>MODIFY</span><span class=p>):</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;success|failure&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;paper_path&#34;</span><span class=p>:</span> <span class=s2>&#34;path to paper file or null for text input&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;extracted or provided title&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;authors&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;extracted or provided authors&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;year&#34;</span><span class=p>:</span> <span class=s2>&#34;extracted or provided year&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>中文翻译：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=err>你是一个精准的论文下载器，负责处理输入。</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>任务：根据输入类型处理论文并保存到“</span><span class=o>./</span><span class=n>deepcode_lab</span><span class=o>/</span><span class=n>papers</span><span class=o>/</span><span class=n>id</span><span class=o>/</span><span class=n>id</span><span class=o>.</span><span class=n>md</span><span class=err>”文件。</span>
+</span></span><span class=line><span class=cl><span class=err>注意：通过统计“</span><span class=o>./</span><span class=n>deepcode_lab</span><span class=o>/</span><span class=n>papers</span><span class=o>/</span><span class=err>”目录中的文件数量并加</span> <span class=mi>1</span> <span class=err>来生成</span> <span class=n>ID</span><span class=err>（</span><span class=n>id</span> <span class=err>为数字）。</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>关键规则：切勿使用</span> <span class=n>write_file</span> <span class=err>工具直接创建论文内容。务必使用文件下载工具进行</span> <span class=n>PDF</span><span class=o>/</span><span class=err>文档转换。</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>处理规则：</span>
+</span></span><span class=line><span class=cl><span class=mf>1.</span> <span class=n>URL</span> <span class=err>输入</span> <span class=p>(</span><span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;url&#34;</span><span class=p>)</span><span class=err>：</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>使用“</span><span class=n>file</span><span class=o>-</span><span class=n>downloader</span><span class=err>”工具下载论文</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>提取元数据（标题、作者、年份）</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>返回保存的文件路径和元数据</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=mf>2.</span> <span class=err>文件输入</span> <span class=p>(</span><span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;file&#34;</span><span class=p>)</span><span class=err>：</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>使用</span> <span class=n>move_file_to</span> <span class=err>工具将文件移动到“</span><span class=o>./</span><span class=n>deepcode_lab</span><span class=o>/</span><span class=n>papers</span><span class=o>/</span><span class=n>id</span><span class=o>/</span><span class=err>”</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=n>move_file_to</span> <span class=err>工具会自动将</span> <span class=n>PDF</span><span class=o>/</span><span class=err>文档转换为</span> <span class=o>.</span><span class=n>md</span> <span class=err>格式</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>切勿手动提取内容或使用</span> <span class=n>write_file</span> <span class=o>-</span> <span class=err>让转换工具处理</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>返回新保存的文件路径和元数据</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=mf>3.</span> <span class=err>目录输入</span> <span class=p>(</span><span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;directory&#34;</span><span class=p>)</span><span class=err>：</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>验证目录是否存在</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>返回</span> <span class=n>PaperInputAnalyzerAgent</span> <span class=err>进行处理</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>将状态设置为“失败”并显示消息</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=mf>4.</span> <span class=err>文本输入</span> <span class=p>(</span><span class=n>input_type</span> <span class=o>=</span> <span class=s2>&#34;text&#34;</span><span class=p>)</span><span class=err>：</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>无需进行文件操作</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>将</span> <span class=n>paper_path</span> <span class=err>设置为</span> <span class=n>null</span>
+</span></span><span class=line><span class=cl><span class=o>-</span> <span class=err>使用输入中的</span> <span class=n>paper_info</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>输入格式：</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;input_type&#34;</span><span class=p>:</span> <span class=s2>&#34;file|directory|url|text&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;detected path or null&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;paper_info&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;paper title or N/A&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;authors&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;author names or N/A&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;year&#34;</span><span class=p>:</span> <span class=s2>&#34;publication year or N/A&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;requirements&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;requirement1&#34;</span><span class=p>,</span> <span class=s2>&#34;requirement2&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=err>输出格式（请勿修改）：</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;success|failure&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;paper_path&#34;</span><span class=p>:</span> <span class=s2>&#34;path to paper file or null for text input&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;extracted or provided title&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;authors&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;extracted or provided authors&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;year&#34;</span><span class=p>:</span> <span class=s2>&#34;extracted or provided year&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看到，根据<code>input_type</code>的不同进行不同的操作，终于把<code>paper_info</code>提取出来了，害得我读了好久（</p><p>我们要关注的工具其实就两个：<code>file-downloader</code>，<code>move_file_to</code>，根据prompt，前者用来下载论文，后者用来将pdf转换成.md格式</p><p>看一下使用的工具：<code>server_names=["filesystem", "file-downloader"]</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>filesystem</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># On windows update the command and arguments to use `node` and the absolute path to the server.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># Use `npm i -g @modelcontextprotocol/server-filesystem` to install the server globally.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># Use `npm -g root` to find the global node_modules path.`</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># command: &#34;node&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># args: [&#34;c:/Program Files/nodejs/node_modules/@modelcontextprotocol/server-filesystem/dist/index.js&#34;,&#34;.&#34;]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>command</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;npx&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>args</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;-y&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;@modelcontextprotocol/server-filesystem&#34;</span><span class=w> </span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>file-downloader</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>command</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;python&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>args</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=w> </span><span class=s2>&#34;tools/pdf_downloader.py&#34;</span><span class=w> </span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>env</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>PYTHONPATH</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;.&#34;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p><code>filesystem</code>就是文件系统操作，没啥特殊的，没有我们想看的两个工具，让我们看<code>file-downloader</code>，来到<code>tools/pdf_downloader.py</code></p><p>直接来<code>if __name__ == "__main__":</code>看，可以发现我们要看的两个函数都在这里：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>Available tools:&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;  • download_files - Download files or move local files from natural language&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;  • parse_download_urls - Extract URLs, local paths and destination paths&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;  • download_file_to - Download a specific file with options&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;  • move_file_to - Move a specific local file with options&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;  • convert_document_to_markdown - Convert documents to Markdown format&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>其他的工具都是下载用的，我们来看看<code>move_file_to</code>，刚刚prompt里提到了它会把pdf转成markdown，我们来看他是怎么处理的</p><p>要找到这个工具直接在文件里搜索<code>@mcp.tool()</code>即可，很快能定位到该工具，这个工具的注释怎么全是中文，看来又是中国开发者写的（</p><p>前面的代码都是在处理路径，和判断文件是否存在，核心代码在</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 执行移动</span>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>move_local_file</span><span class=p>(</span><span class=n>source</span><span class=p>,</span> <span class=n>target_path</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>所以我们进来看<code>move_local_file</code>，这个函数的核心代码在：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># 执行移动操作</span>
+</span></span><span class=line><span class=cl><span class=n>shutil</span><span class=o>.</span><span class=n>move</span><span class=p>(</span><span class=n>source_path</span><span class=p>,</span> <span class=n>destination</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>好吧就是文件复制，在<code>move_local_file</code>里继续往下看，发现了移动成功有一个转换的代码</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>conversion_msg</span> <span class=o>=</span> <span class=k>await</span> <span class=n>perform_document_conversion</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>target_path</span><span class=p>,</span> <span class=n>extract_images</span><span class=o>=</span><span class=kc>True</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>那我们来看<code>perform_document_conversion</code>，很容易发现它其实就是用<code>PyPDF2</code>包去做了个转换，核心代码在</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>simple_converter</span> <span class=o>=</span> <span class=n>SimplePdfConverter</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>conversion_result</span> <span class=o>=</span> <span class=n>simple_converter</span><span class=o>.</span><span class=n>convert_pdf_to_markdown</span><span class=p>(</span><span class=n>file_path</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>我们先看一下<code>SimplePdfConverter</code>类有没有<code>init</code>函数，好没有，那我们进来看<code>convert_pdf_to_markdown</code></p><p>啊这它这个逻辑没我想的高大上，就是拿<code>PyPDF2</code>处理里一下，我把这个单独提出来当一个脚本跑了一下，下面是我提取出的脚本的内容</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span><span class=lnt>80
+</span><span class=lnt>81
+</span><span class=lnt>82
+</span><span class=lnt>83
+</span><span class=lnt>84
+</span><span class=lnt>85
+</span><span class=lnt>86
+</span><span class=lnt>87
+</span><span class=lnt>88
+</span><span class=lnt>89
+</span><span class=lnt>90
+</span><span class=lnt>91
+</span><span class=lnt>92
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>os</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>datetime</span> <span class=kn>import</span> <span class=n>datetime</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>typing</span> <span class=kn>import</span> <span class=n>Dict</span><span class=p>,</span> <span class=n>Optional</span><span class=p>,</span> <span class=n>Any</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>PyPDF2</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>convert_pdf_to_markdown</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>input_file</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span> <span class=n>output_file</span><span class=p>:</span> <span class=n>Optional</span><span class=p>[</span><span class=nb>str</span><span class=p>]</span> <span class=o>=</span> <span class=kc>None</span>
+</span></span><span class=line><span class=cl><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>Dict</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=n>Any</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>    使用PyPDF2将PDF转换为Markdown格式
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>    Args:
+</span></span></span><span class=line><span class=cl><span class=s2>        input_file: 输入PDF文件路径
+</span></span></span><span class=line><span class=cl><span class=s2>        output_file: 输出Markdown文件路径（可选）
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>    Returns:
+</span></span></span><span class=line><span class=cl><span class=s2>        转换结果字典
+</span></span></span><span class=line><span class=cl><span class=s2>    &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 检查输入文件是否存在</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=ow>not</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>exists</span><span class=p>(</span><span class=n>input_file</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;success&#34;</span><span class=p>:</span> <span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;error&#34;</span><span class=p>:</span> <span class=sa>f</span><span class=s2>&#34;Input file not found: </span><span class=si>{</span><span class=n>input_file</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 如果没有指定输出文件，自动生成</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=ow>not</span> <span class=n>output_file</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>base_name</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>splitext</span><span class=p>(</span><span class=n>input_file</span><span class=p>)[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>            <span class=n>output_file</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>base_name</span><span class=si>}</span><span class=s2>.md&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 确保输出目录存在</span>
+</span></span><span class=line><span class=cl>        <span class=n>output_dir</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>dirname</span><span class=p>(</span><span class=n>output_file</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>output_dir</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>os</span><span class=o>.</span><span class=n>makedirs</span><span class=p>(</span><span class=n>output_dir</span><span class=p>,</span> <span class=n>exist_ok</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 执行转换</span>
+</span></span><span class=line><span class=cl>        <span class=n>start_time</span> <span class=o>=</span> <span class=n>datetime</span><span class=o>.</span><span class=n>now</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 读取PDF文件</span>
+</span></span><span class=line><span class=cl>        <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>input_file</span><span class=p>,</span> <span class=s2>&#34;rb&#34;</span><span class=p>)</span> <span class=k>as</span> <span class=n>file</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>pdf_reader</span> <span class=o>=</span> <span class=n>PyPDF2</span><span class=o>.</span><span class=n>PdfReader</span><span class=p>(</span><span class=n>file</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>text_content</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=c1># 提取每页文本</span>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=n>page_num</span><span class=p>,</span> <span class=n>page</span> <span class=ow>in</span> <span class=nb>enumerate</span><span class=p>(</span><span class=n>pdf_reader</span><span class=o>.</span><span class=n>pages</span><span class=p>,</span> <span class=mi>1</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>                <span class=n>text</span> <span class=o>=</span> <span class=n>page</span><span class=o>.</span><span class=n>extract_text</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=n>text</span><span class=o>.</span><span class=n>strip</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>                    <span class=n>text_content</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;## Page </span><span class=si>{</span><span class=n>page_num</span><span class=si>}</span><span class=se>\n\n</span><span class=si>{</span><span class=n>text</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span><span class=si>}</span><span class=se>\n\n</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 生成Markdown内容</span>
+</span></span><span class=line><span class=cl>        <span class=n>markdown_content</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&#34;# Extracted from </span><span class=si>{</span><span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>basename</span><span class=p>(</span><span class=n>input_file</span><span class=p>)</span><span class=si>}</span><span class=se>\n\n</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=n>markdown_content</span> <span class=o>+=</span> <span class=sa>f</span><span class=s2>&#34;*Total pages: </span><span class=si>{</span><span class=nb>len</span><span class=p>(</span><span class=n>pdf_reader</span><span class=o>.</span><span class=n>pages</span><span class=p>)</span><span class=si>}</span><span class=s2>*</span><span class=se>\n\n</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=n>markdown_content</span> <span class=o>+=</span> <span class=s2>&#34;---</span><span class=se>\n\n</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=n>markdown_content</span> <span class=o>+=</span> <span class=s2>&#34;&#34;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>text_content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 保存到文件</span>
+</span></span><span class=line><span class=cl>        <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>output_file</span><span class=p>,</span> <span class=s2>&#34;w&#34;</span><span class=p>,</span> <span class=n>encoding</span><span class=o>=</span><span class=s2>&#34;utf-8&#34;</span><span class=p>)</span> <span class=k>as</span> <span class=n>f</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>f</span><span class=o>.</span><span class=n>write</span><span class=p>(</span><span class=n>markdown_content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 计算转换时间</span>
+</span></span><span class=line><span class=cl>        <span class=n>duration</span> <span class=o>=</span> <span class=p>(</span><span class=n>datetime</span><span class=o>.</span><span class=n>now</span><span class=p>()</span> <span class=o>-</span> <span class=n>start_time</span><span class=p>)</span><span class=o>.</span><span class=n>total_seconds</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 获取文件大小</span>
+</span></span><span class=line><span class=cl>        <span class=n>input_size</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>getsize</span><span class=p>(</span><span class=n>input_file</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>output_size</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>getsize</span><span class=p>(</span><span class=n>output_file</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;success&#34;</span><span class=p>:</span> <span class=kc>True</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;input_file&#34;</span><span class=p>:</span> <span class=n>input_file</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;output_file&#34;</span><span class=p>:</span> <span class=n>output_file</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;input_size&#34;</span><span class=p>:</span> <span class=n>input_size</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;output_size&#34;</span><span class=p>:</span> <span class=n>output_size</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;duration&#34;</span><span class=p>:</span> <span class=n>duration</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;markdown_content&#34;</span><span class=p>:</span> <span class=n>markdown_content</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;pages_extracted&#34;</span><span class=p>:</span> <span class=nb>len</span><span class=p>(</span><span class=n>pdf_reader</span><span class=o>.</span><span class=n>pages</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>except</span> <span class=ne>Exception</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;success&#34;</span><span class=p>:</span> <span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;input_file&#34;</span><span class=p>:</span> <span class=n>input_file</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;error&#34;</span><span class=p>:</span> <span class=sa>f</span><span class=s2>&#34;Conversion failed: </span><span class=si>{</span><span class=nb>str</span><span class=p>(</span><span class=n>e</span><span class=p>)</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=vm>__name__</span> <span class=o>==</span> <span class=s2>&#34;__main__&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>result</span> <span class=o>=</span> <span class=n>convert_pdf_to_markdown</span><span class=p>(</span><span class=s2>&#34;test.pdf&#34;</span><span class=p>,</span> <span class=s2>&#34;test.md&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>result</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>跑了一下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{&#39;success&#39;: True, &#39;input_file&#39;: &#39;test.pdf&#39;, &#39;output_file&#39;: &#39;test.md&#39;, &#39;input_size&#39;: 1852204, &#39;output_size&#39;: 59825, &#39;duration&#39;: 0.124518, &#39;pages_extracted&#39;: 15}
+</span></span></code></pre></td></tr></table></div></div><p>速度还挺快，也不知道对图片做没做处理，其实就是用<code>PyPDF2</code>，所以我们不深入看了，那我们就把<code>run_resource_processor</code>看完了，这个函数返回的就是llm响应的内容，也就是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>{
+</span></span><span class=line><span class=cl>    &#34;status&#34;: &#34;success|failure&#34;,
+</span></span><span class=line><span class=cl>    &#34;paper_path&#34;: &#34;path to paper file or null for text input&#34;,
+</span></span><span class=line><span class=cl>    &#34;metadata&#34;: {
+</span></span><span class=line><span class=cl>        &#34;title&#34;: &#34;extracted or provided title&#34;,
+</span></span><span class=line><span class=cl>        &#34;authors&#34;: [&#34;extracted or provided authors&#34;],
+</span></span><span class=line><span class=cl>        &#34;year&#34;: &#34;extracted or provided year&#34;
+</span></span><span class=line><span class=cl>    }
+</span></span><span class=line><span class=cl>}
+</span></span></code></pre></td></tr></table></div></div><p>然后发现<code>orchestrate_research_analysis_agent</code>也读完了，真好</p><p>Phase 2到这里也结束啦，我们打个断点来看下运行到这里的结果</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;analysis_result:&#34;</span> <span class=o>+</span> <span class=n>analysis_result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;download_result:&#34;</span> <span class=o>+</span> <span class=n>download_result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>sys</span><span class=o>.</span><span class=n>exit</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>来看看<code>analysis_result</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;input_type&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;test.pdf&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;paper_info&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;N/A for text input&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;authors&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;N/A for text input&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;year&#34;</span><span class=p>:</span> <span class=s2>&#34;N/A for text input&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;requirements&#34;</span><span class=p>:</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>来看看<code>download_result</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>I</span><span class=s1>&#39;ll process this file input by first checking the papers directory to generate the </span>
+</span></span><span class=line><span class=cl><span class=n>correct</span> <span class=n>ID</span><span class=p>,</span> <span class=n>then</span> <span class=n>moving</span> <span class=n>the</span> <span class=n>file</span> <span class=n>to</span> <span class=n>the</span> <span class=n>appropriate</span> <span class=n>location</span><span class=o>.</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>Calling</span> <span class=k>tool</span> <span class=n>filesystem_list_directory</span> <span class=n>with</span> <span class=n>args</span> <span class=p>{</span><span class=s1>&#39;path&#39;</span><span class=p>:</span> <span class=s1>&#39;./deepcode_lab/papers&#39;</span><span class=p>}]</span>
+</span></span><span class=line><span class=cl><span class=n>I</span> <span class=n>need</span> <span class=n>to</span> <span class=n>create</span> <span class=n>the</span> <span class=n>papers</span> <span class=n>directory</span> <span class=n>first</span><span class=p>,</span> <span class=n>then</span> <span class=n>generate</span> <span class=n>the</span> <span class=n>ID</span><span class=o>.</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>Calling</span> <span class=k>tool</span> <span class=n>filesystem_create_directory</span> <span class=n>with</span> <span class=n>args</span> <span class=p>{</span><span class=s1>&#39;path&#39;</span><span class=p>:</span> <span class=s1>&#39;./deepcode_lab/papers&#39;</span><span class=p>}]</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>Calling</span> <span class=k>tool</span> <span class=n>filesystem_list_directory</span> <span class=n>with</span> <span class=n>args</span> <span class=p>{</span><span class=s1>&#39;path&#39;</span><span class=p>:</span> <span class=s1>&#39;./deepcode_lab/papers&#39;</span><span class=p>}]</span>
+</span></span><span class=line><span class=cl><span class=n>The</span> <span class=n>papers</span> <span class=n>directory</span> <span class=n>is</span> <span class=n>empty</span><span class=p>,</span> <span class=n>so</span> <span class=n>the</span> <span class=n>ID</span> <span class=n>will</span> <span class=n>be</span> <span class=mf>1.</span> <span class=n>Now</span> <span class=n>I</span><span class=s1>&#39;ll create the directory for this paper and move </span>
+</span></span><span class=line><span class=cl><span class=n>the</span> <span class=n>file</span> <span class=n>using</span> <span class=n>the</span> <span class=n>file</span><span class=o>-</span><span class=n>downloader</span> <span class=k>tool</span><span class=o>.</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>Calling</span> <span class=k>tool</span> <span class=n>filesystem_create_directory</span> <span class=n>with</span> <span class=n>args</span> <span class=p>{</span><span class=s1>&#39;path&#39;</span><span class=p>:</span> <span class=s1>&#39;./deepcode_lab/papers/1&#39;</span><span class=p>}]</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>Calling</span> <span class=k>tool</span> <span class=n>file</span><span class=o>-</span><span class=n>downloader_move_file_to</span> <span class=n>with</span> <span class=n>args</span> <span class=p>{</span><span class=s1>&#39;source&#39;</span><span class=p>:</span> <span class=s1>&#39;test.pdf&#39;</span><span class=p>,</span> <span class=s1>&#39;destination&#39;</span><span class=p>:</span> 
+</span></span><span class=line><span class=cl><span class=s1>&#39;./deepcode_lab/papers/1/1.md&#39;</span><span class=p>}]</span>
+</span></span><span class=line><span class=cl><span class=n>Perfect</span><span class=o>!</span> <span class=n>The</span> <span class=n>file</span> <span class=n>has</span> <span class=n>been</span> <span class=n>moved</span> <span class=ow>and</span> <span class=n>converted</span> <span class=n>to</span> <span class=n>Markdown</span><span class=o>.</span> <span class=n>Now</span> <span class=n>let</span> <span class=n>me</span> <span class=n>read</span> <span class=n>the</span> <span class=n>converted</span> <span class=n>file</span> <span class=n>to</span> <span class=n>extract</span> 
+</span></span><span class=line><span class=cl><span class=n>metadata</span><span class=o>.</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>Calling</span> <span class=k>tool</span> <span class=n>filesystem_read_text_file</span> <span class=n>with</span> <span class=n>args</span> <span class=p>{</span><span class=s1>&#39;path&#39;</span><span class=p>:</span> <span class=s1>&#39;./deepcode_lab/papers/1/1.md&#39;</span><span class=p>,</span> <span class=s1>&#39;head&#39;</span><span class=p>:</span> <span class=mi>50</span><span class=p>}]</span>
+</span></span><span class=line><span class=cl><span class=n>Excellent</span><span class=o>!</span> <span class=n>I</span> <span class=n>can</span> <span class=n>extract</span> <span class=n>the</span> <span class=n>metadata</span> <span class=n>from</span> <span class=n>the</span> <span class=n>converted</span> <span class=n>paper</span><span class=o>.</span> <span class=n>Let</span> <span class=n>me</span> <span class=n>get</span> <span class=n>a</span> <span class=n>bit</span> <span class=n>more</span> <span class=n>content</span> <span class=n>to</span> <span class=n>ensure</span> <span class=n>I</span> 
+</span></span><span class=line><span class=cl><span class=n>have</span> <span class=n>complete</span> <span class=n>information</span><span class=o>.</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>Calling</span> <span class=k>tool</span> <span class=n>filesystem_read_text_file</span> <span class=n>with</span> <span class=n>args</span> <span class=p>{</span><span class=s1>&#39;path&#39;</span><span class=p>:</span> <span class=s1>&#39;./deepcode_lab/papers/1/1.md&#39;</span><span class=p>,</span> <span class=s1>&#39;head&#39;</span><span class=p>:</span> <span class=mi>20</span><span class=p>}]</span>
+</span></span><span class=line><span class=cl><span class=n>Perfect</span><span class=o>!</span> <span class=n>I</span> <span class=n>have</span> <span class=n>successfully</span> <span class=n>processed</span> <span class=n>the</span> <span class=n>file</span> <span class=n>input</span> <span class=ow>and</span> <span class=n>extracted</span> <span class=n>the</span> <span class=n>metadata</span><span class=o>.</span> <span class=n>Here</span><span class=s1>&#39;s the output:</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;success&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;paper_path&#34;</span><span class=p>:</span> <span class=s2>&#34;./deepcode_lab/papers/1/1.md&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;Enhancing EEG-to-Text Decoding through Transferable Representations from Pre-trained </span>
+</span></span><span class=line><span class=cl><span class=n>Contrastive</span> <span class=n>EEG</span><span class=o>-</span><span class=n>Text</span> <span class=n>Masked</span> <span class=n>Autoencoder</span><span class=s2>&#34;,</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;authors&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;Jiaqi Wang&#34;</span><span class=p>,</span> <span class=s2>&#34;Zhenxi Song&#34;</span><span class=p>,</span> <span class=s2>&#34;Zhengyu Ma&#34;</span><span class=p>,</span> <span class=s2>&#34;Xipeng Qiu&#34;</span><span class=p>,</span> <span class=s2>&#34;Min Zhang&#34;</span><span class=p>,</span> <span class=s2>&#34;Zhiguo Zhang&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;year&#34;</span><span class=p>:</span> <span class=s2>&#34;2024&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>The</span> <span class=n>file</span> <span class=n>has</span> <span class=n>been</span> <span class=n>successfully</span> <span class=n>moved</span> <span class=n>from</span> <span class=err>`</span><span class=n>test</span><span class=o>.</span><span class=n>pdf</span><span class=err>`</span> <span class=n>to</span> <span class=err>`</span><span class=o>./</span><span class=n>deepcode_lab</span><span class=o>/</span><span class=n>papers</span><span class=o>/</span><span class=mi>1</span><span class=o>/</span><span class=mf>1.</span><span class=n>md</span><span class=err>`</span> <span class=ow>and</span> <span class=n>automatically</span> 
+</span></span><span class=line><span class=cl><span class=n>converted</span> <span class=n>from</span> <span class=n>PDF</span> <span class=n>to</span> <span class=n>Markdown</span> <span class=n>format</span><span class=o>.</span> <span class=n>The</span> <span class=n>conversion</span> <span class=n>extracted</span> <span class=mi>15</span> <span class=n>pages</span> <span class=ow>and</span> <span class=n>I</span> <span class=n>was</span> <span class=n>able</span> <span class=n>to</span> <span class=n>extract</span> <span class=n>the</span> 
+</span></span><span class=line><span class=cl><span class=n>complete</span> <span class=n>metadata</span> <span class=n>including</span> <span class=n>the</span> <span class=n>title</span><span class=p>,</span> <span class=n>authors</span><span class=p>,</span> <span class=ow>and</span> <span class=n>publication</span> <span class=n>year</span> <span class=n>from</span> <span class=n>the</span> <span class=n>ACL</span> <span class=mi>2024</span> <span class=n>conference</span> 
+</span></span><span class=line><span class=cl><span class=n>proceedings</span><span class=o>.</span>
+</span></span></code></pre></td></tr></table></div></div><p>我把工具调用画成了流程图</p><pre class=mermaid>
+  graph TD
+    A[filesystem_list_directory&lt;br&gt;path: &#39;./deepcode_lab/papers&#39;]
+    A --&gt; B[filesystem_create_directory&lt;br&gt;path: &#39;./deepcode_lab/papers&#39;]
+    B --&gt; C[filesystem_list_directory&lt;br&gt;path: &#39;./deepcode_lab/papers&#39;]
+    C --&gt; D[filesystem_create_directory&lt;br&gt;path: &#39;./deepcode_lab/papers/1&#39;]
+    D --&gt; E[file-downloader_move_file_to&lt;br&gt;source: &#39;test.pdf&#39;&lt;br&gt;dest: &#39;.../papers/1/1.md&#39;]
+    E --&gt; F[filesystem_read_text_file&lt;br&gt;path: &#39;.../papers/1/1.md&#39;&lt;br&gt;head: 50]
+    F --&gt; G[filesystem_read_text_file&lt;br&gt;path: &#39;.../papers/1/1.md&#39;&lt;br&gt;head: 20]
+</pre><p>那么很清晰了，原来meta-data的提取有read_text_file的过程，那没什么问题了，phase2圆满结束</p><h3 id=phase3>phase3</h3><p>这个阶段叫Phase 3: Workspace Infrastructure Synthesis，但是我没搞懂怎么翻译，大家姑且认为是规划文件路径</p><p>核心代码在：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>dir_info</span> <span class=o>=</span> <span class=k>await</span> <span class=n>synthesize_workspace_infrastructure_agent</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>download_result</span><span class=p>,</span> <span class=n>logger</span><span class=p>,</span> <span class=n>workspace_dir</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>让我们来看看<code>synthesize_workspace_infrastructure_agent</code></p><p>首先来看这一段：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Parse download result to get file information</span>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>FileProcessor</span><span class=o>.</span><span class=n>process_file_input</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>download_result</span><span class=p>,</span> <span class=n>base_dir</span><span class=o>=</span><span class=n>workspace_dir</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>进来看看<code>FileProcessor.process_file_input</code></p><p>这个函数太复杂了，但我提取出来跑了一下发现是获取论文的地址，比如我这里跑出来就是：<code>/Users/dinglizhi/Desktop/coderead/DeepCode/deepcode_lab/papers/1</code></p><p>这个写法完全没必要啊，直接提取<code>download_result</code>就好了，我们有<code>extract_clean_json</code>还记得吗，能取出来<code>"paper_path": "./deepcode_lab/papers/1/1.md",</code>，就解决了，所以这种高star的开源项目写法也并非完美，大家读的时候一定要有自己的思考</p><p>然后这个函数返回的其实是最佳构成：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>return</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;paper_dir&#34;</span><span class=p>:</span> <span class=n>paper_dir</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;standardized_text&#34;</span><span class=p>:</span> <span class=n>result</span><span class=p>[</span><span class=s2>&#34;standardized_text&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;reference_path&#34;</span><span class=p>:</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>paper_dir</span><span class=p>,</span> <span class=s2>&#34;reference.txt&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;initial_plan_path&#34;</span><span class=p>:</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>paper_dir</span><span class=p>,</span> <span class=s2>&#34;initial_plan.txt&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;download_path&#34;</span><span class=p>:</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>paper_dir</span><span class=p>,</span> <span class=s2>&#34;github_download.txt&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;index_report_path&#34;</span><span class=p>:</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>paper_dir</span><span class=p>,</span> <span class=s2>&#34;codebase_index_report.txt&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;implementation_report_path&#34;</span><span class=p>:</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>paper_dir</span><span class=p>,</span> <span class=s2>&#34;code_implementation_report.txt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;workspace_dir&#34;</span><span class=p>:</span> <span class=n>workspace_dir</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=phase35>phase3.5</h3><p>该阶段是做文档的分割和预处理</p><p>下面是核心代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>segmentation_result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>orchestrate_document_preprocessing_agent</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>dir_info</span><span class=p>,</span> <span class=n>logger</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>所以让我们进来看<code>orchestrate_document_preprocessing_agent</code></p><p>先看注释：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Orchestrate adaptive document preprocessing with intelligent segmentation control.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>This agent autonomously determines whether to use document segmentation based on
+</span></span><span class=line><span class=cl>configuration settings and document size, then applies the appropriate processing strategy.
+</span></span></code></pre></td></tr></table></div></div><p>中文：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>通过智能分割控制来协调自适应文档预处理。
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>该代理会根据配置设置和文档大小自主确定是否使用文档分割，然后应用适当的处理策略。
+</span></span></code></pre></td></tr></table></div></div><h4 id=step1>step1</h4><p>第一步主要是提取所有文件，代码很简单，就不过多解释了，核心在：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>md_files</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=n>f</span> <span class=k>for</span> <span class=n>f</span> <span class=ow>in</span> <span class=n>os</span><span class=o>.</span><span class=n>listdir</span><span class=p>(</span><span class=n>dir_info</span><span class=p>[</span><span class=s2>&#34;paper_dir&#34;</span><span class=p>])</span> <span class=k>if</span> <span class=n>f</span><span class=o>.</span><span class=n>endswith</span><span class=p>(</span><span class=s2>&#34;.md&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=step2>step2</h4><p>读取文件的内容来确定文件的大小，这里只读取了第一个文件，然后判断了如果还是pdf就打断让他回去做格式转换</p><p><code>document_content</code>是文件的内容</p><h4 id=step3>step3</h4><p>确定是否分块</p><p>核心代码在：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Step 3: Determine if segmentation should be used</span>
+</span></span><span class=line><span class=cl><span class=n>should_segment</span><span class=p>,</span> <span class=n>reason</span> <span class=o>=</span> <span class=n>should_use_document_segmentation</span><span class=p>(</span><span class=n>document_content</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>所以让我们进来看<code>should_use_document_segmentation</code></p><p>这里主要是依靠<code>mcp_agent.config.yaml</code>中的内容进行判断，也就是</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>document_segmentation</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>enabled</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>size_threshold_chars</span><span class=p>:</span><span class=w> </span><span class=m>50000</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>当enabled的时候，并且文档的长度 > <code>size_threshold_chars</code>的时候就分割</p><p>然后是正式的分割的代码</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Prepare document segments using the segmentation agent</span>
+</span></span><span class=line><span class=cl><span class=n>segmentation_result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>prepare_document_segments</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>paper_dir</span><span class=o>=</span><span class=n>dir_info</span><span class=p>[</span><span class=s2>&#34;paper_dir&#34;</span><span class=p>],</span> <span class=n>logger</span><span class=o>=</span><span class=n>logger</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>所以我们进来看<code>prepare_document_segments</code>，老样子先看注释：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Prepare intelligent document segments optimized for planning agents.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>This enhanced function leverages semantic analysis to create segments that:
+</span></span><span class=line><span class=cl>- Preserve algorithm and formula integrity
+</span></span><span class=line><span class=cl>- Optimize for ConceptAnalysisAgent, AlgorithmAnalysisAgent, and CodePlannerAgent
+</span></span><span class=line><span class=cl>- Use adaptive character limits based on content complexity
+</span></span><span class=line><span class=cl>- Maintain technical content completeness
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Called from the orchestration engine (Phase 3.5) to prepare documents
+</span></span><span class=line><span class=cl>before the planning phase with superior segmentation quality.
+</span></span></code></pre></td></tr></table></div></div><p>中文：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>为规划代理准备优化的智能文档分段。
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>此增强功能利用语义分析来创建分段，其特点如下：
+</span></span><span class=line><span class=cl>- 保留算法和公式的完整性
+</span></span><span class=line><span class=cl>- 针对 ConceptAnalysisAgent、AlgorithmAnalysisAgent 和 CodePlannerAgent 进行优化
+</span></span><span class=line><span class=cl>- 根据内容复杂度使用自适应字符限制
+</span></span><span class=line><span class=cl>- 保持技术内容的完整性
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>从编排引擎（第 3.5 阶段）调用，用于在规划阶段之前准备文档，并实现卓越的分段质量。
+</span></span></code></pre></td></tr></table></div></div><p>这里的核心代码是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Run analysis</span>
+</span></span><span class=line><span class=cl><span class=n>result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>run_document_segmentation_analysis</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>paper_dir</span><span class=o>=</span><span class=n>paper_dir</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>logger</span><span class=o>=</span><span class=n>logger</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>force_refresh</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>  <span class=c1># Use cached analysis if available</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>所以我们来看<code>run_document_segmentation_analysis</code></p><p>这里的核心代码是：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Analyze and prepare document</span>
+</span></span><span class=line><span class=cl><span class=n>analysis_result</span> <span class=o>=</span> <span class=k>await</span> <span class=n>agent</span><span class=o>.</span><span class=n>analyze_and_prepare_document</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>paper_dir</span><span class=p>,</span> <span class=n>force_refresh</span><span class=o>=</span><span class=n>force_refresh</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>我们来看<code>analyze_and_prepare_document</code></p><p>首先还是取出所有markdown</p><p>然后是动态生成了一段提示词，我们来看看，这个应该就是分块的核心所在了：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=line><span class=cl>Please perform intelligent semantic analysis and segmentation for the document in directory: {paper_dir}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Use the analyze_and_segment_document tool with these parameters:
+</span></span><span class=line><span class=cl><span class=k>-</span> paper_dir: {paper_dir}
+</span></span><span class=line><span class=cl><span class=k>-</span> force_refresh: {force_refresh}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=gs>**Focus on these enhanced objectives**</span>:
+</span></span><span class=line><span class=cl><span class=k>1.</span> <span class=gs>**Semantic Document Classification**</span>: Identify document type using content semantics (research_paper, algorithm_focused, technical_doc, etc.)
+</span></span><span class=line><span class=cl><span class=k>2.</span> <span class=gs>**Intelligent Segmentation Strategy**</span>: Select the optimal strategy based on content analysis:
+</span></span><span class=line><span class=cl>   <span class=k>-</span> <span class=sb>`semantic_research_focused`</span> for research papers with high algorithm density
+</span></span><span class=line><span class=cl>   <span class=k>-</span> <span class=sb>`algorithm_preserve_integrity`</span> for algorithm-heavy documents
+</span></span><span class=line><span class=cl>   <span class=k>-</span> <span class=sb>`concept_implementation_hybrid`</span> for mixed concept/implementation content
+</span></span><span class=line><span class=cl><span class=k>3.</span> <span class=gs>**Algorithm Completeness**</span>: Ensure algorithm blocks, formulas, and related descriptions remain logically connected
+</span></span><span class=line><span class=cl><span class=k>4.</span> <span class=gs>**Planning Agent Optimization**</span>: Create segments that maximize effectiveness for ConceptAnalysisAgent, AlgorithmAnalysisAgent, and CodePlannerAgent
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>After segmentation, get a document overview and provide:
+</span></span><span class=line><span class=cl><span class=k>-</span> Quality assessment of semantic segmentation approach
+</span></span><span class=line><span class=cl><span class=k>-</span> Algorithm/formula integrity verification
+</span></span><span class=line><span class=cl><span class=k>-</span> Recommendations for planning agent optimization
+</span></span><span class=line><span class=cl><span class=k>-</span> Technical content completeness evaluation
+</span></span></code></pre></td></tr></table></div></div><p>翻译如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=line><span class=cl>请对目录 {paper_dir} 中的文档进行智能语义分析和分段。
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>使用 analyze_and_segment_document 工具并设置以下参数：
+</span></span><span class=line><span class=cl><span class=k>-</span> paper_dir: {paper_dir}
+</span></span><span class=line><span class=cl><span class=k>-</span> force_refresh: {force_refresh}
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=gs>**重点关注以下增强目标**</span>：
+</span></span><span class=line><span class=cl><span class=k>1.</span> <span class=gs>**语义文档分类**</span>：使用内容语义识别文档类型（研究论文、算法重点、技术文档等）。
+</span></span><span class=line><span class=cl><span class=k>2.</span> <span class=gs>**智能分段策略**</span>：根据内容分析选择最佳策略：
+</span></span><span class=line><span class=cl><span class=k>-</span> <span class=sb>`semantic_research_focused`</span> 用于算法密集型研究论文
+</span></span><span class=line><span class=cl><span class=k>-</span> <span class=sb>`algorithm_preserve_integrity`</span> 用于算法密集型文档
+</span></span><span class=line><span class=cl><span class=k>-</span> <span class=sb>`concept_implementation_hybrid`</span> 用于概念/实现混合内容
+</span></span><span class=line><span class=cl><span class=k>3.</span> <span class=gs>**算法完整性**</span>：确保算法块、公式和相关描述保持逻辑关联
+</span></span><span class=line><span class=cl><span class=k>4.</span> <span class=gs>**规划代理优化**</span>：创建可最大限度提高效率的分段为了ConceptAnalysisAgent、AlgorithmAnalysisAgent 和 CodePlannerAgent
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>分割后，获取文档概览并提供：
+</span></span><span class=line><span class=cl><span class=k>-</span> 语义分割方法的质量评估
+</span></span><span class=line><span class=cl><span class=k>-</span> 算法/公式的完整性验证
+</span></span><span class=line><span class=cl><span class=k>-</span> 规划代理优化建议
+</span></span><span class=line><span class=cl><span class=k>-</span> 技术内容完整性评估
+</span></span></code></pre></td></tr></table></div></div><p>这里发现他直接用了llm，所以我们来看一下<code>__init__</code>和<code>initialize</code>，发现agent是在<code>initialize</code>里初始化的</p><p>这个agent也有一个prompt：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=line><span class=cl>You are an intelligent document segmentation coordinator that leverages advanced semantic analysis for optimal document processing.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Your enhanced capabilities include:
+</span></span><span class=line><span class=cl><span class=k>1.</span> <span class=gs>**Semantic Content Analysis**</span>: Coordinate intelligent document type classification based on content semantics rather than structural patterns
+</span></span><span class=line><span class=cl><span class=k>2.</span> <span class=gs>**Algorithm Integrity Protection**</span>: Ensure algorithm blocks, formulas, and related content maintain logical coherence
+</span></span><span class=line><span class=cl><span class=k>3.</span> <span class=gs>**Adaptive Segmentation Strategy**</span>: Select optimal segmentation approaches (semantic_research_focused, algorithm_preserve_integrity, concept_implementation_hybrid, etc.)
+</span></span><span class=line><span class=cl><span class=k>4.</span> <span class=gs>**Quality Intelligence Validation**</span>: Assess segmentation quality using enhanced metrics for completeness, relevance, and technical accuracy
+</span></span><span class=line><span class=cl><span class=k>5.</span> <span class=gs>**Planning Agent Optimization**</span>: Ensure segments are specifically optimized for ConceptAnalysisAgent, AlgorithmAnalysisAgent, and CodePlannerAgent needs
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=gs>**Key Principles**</span>:
+</span></span><span class=line><span class=cl><span class=k>-</span> Prioritize content semantics over mechanical structure
+</span></span><span class=line><span class=cl><span class=k>-</span> Preserve algorithm and formula completeness
+</span></span><span class=line><span class=cl><span class=k>-</span> Optimize for downstream agent token efficiency
+</span></span><span class=line><span class=cl><span class=k>-</span> Ensure technical content integrity
+</span></span><span class=line><span class=cl><span class=k>-</span> Provide actionable quality assessments
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Use the enhanced document-segmentation tools to deliver superior segmentation results that significantly improve planning agent performance.
+</span></span></code></pre></td></tr></table></div></div><p>来看看中文翻译：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=line><span class=cl>您是一位智能文档分割协调者，能够利用高级语义分析实现最佳文档处理。
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>您的增强功能包括：
+</span></span><span class=line><span class=cl><span class=k>1.</span> <span class=gs>**语义内容分析**</span>：基于内容语义而非结构模式协调智能文档类型分类
+</span></span><span class=line><span class=cl><span class=k>2.</span> <span class=gs>**算法完整性保护**</span>：确保算法块、公式和相关内容保持逻辑一致性
+</span></span><span class=line><span class=cl><span class=k>3.</span> <span class=gs>**自适应分段策略**</span>：选择最佳分段方法（以语义研究为中心、算法保留完整性、概念实现混合等）
+</span></span><span class=line><span class=cl><span class=k>4.</span> <span class=gs>**质量智能验证**</span>：使用增强的完整性、相关性和技术准确性指标评估分段质量
+</span></span><span class=line><span class=cl><span class=k>5.</span> <span class=gs>**规划代理优化**</span>：确保分段针对 ConceptAnalysisAgent、AlgorithmAnalysisAgent 和 CodePlannerAgent 的需求进行专门优化
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=gs>**关键原则**</span>：
+</span></span><span class=line><span class=cl><span class=k>-</span> 优先考虑内容语义而非机械结构
+</span></span><span class=line><span class=cl><span class=k>-</span> 保持算法和公式的完整性
+</span></span><span class=line><span class=cl><span class=k>-</span> 优化下游代理令牌效率
+</span></span><span class=line><span class=cl><span class=k>-</span> 确保技术内容完整性
+</span></span><span class=line><span class=cl><span class=k>-</span> 提供可操作的质量评估
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>使用增强的文档分割工具可提供卓越的分割结果，从而显著提高规划代理的性能。
+</span></span></code></pre></td></tr></table></div></div><p>mcp有两个：<code>document-segmentation</code>和<code>filesystem</code>，刚刚的message里提到了工具：<code>analyze_and_segment_document</code>应该在<code>document-segmentation</code>里，我们来看看<code>document-segmentation</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>document-segmentation</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>args</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=l>tools/document_segmentation_server.py</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>command</span><span class=p>:</span><span class=w> </span><span class=l>python</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=l>Document segmentation server - Provides intelligent document analysis</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=l>and segmented reading to optimize token usage</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>env</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>PYTHONPATH</span><span class=p>:</span><span class=w> </span><span class=l>.</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>所以我们来看<code>tools/document_segmentation_server.py</code>，文件的最上面有<code>analyze_and_segment_document</code>的注释</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=line><span class=cl>📄 analyze_and_segment_document(paper_dir: str, force_refresh: bool = False)
+</span></span><span class=line><span class=cl>   Purpose: Analyzes document structure and creates intelligent segments
+</span></span><span class=line><span class=cl>   <span class=k>-</span> Detects document type (research paper, technical doc, algorithm-focused, etc.)
+</span></span><span class=line><span class=cl>   <span class=k>-</span> Selects optimal segmentation strategy based on content analysis
+</span></span><span class=line><span class=cl>   <span class=k>-</span> Creates semantic segments preserving algorithm and concept integrity
+</span></span><span class=line><span class=cl>   <span class=k>-</span> Stores segmentation index for efficient retrieval
+</span></span><span class=line><span class=cl>   <span class=k>-</span> Returns: JSON with segmentation status, strategy used, and segment count
+</span></span></code></pre></td></tr></table></div></div><p>看看中文：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>📄 analyze_and_segment_document(paper_dir: str, force_refresh: bool = False)
+</span></span><span class=line><span class=cl>用途：分析文档结构并创建智能分段
+</span></span><span class=line><span class=cl>- 检测文档类型（研究论文、技术文档、算法类文档等）
+</span></span><span class=line><span class=cl>- 根据内容分析选择最佳分段策略
+</span></span><span class=line><span class=cl>- 创建语义分段，保留算法和概念的完整性
+</span></span><span class=line><span class=cl>- 存储分段索引以便高效检索
+</span></span><span class=line><span class=cl>- 返回：包含分段状态、所用策略和分段计数的 JSON 数据
+</span></span></code></pre></td></tr></table></div></div><p>老样子，来搜<code>@mcp.tool()</code>，找到<code>analyze_and_segment_document</code>实现的地方，来从上往下看，首先还是经典取出所有文件，很奇怪这边都只会处理第一个文件，那多文件的意义在哪里呢，搞不懂</p><p>首先是如果老的配置文件存在就加载，不存在就读入要处理的文件</p><p>首先是分析文件部分：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Analyze document</span>
+</span></span><span class=line><span class=cl><span class=n>analyzer</span> <span class=o>=</span> <span class=n>DocumentAnalyzer</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>doc_type</span><span class=p>,</span> <span class=n>confidence</span> <span class=o>=</span> <span class=n>analyzer</span><span class=o>.</span><span class=n>analyze_document_type</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>strategy</span> <span class=o>=</span> <span class=n>analyzer</span><span class=o>.</span><span class=n>detect_segmentation_strategy</span><span class=p>(</span><span class=n>content</span><span class=p>,</span> <span class=n>doc_type</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>DocumentAnalyzer</code>类中没有初始化函数，那么我们直接往下看<code>analyze_document_type</code>，他首先把内容小写了，然后开始计算权重？</p><p>我们来看看<code>_calculate_weighted_score</code>，大家看了以后自行往上翻看看就知道了，其实就是判断词汇出现的次数来计算权重</p><p>然后下面有一个Detect semantic patterns of document types，也就是语义分类，来看下<code>_detect_pattern_score</code>，这个和<code>_calculate_weighted_score</code>类似，我们就不看了，然后下面就是算总得分，给出分类和置信度</p><p>然后来看一下<code>detect_segmentation_strategy</code>，这里还是各种关键词检索，然后确定文档类型</p><p>在工具里继续往下看，创建分块的具体逻辑：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Create segments</span>
+</span></span><span class=line><span class=cl><span class=n>segments</span> <span class=o>=</span> <span class=n>segmenter</span><span class=o>.</span><span class=n>segment_document</span><span class=p>(</span><span class=n>content</span><span class=p>,</span> <span class=n>strategy</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>来看<code>segment_document</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>segment_document</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>content</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span> <span class=n>strategy</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>List</span><span class=p>[</span><span class=n>DocumentSegment</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>    Perform intelligent segmentation using the specified strategy
+</span></span></span><span class=line><span class=cl><span class=s2>    &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>strategy</span> <span class=o>==</span> <span class=s2>&#34;semantic_research_focused&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_segment_research_paper_semantically</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>elif</span> <span class=n>strategy</span> <span class=o>==</span> <span class=s2>&#34;algorithm_preserve_integrity&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_segment_preserve_algorithm_integrity</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>elif</span> <span class=n>strategy</span> <span class=o>==</span> <span class=s2>&#34;concept_implementation_hybrid&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_segment_concept_implementation_hybrid</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>elif</span> <span class=n>strategy</span> <span class=o>==</span> <span class=s2>&#34;semantic_chunking_enhanced&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_segment_by_enhanced_semantic_chunks</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>elif</span> <span class=n>strategy</span> <span class=o>==</span> <span class=s2>&#34;content_aware_segmentation&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_segment_content_aware</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=c1># Compatibility with legacy strategies</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_segment_by_enhanced_semantic_chunks</span><span class=p>(</span><span class=n>content</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>这个很朴素了，大家自己看吧，我们权当分块跑完了</p><p>老样子，我们在这个phase结束打个断点，看看运行到这里发生了什么</p><p>结果毛都没给我分片出来，看看<code>document_index.json</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;document_path&#34;</span><span class=p>:</span> <span class=s2>&#34;/Users/dinglizhi/Desktop/coderead/DeepCode/deepcode_lab/papers/1/1.md&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;document_type&#34;</span><span class=p>:</span> <span class=s2>&#34;research_paper&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;segmentation_strategy&#34;</span><span class=p>:</span> <span class=s2>&#34;concept_implementation_hybrid&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;total_segments&#34;</span><span class=p>:</span> <span class=mi>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;total_chars&#34;</span><span class=p>:</span> <span class=mi>59608</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;segments&#34;</span><span class=p>:</span> <span class=p>[],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;created_at&#34;</span><span class=p>:</span> <span class=s2>&#34;2025-10-11T15:04:27.466987&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>我们就当他没分片这个功能好吧</p><h3 id=phase4>phase4</h3></section><footer class=article-footer><section class=article-tags><a href=/tags/python/>Python</a>
+<a href=/tags/agent/>Agent</a></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>Last updated on Sep 28, 2025 02:00 UTC</span></section></footer></article><footer class=site-footer><section class=copyright>&copy;
+2024 -
+2025 Dinglz 's Blog</section><section class=powerby>copyright &copy; dinglz<br>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.31.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script><script type=module>
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+</script></body></html>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>QQ机器人 on Dinglz 's Blog</title><link>https://dingdinglz.github.io/categories/qbot/</link><description>Recent content in QQ机器人 on Dinglz 's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 16 Oct 2024 02:00:00 +0000</lastBuildDate><atom:link href="https://dingdinglz.github.io/categories/qbot/index.xml" rel="self" type="application/rss+xml"/><item><title>dingbot v2</title><link>https://dingdinglz.github.io/p/dingbot-v2/</link><pubDate>Wed, 16 Oct 2024 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/dingbot-v2/</guid><description>&lt;h2 id="简述">简述
+&lt;/h2>&lt;p>自从酷Q时代开始乃至更早时期，QQ机器人便出现在大家的视野里，由于被使用于一些不正当领域&lt;del>以及某些不可告人的原因&lt;/del>，QQ Robot被QQ官方ban了很长时间，直到最近官方放出了部分机器人权限，以及onebot等对于协议的贡献，QQ Robot恢复了部分功能，dingbot便由于本作者的需求重构出了v2版本。&lt;/p>
+&lt;p>链接：&lt;strong>&lt;a class="link" href="https://github.com/dingdinglz/dingbot" target="_blank" rel="noopener"
+>https://github.com/dingdinglz/dingbot&lt;/a>&lt;/strong>&lt;/p>
+&lt;h2 id="已支持功能">已支持功能
+&lt;/h2>&lt;p>请移步github查看&lt;/p>
+&lt;h2 id="实现方法">实现方法
+&lt;/h2>&lt;p>golang + html&lt;/p>
+&lt;p>golang下对接&lt;a class="link" href="https://github.com/LagrangeDev/LagrangeGo" target="_blank" rel="noopener"
+>Lagrange&lt;/a>，以&lt;a class="link" href="https://github.com/gofiber/fiber" target="_blank" rel="noopener"
+>fiber&lt;/a>框架作为web框架，html以&lt;a class="link" href="https://layui.dev" target="_blank" rel="noopener"
+>layui&lt;/a>构建前端界面&lt;/p>
+&lt;h2 id="画廊">画廊
+&lt;/h2>&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/1.png"
+width="1455"
+height="973"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/1_hu10965539961711071348.png 480w, https://dingdinglz.github.io/p/dingbot-v2/1_hu8885517190124739403.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="149"
+data-flex-basis="358px"
+>&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/2.png"
+width="2192"
+height="922"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/2_hu15350188976384697722.png 480w, https://dingdinglz.github.io/p/dingbot-v2/2_hu7446977080723650097.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="237"
+data-flex-basis="570px"
+>&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/3.png"
+width="733"
+height="617"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/3_hu878386983409735340.png 480w, https://dingdinglz.github.io/p/dingbot-v2/3_hu13451784689874483549.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="118"
+data-flex-basis="285px"
+>&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/4.png"
+width="2390"
+height="1057"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/4_hu382046322339415121.png 480w, https://dingdinglz.github.io/p/dingbot-v2/4_hu394817988810114068.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="226"
+data-flex-basis="542px"
+>&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/5.png"
+width="2260"
+height="1355"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/5_hu6841331385226783765.png 480w, https://dingdinglz.github.io/p/dingbot-v2/5_hu1786408520571822458.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="166"
+data-flex-basis="400px"
+>&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/6.png"
+width="2263"
+height="1104"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/6_hu17396367264542628230.png 480w, https://dingdinglz.github.io/p/dingbot-v2/6_hu4542541386972253816.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="204"
+data-flex-basis="491px"
+>&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/dingbot-v2/7.png"
+width="2001"
+height="1230"
+srcset="https://dingdinglz.github.io/p/dingbot-v2/7_hu7963998935139011876.png 480w, https://dingdinglz.github.io/p/dingbot-v2/7_hu16695557343062916310.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="162"
+data-flex-basis="390px"
+>&lt;/p>
+&lt;h2 id="编译方法">编译方法
+&lt;/h2>&lt;h3 id="前置条件">前置条件
+&lt;/h3>&lt;p>安装golang&lt;/p>
+&lt;h3 id="编译方法-1">编译方法
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">go build
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="产物">产物
+&lt;/h3>&lt;p>将所得的dingbot.exe（其他系统后缀可能不同）与web文件夹复制到新的文件夹中，此时的dingbot可以直接运行。&lt;/p>
+&lt;p>此时你的文件夹结构应该为&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">- dingbot[.exe]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">- web
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="运行方法">运行方法
+&lt;/h2>&lt;p>打开dingbot可执行文件，第一次使用会为你打开初始化界面，完成设置后重启dingbot即可。&lt;/p>
+&lt;p>首先在账号设置栏中保存QQ账号与密码，点击保存。&lt;/p>
+&lt;p>点击下方登录进行登录，初次登录需要扫描二维码。后续登录如sig未失效可直接登录。&lt;/p>
+&lt;p>提示登录成功后机器人便进入正常运行状态。&lt;/p>
+&lt;h3 id="关键词回复">关键词回复
+&lt;/h3>&lt;p>点击创建可以创建新的关键词。&lt;/p>
+&lt;p>精确识别为消息必须完美符合关键词才会发送回复内容。&lt;/p>
+&lt;p>非精确识别则如果消息包含关键词即发送回复内容。&lt;/p>
+&lt;h3 id="群接收开关--好友接收开关">群接收开关 &amp;amp;&amp;amp; 好友接收开关
+&lt;/h3>&lt;p>开启后机器人才会对对应群和好友的消息进行处理。否则dingbot自带功能与插件功能无法在对应的对话中生效。&lt;/p>
+&lt;h3 id="插件">插件
+&lt;/h3>&lt;p>新建插件后即会为你创建一个新的插件源码，点击编辑后会进入插件编辑器中进行编辑。&lt;/p>
+&lt;p>一个完整的插件&lt;strong>至少&lt;/strong>拥有插件信息提供事件，即事件中第一个，将其拖至编辑器中，用文本填充相关信息即可。&lt;/p>
+&lt;h4 id="事件">事件
+&lt;/h4>&lt;p>所有的事件的实现方法都拖至事件内部处理。&lt;/p>
+&lt;p>在对应的事件中可以使用对应的参数。&lt;/p>
+&lt;h4 id="保存">保存
+&lt;/h4>&lt;p>编辑完插件后记得保存，否则下次将丢失上次编辑。&lt;/p>
+&lt;h4 id="生成">生成
+&lt;/h4>&lt;p>插件编辑完后无法立即进入工作状态，点击生成插件后才会生成正式的插件文件，若你可以在插件列表中看到该插件，即为生成成功，并进入工作状态。&lt;/p>
+&lt;h4 id="插件的获取">插件的获取
+&lt;/h4>&lt;p>当然，除了自己编写插件以外，可以从社区下载他人制作完成的插件，复制到对应的文件夹中，若你可以在插件列表中看到该插件，即为添加成功。&lt;/p></description></item></channel></rss>

@@ -1,7 +1,7 @@
 ---
 title: dinglz带你读deepcode
 description: 今天要读的项目是：https://github.com/HKUDS/DeepCode
-date: 2025-09-28 02:00:00+0000
+date: 2026-01-18 02:00:00+0000
 categories:
     - coderead
 tags:
@@ -1398,3 +1398,435 @@ def segment_document(self, content: str, strategy: str) -> List[DocumentSegment]
 
 ### phase4
 
+好的好的，终于完成了大部分前置工作，现在正式进入代码规划的智能体
+
+咱们进来看`await orchestrate_code_planning_agent(dir_info, logger, progress_callback)`
+
+老样子先来看下注释：
+
+```
+Orchestrate intelligent code planning with automated design analysis.
+
+This agent autonomously generates optimal code reproduction plans and implementation strategies using AI-driven code analysis and planning principles.
+```
+
+翻译：
+
+```
+通过自动化设计分析，统筹智能化代码规划。
+
+该智能体利用 AI 驱动的代码分析与规划原理，自主生成最优的代码复现方案及实施策略。
+```
+
+好，这里首先标记上plan文件，如果这个文件不存在，去跑一个叫`run_code_analyzer`的函数，我们来看看这个
+
+这个函数的注释如下：
+
+```
+Run the adaptive code analysis workflow using multiple agents for comprehensive code planning.
+
+This function orchestrates three specialized agents with adaptive configuration:
+- ConceptAnalysisAgent: Analyzes system architecture and conceptual framework
+- AlgorithmAnalysisAgent: Extracts algorithms, formulas, and technical details
+- CodePlannerAgent: Integrates outputs into a comprehensive implementation plan
+```
+
+翻译：
+
+```
+运行自适应代码分析工作流，通过多智能体协同进行全面的代码规划。
+
+该函数通过自适应配置协调三个专业智能体：
+
+ConceptAnalysisAgent（概念分析智能体）：分析系统架构与概念框架。
+AlgorithmAnalysisAgent（算法分析智能体）：提取算法、公式及技术细节。
+CodePlannerAgent（代码规划智能体）：将输出内容整合为全面的实现方案。
+```
+
+首先这里配置了三个智能体，先获取必要的配置
+
+我们一个个看
+
+``` python
+search_server_names = get_search_server_names()
+agent_config = get_adaptive_agent_config(use_segmentation, search_server_names)
+prompts = get_adaptive_prompts(use_segmentation)
+```
+
+第一个配置，就是去search用的mcp，默认的就是brave，这个没什么好在意的
+
+第二个去配置不同的agent，我们进来看`get_adaptive_agent_config`
+
+诶这里很奇怪，
+
+``` python
+config = {
+    "concept_analysis": [],
+    "algorithm_analysis": search_server_names.copy(),
+    "code_planner": search_server_names.copy(),
+}
+```
+
+基础设置是，`concept_analysis`是空，`algorithm_analysis`和`code_planner`都有搜索mcp
+
+然后给这三个agent都分配了`document-segmentation`也就是分片用的mcp，里面有`read_document_segments`和`get_document_overview`两个工具应该是能用到的
+
+然后就是获取适配的提示词：`get_adaptive_prompts`
+
+最终获取到的提示词如下：
+
+``` python
+return {
+    "concept_analysis": PAPER_CONCEPT_ANALYSIS_PROMPT,
+    "algorithm_analysis": PAPER_ALGORITHM_ANALYSIS_PROMPT,
+    "code_planning": CODE_PLANNING_PROMPT,
+}
+```
+
+我们先把执行的流程看一下再看每一个提示词，定义了一个大的agent
+
+``` python
+code_aggregator_agent = ParallelLLM(
+    fan_in_agent=code_planner_agent,
+    fan_out_agents=[concept_analysis_agent, algorithm_analysis_agent],
+    llm_factory=get_preferred_llm_class(),
+)
+```
+
+看起来像是把`code_planner_agent`的结果传给`concept_analysis_agent`和`algorithm_analysis_agent`，再汇总结果，总之我们来看一下`ParallelLLM`
+
+```
+LLMs can sometimes work simultaneously on a task (fan-out)
+and have their outputs aggregated programmatically (fan-in).
+This workflow performs both the fan-out and fan-in operations using  LLMs.
+From the user's perspective, an input is specified and the output is returned.
+
+When to use this workflow:
+    Parallelization is effective when the divided subtasks can be parallelized
+    for speed (sectioning), or when multiple perspectives or attempts are needed for
+    higher confidence results (voting).
+
+Examples:
+    Sectioning:
+        - Implementing guardrails where one model instance processes user queries
+        while another screens them for inappropriate content or requests.
+
+        - Automating evals for evaluating LLM performance, where each LLM call
+        evaluates a different aspect of the model’s performance on a given prompt.
+
+    Voting:
+        - Reviewing a piece of code for vulnerabilities, where several different
+        agents review and flag the code if they find a problem.
+
+        - Evaluating whether a given piece of content is inappropriate,
+        with multiple agents evaluating different aspects or requiring different
+        vote thresholds to balance false positives and negatives.
+```
+
+翻译为：
+
+```
+LLM 有时可以同时处理多项任务（扇出/fan-out），并以编程方式汇总其输出结果（扇入/fan-in）。此工作流利用 LLM 同时执行扇出和扇入操作。从用户的角度来看，只需指定输入，即可获得返回的输出结果。
+何时使用此工作流：
+
+当拆分后的子任务可以为了提高速度而并行处理（分段模式），或者当需要多个视角/尝试以获得更高置信度的结果（投票模式）时，并行化方案非常有效。
+应用示例：
+
+1. 分段模式 (Sectioning):
+
+    实施护栏 (Guardrails)： 一个模型实例处理用户查询，而另一个实例同时筛选其中是否包含不当内容或违规请求。
+
+    自动化评估 (Evals)： 在评估 LLM 性能时，通过多个 LLM 调用分别评估模型在特定提示词下不同维度的表现。
+
+2. 投票模式 (Voting):
+
+    代码漏洞审查： 多个不同的智能体（Agent）共同审查一段代码，只要发现问题就进行标记。
+
+    内容合规性评估： 多个智能体从不同维度评估内容是否违规，并通过设置不同的投票阈值，来平衡误报率（False Positives）和漏报率（Negative）。
+```
+
+然后来看一下用到的：`generate`
+
+然后就发现我们刚刚的理解有歧义，其实是把fan_out的信息交给fan_in汇总
+
+好的，`ParallelLLM`我们了解了，这里的写法并不难理解，大家感兴趣可以自己点进去看
+
+那这里相当于是先跑`concept_analysis`和`algorithm_analysis`，然后把结果给`code_planning`汇总出来。
+
+好，了解了，那么我们只用看这三个agent的提示词和传入的message就解决这个phase了
+
+#### concept_analysis
+
+提示词：
+
+``` markdown
+You are doing a COMPREHENSIVE analysis of a research paper to understand its complete structure, contributions, and implementation requirements.
+
+# OBJECTIVE
+Map out the ENTIRE paper structure and identify ALL components that need implementation for successful reproduction.
+
+# INTELLIGENT DOCUMENT READING STRATEGY
+
+## IMPORTANT: Use Segmented Reading for Optimal Performance
+Instead of reading the entire document at once (which may hit token limits), use the intelligent segmentation system:
+
+1. **Use read_document_segments tool** with these parameters:
+   - query_type: "concept_analysis"
+   - keywords: ["introduction", "overview", "architecture", "system", "framework", "concept", "method"]
+   - max_segments: 3
+   - max_total_chars: 6000
+
+2. **This will automatically find and retrieve** the most relevant sections for concept analysis without token overflow
+
+3. **If you need additional sections**, make follow-up calls with different keywords like ["experiment", "evaluation", "results"] or ["conclusion", "discussion"]
+
+# COMPREHENSIVE ANALYSIS PROTOCOL
+
+## 1. INTELLIGENT PAPER STRUCTURAL ANALYSIS
+Use the segmented reading approach to create a complete map:
+
+paper_structure_map:
+  title: "[Full paper title]"
+
+  sections:
+    1_introduction:
+      main_claims: "[What the paper claims to achieve]"
+      problem_definition: "[Exact problem being solved]"
+
+    2_related_work:
+      key_comparisons: "[Methods this work builds upon or competes with]"
+
+    3_method:  # May have multiple subsections
+      subsections:
+        3.1: "[Title and main content]"
+        3.2: "[Title and main content]"
+      algorithms_presented: "[List all algorithms by name]"
+
+    4_experiments:
+      environments: "[All test environments/datasets]"
+      baselines: "[All comparison methods]"
+      metrics: "[All evaluation metrics used]"
+
+    5_results:
+      main_findings: "[Key results that prove the method works]"
+      tables_figures: "[Important result tables/figures to reproduce]"
+
+## 2. METHOD DECOMPOSITION
+For the main method/approach:
+
+method_decomposition:
+  method_name: "[Full name and acronym]"
+
+  core_components:  # Break down into implementable pieces
+    component_1:
+      name: "[e.g., State Importance Estimator]"
+      purpose: "[Why this component exists]"
+      paper_section: "[Where it's described]"
+
+    component_2:
+      name: "[e.g., Policy Refinement Module]"
+      purpose: "[Its role in the system]"
+      paper_section: "[Where it's described]"
+
+  component_interactions:
+    - "[How component 1 feeds into component 2]"
+    - "[Data flow between components]"
+
+  theoretical_foundation:
+    key_insight: "[The main theoretical insight]"
+    why_it_works: "[Intuitive explanation]"
+
+## 3. IMPLEMENTATION REQUIREMENTS MAPPING
+Map paper content to code requirements:
+
+implementation_map:
+  algorithms_to_implement:
+    - algorithm: "[Name from paper]"
+      section: "[Where defined]"
+      complexity: "[Simple/Medium/Complex]"
+      dependencies: "[What it needs to work]"
+
+  models_to_build:
+    - model: "[Neural network or other model]"
+      architecture_location: "[Section describing it]"
+      purpose: "[What this model does]"
+
+  data_processing:
+    - pipeline: "[Data preprocessing needed]"
+      requirements: "[What the data should look like]"
+
+  evaluation_suite:
+    - metric: "[Metric name]"
+      formula_location: "[Where it's defined]"
+      purpose: "[What it measures]"
+
+## 4. EXPERIMENT REPRODUCTION PLAN
+Identify ALL experiments needed:
+
+experiments_analysis:
+  main_results:
+    - experiment: "[Name/description]"
+      proves: "[What claim this validates]"
+      requires: "[Components needed to run this]"
+      expected_outcome: "[Specific numbers/trends]"
+
+  ablation_studies:
+    - study: "[What is being ablated]"
+      purpose: "[What this demonstrates]"
+
+  baseline_comparisons:
+    - baseline: "[Method name]"
+      implementation_required: "[Yes/No/Partial]"
+      source: "[Where to find implementation]"
+
+## 5. CRITICAL SUCCESS FACTORS
+What defines successful reproduction:
+
+success_criteria:
+  must_achieve:
+    - "[Primary result that must be reproduced]"
+    - "[Core behavior that must be demonstrated]"
+
+  should_achieve:
+    - "[Secondary results that validate the method]"
+
+  validation_evidence:
+    - "[Specific figure/table to reproduce]"
+    - "[Qualitative behavior to demonstrate]"
+
+# OUTPUT FORMAT
+comprehensive_paper_analysis:
+  executive_summary:
+    paper_title: "[Full title]"
+    core_contribution: "[One sentence summary]"
+    implementation_complexity: "[Low/Medium/High]"
+    estimated_components: "[Number of major components to build]"
+
+  complete_structure_map:
+    [FULL SECTION BREAKDOWN AS ABOVE]
+
+  method_architecture:
+    [DETAILED COMPONENT BREAKDOWN]
+
+  implementation_requirements:
+    [ALL ALGORITHMS, MODELS, DATA, METRICS]
+
+  reproduction_roadmap:
+    phase_1: "[What to implement first]"
+    phase_2: "[What to build next]"
+    phase_3: "[Final components and validation]"
+
+  validation_checklist:
+    - "[ ] [Specific result to achieve]"
+    - "[ ] [Behavior to demonstrate]"
+    - "[ ] [Metric to match]"
+
+BE THOROUGH. Miss nothing. The output should be a complete blueprint for reproduction.
+```
+
+翻译不放了，大家哪里看不懂自己翻译吧，下面我们来解析这段提示词
+
+首先是经典身份设定：You are doing a COMPREHENSIVE analysis of a research paper to understand its complete structure, contributions, and implementation requirements.
+
+说明白了正在干吗，要了解论文的结构、贡献和实施要求
+
+然后是说了最后要输出的结果：
+
+绘制出整个论文结构并确定成功复制所需实施的所有组件。
+
+接下来有三个部分：`INTELLIGENT DOCUMENT READING STRATEGY（指导agent怎么读文章）`、`COMPREHENSIVE ANALYSIS PROTOCOL（用来分析的工作流）`和`OUTPUT FORMAT（输出格式）`
+
+##### INTELLIGENT DOCUMENT READING STRATEGY
+
+好的，这个工作流指导agent怎么去用工具读分块，并且指导agent怎么循环分析，这个很有意思，把所有决策权交给llm，如果是我的话可能会用固定的workflow来做整个过程
+
+##### COMPREHENSIVE ANALYSIS PROTOCOL
+
+第一步，用刚刚教的方法去分块读，然后创建一个yaml记录信息，这里还是结构化指导（虽然只用于内部传导）其实也是一种防蠢，以免ai漏信息等等。看一下这个yml
+
+``` yaml
+```yaml
+paper_structure_map:
+  title: "[Full paper title]"
+
+  sections:
+    1_introduction:
+      main_claims: "[What the paper claims to achieve]"
+      problem_definition: "[Exact problem being solved]"
+
+    2_related_work:
+      key_comparisons: "[Methods this work builds upon or competes with]"
+
+    3_method:  # May have multiple subsections
+      subsections:
+        3.1: "[Title and main content]"
+        3.2: "[Title and main content]"
+      algorithms_presented: "[List all algorithms by name]"
+
+    4_experiments:
+      environments: "[All test environments/datasets]"
+      baselines: "[All comparison methods]"
+      metrics: "[All evaluation metrics used]"
+
+    5_results:
+      main_findings: "[Key results that prove the method works]"
+      tables_figures: "[Important result tables/figures to reproduce]"
+```
+
+第二步对方法分解，这一块我不太懂（因为我不搞学术也不看论文）
+
+第三步就是确定具体要实现哪些东西
+
+第四步是重现计划，第五部是验证成功的需要，输出就是上面的汇总
+
+可以看到是一个非常好的提示词结构，有定义，有工具使用说明，有执行流程
+
+#### algorithm_analysis
+
+提示词我不粘贴了，大家刚刚也看到怎么去找提示词了，我们来看一下这个提示词
+
+这个提示词跟刚刚分析的那个结构非常相似，大家可以自己分析分析，有不懂的欢迎来找我讨论，最终这个agent的目的是为了分析用到的算法和公式
+
+#### code_planning
+
+好，来看一下计划规划agent，这个很重要，md这个提示词也特别长，我们来看一下（这下知道为啥这些工具这么烧token了吧）
+
+首先说明背景，通过分析来制定可以复刻的计划，接下来分为：`INPUT（说明输入格式）`、`INTELLIGENT DOCUMENT ACCESS（智能文档访问）`、`OBJECTIVE（最终要实现的目标）`、`CONTENT LENGTH CONTROL（生成内容和长度说明）`、`DETAILED SYNTHESIS PROCESS（具体的执行方式，也就是workflow）`、`COMPREHENSIVE OUTPUT FORMAT（最终的输出格式）`
+
+##### INPUT
+
+说明了一下传进来的分析有两个，也就是介绍了一下刚刚进行的两个工作
+
+##### INTELLIGENT DOCUMENT ACCESS
+
+说明了怎么用mcp去读分片
+
+##### OBJECTIVE
+
+最终要实现的目标，创建一个如此详细的实施计划，以便开发人员可以在不阅读整篇论文的情况下复制它。
+
+##### CONTENT LENGTH CONTROL
+
+说明了要创建哪几个文件部分，和每个部分的大概占比
+
+1. 创建文件结构，一定要完整
+2. 实现组件（优先级最高）
+3. 最终的验证
+4. 所有需要的依赖（指开发环境的）
+5. 一步一步的实现细节
+
+然后说明了一下实现步骤，先算法文件，然后是工具类，然后是测试脚本，然后是配置和数据处理，然后才是说明文档，然后说明了要包含README和requirements.txt（写论文的喜欢用python实现，所以该工具就是专注于生成python代码）
+
+##### DETAILED SYNTHESIS PROCESS
+
+1. 说明了要合并得到的所有信息，然后说了一下哪些
+2. 然后要把得到的信息变成实现
+3. 技术提取的方法
+
+##### COMPREHENSIVE OUTPUT FORMAT
+
+输出格式，大家自己看吧，就是把上面得到的结果汇总输出
+
+---
+
+好的，漫长的phase4结束了，最终得到的结果保存到了`initial_plan.txt`

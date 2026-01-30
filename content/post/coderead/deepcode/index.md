@@ -1830,3 +1830,199 @@ paper_structure_map:
 ---
 
 好的，漫长的phase4结束了，最终得到的结果保存到了`initial_plan.txt`
+
+### phase 5
+
+该阶段叫 Reference Intelligence，我们来看下它是怎么做的，来进来看看这个函数，注释是：
+
+```
+Orchestrate intelligent reference analysis with automated research discovery.
+
+This agent autonomously processes research references and discovers
+related work using advanced AI-powered analysis algorithms.
+
+Args:
+    dir_info: Workspace infrastructure metadata
+    logger: Logger instance for intelligence tracking
+    progress_callback: Progress callback function for monitoring
+
+Returns:
+    str: Comprehensive reference intelligence analysis result
+```
+
+翻译：
+
+```
+此智能代理（Agent）利用先进的 AI 分析算法，自主处理研究文献并探索相关工作。
+
+参数 (Args):
+
+    dir_info: 工作区基础设施元数据
+
+    logger: 用于智能跟踪的日志记录器实例
+
+    progress_callback: 用于进度监控的回调函数
+
+返回值 (Returns):
+
+    str: 详尽的文献智能分析结果
+```
+
+呃呃呃不管怎么看，都觉得这个说的很邪乎吧，总之让我们继续往下看
+
+首先check了一下之前有没有创建过这个文件，最核心的是下面的内容：
+
+``` python
+reference_result = await paper_reference_analyzer(dir_info["paper_dir"], logger)
+```
+
+让我们进来看看`paper_reference_analyzer`
+
+这个函数的注释是：Run the paper reference analysis and GitHub repository workflow.
+
+翻译一下：运行论文文献分析与 GitHub 仓库工作流。
+
+鹅我勉强猜一下，可能是获取论文内容里的github仓库，并分析？总之我们继续看
+
+然后下面就是新建一个Agent开始跑了照例先看他的prompt
+
+``` markdown
+You are an expert academic paper reference analyzer specializing in computer science and machine learning.
+
+Task: Analyze paper and identify 5 most relevant references that have GitHub repositories.
+
+Constraints:
+- ONLY select references with GitHub repositories
+- DO NOT use target paper's official implementation
+- DO NOT use repositories directly associated with target paper
+- CAN analyze code implementations from referenced papers
+- Focus on references with good implementations solving similar problems
+
+Analysis Criteria:
+1. GitHub Repository Quality (40%):
+   - Star count, activity, maintenance
+   - Documentation quality
+   - Community adoption
+   - Last update date
+
+2. Implementation Relevance (30%):
+   - References from methodology/implementation sections
+   - Algorithmic details
+   - Core component descriptions
+   - Code implementation quality
+
+3. Technical Depth (20%):
+   - Algorithm/method similarity
+   - Technical foundation relationship
+   - Implementation details
+   - Code structure
+
+4. Academic Influence (10%):
+   - Publication venue quality
+   - Author expertise
+   - Research impact
+   - Citation influence
+
+Analysis Steps:
+1. Extract all references from paper
+2. Filter references with GitHub repositories
+3. Analyze repositories based on criteria
+4. Calculate relevance scores
+5. Select and rank top 5 references
+
+Output Format:
+{
+    "selected_references": [
+        {
+            "rank": 1,
+            "title": "paper title",
+            "authors": ["author1", "author2"],
+            "year": "publication year",
+            "relevance_score": 0.95,
+            "citation_context": "how cited in main paper",
+            "key_contributions": ["contribution1", "contribution2"],
+            "implementation_value": "why valuable for implementation",
+            "github_info": {
+                "repository_url": "GitHub repository URL",
+                "stars_count": "number of stars",
+                "last_updated": "last update date",
+                "repository_quality": "repository quality assessment",
+                "key_features": ["feature1", "feature2"],
+                "documentation_quality": "documentation assessment",
+                "community_activity": "community engagement description"
+            },
+            "original_reference": "Complete reference text from paper"
+        }
+    ],
+    "analysis_summary": "selection process and key findings",
+    "github_repositories_found": "total number of references with GitHub repositories"
+}
+```
+
+首先仍然是人设定义：您是一位专门从事计算机科学和机器学习的学术论文参考分析专家。
+
+写到这里突然想聊一下人设的问题，最近看了不少文章都说觉得人设没有用，只会白白消耗tokens，btw我觉得至少会给agent指引工作的方向
+
+然后是任务：分析论文并确定 5 个具有 GitHub 存储库的最相关参考文献。
+
+然后是一些限制，大概就是不要直接用原文中的github等等
+
+然后是四个分析标准：
+
+1. github仓库的质量要好，列了一些判断指标
+2. 和本论文有多相关
+3. 技术深度，比如算法的相似性啦，实现的细节啦
+4. 最后是学术影响力
+
+然后就是分析步骤，然后定义了返回格式
+
+我们来看看agent用到的mcp，一个filesystem就是给agent读论文内容的，一个fetch应该就是让agent访问github仓库的，不过个人感觉这样效果会比较差，agent更大可能是从自己的训练数据中找到合适的仓库，然后用fetch判断，应该给一个类似于github搜索的mcp来辅助判断
+
+我们来看下发送的内容
+
+``` markdown
+Analyze the research paper in directory: {paper_dir}
+
+Please locate and analyze the markdown (.md) file containing the research paper. **Focus specifically on the References/Bibliography section** to identify and analyze the 5 most relevant references that have GitHub repositories.
+
+Focus on:
+1. **References section analysis** - Extract all citations from the References/Bibliography part
+2. References with high-quality GitHub implementations
+3. Papers cited for methodology, algorithms, or core techniques
+4. Related work that shares similar technical approaches
+5. Implementation references that could provide code patterns
+
+Goal: Find the most valuable GitHub repositories from the paper's reference list for code implementation reference.
+```
+
+首先给了路径，然后又重复了下目标和方法，该阶段比较简单，到这就结束了
+
+### phase 6
+
+该阶段叫“Repository Acquisition Automation”，也就是自动去处理github仓库，我们来看一下这个agent
+
+先看注释：
+
+```
+Automate intelligent repository acquisition with AI-guided selection.
+
+This agent autonomously identifies, evaluates, and acquires relevant
+repositories using intelligent filtering and automated download protocols.
+```
+
+```
+通过 AI 引导的选择，实现智能仓库获取的自动化。
+
+此智能代理（Agent）利用智能筛选和自动化下载协议，自主识别、评估并获取相关的代码仓库。
+```
+
+首先是一个下载，我们来看看：`github_repo_download`
+
+函数注释是：“Download GitHub repositories based on search results.”，然后我往下一个，嗯？还tm是agent，说实话感觉这个项目有点过度agent炫技了，很多处地方明明用代码实现会更加稳定 && 效果更好的，但是项目作者选择全部使用agent去堆叠，由于这是个学术性质的项目，我姑且理解他就是为了体现agent这个技术，并且不用太考虑token消耗，在这个基础上我们继续看吧
+
+这里实现了一个`github_download_agent`，提示词非常简单：“Download github repo to the directory {paper_dir}/code_base”，就是把所有项目下载下来呗，这还要agent？（bushi，我真没有诋毁的意思）
+
+mcp是`filesystem`和`github-downloader`，我们来看看`github-downloader`有哪些工具，来看`tools/git_command.py`
+
+一共有三个工具：
+

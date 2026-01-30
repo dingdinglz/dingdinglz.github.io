@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Etcd on Dinglz 's Blog</title><link>https://dingdinglz.github.io/tags/etcd/</link><description>Recent content in Etcd on Dinglz 's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 24 Mar 2025 02:00:00 +0000</lastBuildDate><atom:link href="https://dingdinglz.github.io/tags/etcd/index.xml" rel="self" type="application/rss+xml"/><item><title>etcd的功能与应用</title><link>https://dingdinglz.github.io/p/etcd%E7%9A%84%E5%8A%9F%E8%83%BD%E4%B8%8E%E5%BA%94%E7%94%A8/</link><pubDate>Mon, 24 Mar 2025 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/etcd%E7%9A%84%E5%8A%9F%E8%83%BD%E4%B8%8E%E5%BA%94%E7%94%A8/</guid><description>&lt;blockquote>
+&lt;p>伟大的etcd构成了云原生的基石&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="什么是etcd">什么是etcd
+&lt;/h2>&lt;p>etcd 是由 CoreOS（现为 Red Hat 旗下）开发的分布式键值存储系统，采用 Go 语言编写。它通过 Raft 共识算法实现高可用性，专为分布式系统设计，提供以下核心能力：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>强一致性&lt;/strong>：保证所有节点数据状态完全一致&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>高可用性&lt;/strong>：通过多节点集群自动故障转移&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>简单易用&lt;/strong>：通过 HTTP API 提供 RESTful 接口&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>可扩展性&lt;/strong>：支持水平扩展和动态集群管理&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>在分布式系统领域，etcd 以其优雅的设计和强大的功能，成为云原生时代的基础设施基石。它就像一个&amp;quot;分布式系统的心脏&amp;quot;，为 Kubernetes、Service Mesh 等系统提供核心的分布式数据管理能力。&lt;/p>
+&lt;h2 id="etcd的实际应用">etcd的实际应用
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>为分布式系统提供配置设置中心，也就是键值对存储，有点类似于redis，下面我们会谈到它和redis的异同&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>实现配置的热更新，也就是利用etcd的watch功能监听键值的变化&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>作为分布式锁的一种实现形式&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>作为微服务中，服务发现与注册中心（得益于lease和watch）&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>下面，我们将针对这些实际应用，将golang代码实现结合来进行讲解&lt;/p>
+&lt;p>在此之前，先完成前置准备工作：&lt;/p>
+&lt;h3 id="前置工作">前置工作
+&lt;/h3>&lt;ol>
+&lt;li>
+&lt;p>安装etcd：&lt;a class="link" href="https://etcd.io/docs/v3.5/install/" target="_blank" rel="noopener"
+>Install | etcd&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>本文go实现代码基于ectd官方client包：&lt;a class="link" href="https://github.com/etcd-io/etcd/tree/main/client/v3" target="_blank" rel="noopener"
+>etcd/client/v3 at main · etcd-io/etcd · GitHub&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>Let&amp;rsquo;s start&lt;/p>
+&lt;h2 id="部署">部署
+&lt;/h2>&lt;p>etcd支持单机部署和集群式部署，集群式部署时，etcd保证了自己不同终端间的数据高度一致性和高度可用性，也就是说，与redis相比，etcd更加一致，同步速度更快，因而作为分布式配置同步是很好的选择&lt;/p>
+&lt;p>由于本文主要谈一谈etcd能帮我们实现哪些内容，就不在此详细说明如何部署etcd集群（让运维哥去头疼吧哈哈哈），想要了解详细内容可以参考：&lt;a class="link" href="https://etcd.io/docs/v3.5/tutorials/how-to-setup-cluster/" target="_blank" rel="noopener"
+>How to Set Up a Demo etcd Cluster | etcd&lt;/a>&lt;/p>
+&lt;h2 id="golang连接etcd">Golang连接etcd
+&lt;/h2>&lt;p>首先安装前置工作中的etcd官方的client包，然后参考下述代码进行连接，即可得到一个etcd的client对象&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">package&lt;/span> &lt;span class="nx">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;fmt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">etcd&lt;/span> &lt;span class="s">&amp;#34;go.etcd.io/etcd/client/v3&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">func&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">client&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">etcd&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">New&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">etcd&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Endpoints&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[]&lt;/span>&lt;span class="kt">string&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s">&amp;#34;localhost:2379&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Error&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="键值对的读和写">键值对的读和写
+&lt;/h2>&lt;p>etcd最基础的功能其实就是做一个kv存储，有点类似于redis，但是etcd并不具备redis那样丰富的数据类型，所以存储和读取时的结构只有string-string。更多拓展可以考虑用json格式去封装&lt;/p>
+&lt;h3 id="写">写
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ctx&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">context&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Background&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Put&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;test&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;test-value&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这样即给test设置了值&lt;/p>
+&lt;h3 id="读">读
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">res&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;test&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Error&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> &lt;span class="nx">_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">item&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="k">range&lt;/span> &lt;span class="nx">res&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Kvs&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">string&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Key&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;:&amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">string&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Value&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这样即可以取到key和value&lt;/p>
+&lt;p>大家可能有疑惑为什么res.Kvs是一个切片而不是一个元素，因为Get可以按前缀读&lt;/p>
+&lt;h3 id="按前缀读">按前缀读
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">res&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;test&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">etcd&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithPrefix&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="nx">e&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">e&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Error&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> &lt;span class="nx">_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">item&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="k">range&lt;/span> &lt;span class="nx">res&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Kvs&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">string&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Key&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34;:&amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">string&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Value&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>可以看到区别仅仅在于&lt;code>etcd.WithPrefix()&lt;/code>，这句的意思就是读所有前缀是test的键值对，有点类似于test*，我们如果新建一个test2和test3，用上述代码可以全部读出来&lt;/p>
+&lt;h2 id="键值对的合租lease">键值对的合租（lease）
+&lt;/h2>&lt;p>所谓lease，可以理解成一个键的保质期，lease用于与键进行绑定，一个lease可以绑定多个键，当lease过期时，对应的键都会被删除。&lt;/p>
+&lt;p>与正常的过期时间不同的是，lease可以被续时或者直接销毁。&lt;/p>
+&lt;p>基于以上特点，让我们想想lease可以拿来做什么：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>配合监听机制去做心跳包，也就是设置一个过期时间，让服务器端不断的去维护（延时）lease，如果服务器宕机了，与lease绑定的键会自动删除，也就说明了这台服务器对应的已经不可用&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>根据上面那点可以继续拓展，做微服务的服务注册，比如一个api对应一个ip，让服务器动态维护ip的更新，服务器寄了也就导致这个api失效&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="设置过期时间">设置过期时间
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 创建一个新的lease，过期时间是5s
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">lease&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">_&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Grant&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">5&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 将刚刚创建的lease与键绑定
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Put&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;test&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;test-lease&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">etcd&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithLease&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">lease&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ID&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>大家可以试一下5s后再去取test这个键，这个时候test已经被删除&lt;/p>
+&lt;h3 id="服务器维护心跳包">服务器维护心跳包
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 创建一个新的lease，过期时间是5s
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">lease&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">_&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Grant&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">5&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 将刚刚创建的lease与键绑定
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Put&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;heart-ping&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;live&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">etcd&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">WithLease&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">lease&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ID&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 留1s给网络因素
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">4&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="nx">time&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Second&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">KeepAliveOnce&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">lease&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">ID&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>此时，验证服务器是否存活只需要验证heart-ping是否存在即可&lt;/p>
+&lt;h2 id="监听键值对watch">监听键值对（watch）
+&lt;/h2>&lt;p>实时监听键值对的变化，根据这个功能可以做到配置的热更新等等&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 监听test键
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">watcher&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Watch&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;test&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> &lt;span class="nx">event&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="k">range&lt;/span> &lt;span class="nx">watcher&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="nx">_&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">item&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="k">range&lt;/span> &lt;span class="nx">event&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Events&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Type&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="nx">etcd&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">EventTypeDelete&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">string&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Kv&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Key&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34; deleted&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span> &lt;span class="k">else&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">string&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Kv&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Key&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s">&amp;#34; changed:&amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">string&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Kv&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Value&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>类似的，watch也接受&lt;code>etcd.WithPrefix()&lt;/code>参数&lt;/p>
+&lt;h2 id="分布式锁">分布式锁
+&lt;/h2>&lt;p>既然redis可以维护一个分布式锁，那么我etcd当然也行，并且同步性更强，更易于拓展&lt;/p>
+&lt;h3 id="分布式锁的原理">分布式锁的原理
+&lt;/h3>&lt;p>通过redis、etcd这些中间件，让一把锁可以被多个应用共用，实现原理也很简单，维护一个键的存在作为锁被占用，不存在作为未加锁的状态去实现，例如使用redis的&lt;code>SETNX&lt;/code>&lt;/p>
+&lt;p>分布式锁想要实现的功能与本地的&lt;code>sync.MXLock&lt;/code>这些基本类似，区别仅仅在于前者允许多个系统同时访问&lt;/p>
+&lt;h3 id="实现">实现
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-go" data-lang="go">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 开启一个事务
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">res&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">_&lt;/span> &lt;span class="o">:=&lt;/span> &lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Txn&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="nf">If&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">etcd&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Compare&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">etcd&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">CreateRevision&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;lock&amp;#34;&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="s">&amp;#34;=&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;0&amp;#34;&lt;/span>&lt;span class="p">)).&lt;/span> &lt;span class="c1">// 如果lock不存在，即为可以加锁
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nf">Then&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">etcd&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">OpPut&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;lock&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;1&amp;#34;&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="c1">// 创建lock占用锁
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="p">).&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nf">Commit&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="nx">res&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Succeeded&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 加锁成功
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// do someting ....
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// 解锁
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">client&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Delete&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">ctx&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">&amp;#34;lock&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span> &lt;span class="k">else&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">fmt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nf">Println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;加锁失败，占用中&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>为了不形成死锁，也就是一直保持占用状态，可以通过设置ctx的timeout或者用刚刚说的lease去维护一个过期时间来处理&lt;/p>
+&lt;p>加锁失败的情况也不代表彻底不能使用，只是当前被占用，可以用循环尝试多次上锁等等操作&lt;/p>
+&lt;h2 id="服务发现与治理">服务发现与治理
+&lt;/h2>&lt;p>比如说，一个rpc服务，有个function，调用的ip地址有多个，通过心跳包实时维护他的地址，通过watch去动态更新调用的地址，如果你想要深入了解这方面，可以去阅读go-zero的相关部分的源码，它的默认实现就是利用etcd&lt;/p>
+&lt;h2 id="etcd与redis的异同">etcd与redis的异同
+&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>特性&lt;/strong>&lt;/th>
+&lt;th>&lt;strong>Redis&lt;/strong>&lt;/th>
+&lt;th>&lt;strong>etcd&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>核心功能&lt;/strong>&lt;/td>
+&lt;td>高性能键值存储系统，支持多种数据结构（字符串、列表、哈希、集合、有序集合等）。&lt;/td>
+&lt;td>分布式一致性键值存储系统，专注于服务发现、配置管理、分布式协调。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>数据模型&lt;/strong>&lt;/td>
+&lt;td>支持丰富的数据类型，如字符串、列表、哈希、集合、有序集合、位图、地理空间等。&lt;/td>
+&lt;td>仅支持简单的键值对（字符串），但支持版本控制、租约（Lease）和目录结构（递归操作）。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>一致性模型&lt;/strong>&lt;/td>
+&lt;td>支持最终一致性（异步复制）或强一致性（通过 Redis Cluster 或多主模式）。&lt;/td>
+&lt;td>通过 Raft 协议保证强一致性，所有节点数据实时同步。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>性能&lt;/strong>&lt;/td>
+&lt;td>高吞吐量和低延迟，适合高频读写操作（如缓存、队列）。&lt;/td>
+&lt;td>为一致性牺牲部分性能，但能满足分布式系统协调需求。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>持久化&lt;/strong>&lt;/td>
+&lt;td>支持 RDB（快照）和 AOF（追加日志）两种持久化方式。&lt;/td>
+&lt;td>数据持久化基于 Raft 日志，支持 WAL（预写日志）和快照。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>适用场景&lt;/strong>&lt;/td>
+&lt;td>缓存、队列、实时计数器、会话管理、消息中间件（如 Redis Pub/Sub）。&lt;/td>
+&lt;td>服务发现、配置中心、分布式锁、 leader 选举、分布式状态协调（如 Kubernetes）。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>一致性协议&lt;/strong>&lt;/td>
+&lt;td>不依赖特定协议，通过主从复制或 Cluster 实现分布式。&lt;/td>
+&lt;td>基于 Raft 协议实现分布式一致性，确保所有节点数据一致。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>集群管理&lt;/strong>&lt;/td>
+&lt;td>需要额外工具（如 Redis Cluster、Redis Sentinel）实现高可用。&lt;/td>
+&lt;td>内置集群管理，自动故障转移和节点发现。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>API 接口&lt;/strong>&lt;/td>
+&lt;td>原生协议（Redis Protocol）或 RESTful API（通过 RedisJSON 等模块扩展）。&lt;/td>
+&lt;td>原生 HTTP/JSON API，支持 Watch 机制（实时监听键值变化）。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>生态系统&lt;/strong>&lt;/td>
+&lt;td>丰富的客户端库（支持多种语言）、插件和扩展模块（如 RedisModule）。&lt;/td>
+&lt;td>提供官方客户端库（Go、Java、Python 等），专注于分布式协调场景。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>部署复杂度&lt;/strong>&lt;/td>
+&lt;td>单机部署简单，集群模式需配置主从或 Cluster。&lt;/td>
+&lt;td>需要集群部署（至少 3 个节点），但管理相对自动化。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>典型用途示例&lt;/strong>&lt;/td>
+&lt;td>缓存高频访问数据、实现消息队列（如 Celery）、实时计数器（如限流）。&lt;/td>
+&lt;td>存储分布式系统的配置、服务注册与发现、协调分布式任务（如 etcd 作为 Kubernetes 的存储后端）。&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="写在最后">写在最后
+&lt;/h2>&lt;p>在咕咕了很久之后终于又更新了一篇（），etcd在目前谈啥都要聊聊分布式的年代（虽然或许其实不需要用分布式也能带得动呢，真的有那么多用户吗？）起着很重要的作用，etcd在这个领域也不是一家独大，它的“同行”有zookeeper等等，但显然etcd是其中格外出色的。&lt;/p>
+&lt;p>顺便一提，最近有种很忙又不知道在忙啥的感觉（），希望下次更新可以提上日程吧，尚且咕咕了一篇kmp和eino的内容，唉唉唉&lt;/p></description></item></channel></rss>

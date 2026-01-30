@@ -1,0 +1,500 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="基于go-zero框架的微服务架构初实战"><title>Golang微服务实战</title>
+<link rel=canonical href=https://dingdinglz.github.io/p/golang%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%AE%9E%E6%88%98/><link rel=stylesheet href=/scss/style.min.81579ea678e30582aa60028bfe3192821d6c0fee666ee279be318fb5b558916b.css><meta property='og:title' content="Golang微服务实战"><meta property='og:description' content="基于go-zero框架的微服务架构初实战"><meta property='og:url' content='https://dingdinglz.github.io/p/golang%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%AE%9E%E6%88%98/'><meta property='og:site_name' content="Dinglz 's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='golang'><meta property='article:published_time' content='2025-01-15T02:00:00+00:00'><meta property='article:modified_time' content='2025-01-15T02:00:00+00:00'><meta name=twitter:title content="Golang微服务实战"><meta name=twitter:description content="基于go-zero框架的微服务架构初实战"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu9713755695089526605.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Dinglz 's Blog</a></h1><h2 class=site-description>keep learning...</h2></div></header><ol class=menu-social><li><a href=https://github.com/dingdinglz target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>分类</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#概述>概述</a><ol><li><a href=#微服务概述>微服务概述</a></li><li><a href=#go-zero概述>go-zero概述</a></li><li><a href=#本文实战内容概述>本文实战内容概述</a></li></ol></li><li><a href=#环境准备>环境准备</a><ol><li><a href=#安装golang>安装golang</a></li><li><a href=#安装mysql>安装mysql</a></li><li><a href=#安装etcd>安装etcd</a></li><li><a href=#安装protoc-gen-go>安装protoc-gen-go</a></li><li><a href=#安装goctl>安装goctl</a></li><li><a href=#创建目录>创建目录</a></li></ol></li><li><a href=#编写中心网关>编写中心网关</a><ol><li><a href=#创建api文件>创建api文件</a></li><li><a href=#生成网关代码>生成网关代码</a></li><li><a href=#总结>总结</a></li></ol></li><li><a href=#编写微服务>编写微服务</a><ol><li><a href=#add-rpc服务>add rpc服务</a></li><li><a href=#check-rpc服务>check rpc服务</a></li></ol></li><li><a href=#中心网关对接微服务>中心网关对接微服务</a></li><li><a href=#定义数据库表结构并生成crud代码>定义数据库表结构，并生成CRUD代码</a><ol><li><a href=#定义表结构>定义表结构</a></li><li><a href=#通过goctl命令生成crud代码>通过goctl命令生成CRUD代码</a></li></ol></li><li><a href=#rpc中处理数据库>rpc中处理数据库</a></li><li><a href=#测试>测试</a><ol><li><a href=#add>add</a></li><li><a href=#check>check</a></li></ol></li><li><a href=#本文所做项目的完整代码>本文所做项目的完整代码</a></li><li><a href=#反思与总结>反思与总结</a></li><li><a href=#参考资料>参考资料</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/go/ style=background-color:#c71585;color:#fff>Go</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/golang%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%AE%9E%E6%88%98/>Golang微服务实战</a></h2><h3 class=article-subtitle>基于go-zero框架的微服务架构初实战</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2025-01-15T02:00:00Z>Jan 15, 2025</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>5 minute read</time></div></footer></div></header><section class=article-content><h2 id=概述>概述</h2><h3 id=微服务概述>微服务概述</h3><p>近几年<strong>微服务</strong>的概念非常火，各大大厂也都已经在很多项目上采用的微服务式的设计，相比于直接用中间件做负载均衡的设计，微服务的优点在于它的模块式开发，支持热更新，对分布式更加友好。</p><p>对于一家大公司而言，模块式的开发，以及保持产品的稳定性及其重要，前者可以通过微服务设计，后者可以通过在分布式架构下，找个用户量小的时间段分批次更新来做到。</p><p>通常来说，微服务架构由很多微服务（负责实现不同的功能）和一个中心网关来实现，中心网关负责做负载均衡和服务治理，以及其他的统一处理请求。每个单一的微服务提供不同的功能。</p><p>大家较为熟知的rpc就是中心网关与微服务直接沟通的方式之一。</p><p>那么，想要实现一个微服务架构的应用要考虑的点非常之多，包括服务治理，负载均衡，熔断，主从同步等等内容。我也因此很长时间对于微服务的了解只停留在概念阶段。</p><p>近期参与到知易项目的开发中，便决定采用微服务架构，在一次次尝试中，发现了本文要介绍的非常好用，让开发者专注于逻辑的微服务框架<strong>go-zero</strong></p><h3 id=go-zero概述>go-zero概述</h3><p><a class=link href=[https://go-zero.dev/]%28https://go-zero.dev/%29>go-zero</a>是一个集成了各种工程实践的 web 和 rpc 框架。通过弹性设计保障了大并发服务端的稳定性，经受了充分的实战检验。</p><p>也就是说，你能想到要实现的所有功能，已经完全被内置在了go-zero这个框架中。</p><h3 id=本文实战内容概述>本文实战内容概述</h3><p>我们用书店服务做示例，并且实现其中的增加书目和检查价格这两个功能，来模拟实际项目开发的流程。</p><p>那么，Let&rsquo;s go!!</p><h2 id=环境准备>环境准备</h2><h3 id=安装golang>安装golang</h3><p>上官网或者镜像站下载即可，别忘记配置go package的代理</p><p>可用的一个代理：<a class=link href=https://goproxy.cn/ target=_blank rel=noopener>七牛云</a></p><h3 id=安装mysql>安装mysql</h3><p>我们通过mysql作为数据库来存储图书。</p><p>我推荐直接使用docker的mysql镜像来启动mysql，便于管理。</p><p>也可以在本机安装mysql，安利下之前我开发过的一款mysql管理工具：<a class=link href=https://gitee.com/dinglz/mysql-manager target=_blank rel=noopener>MysqlManager: 可视化管理mysql，新建库，删除库，更改密码，初始化mysql，启动，关闭等日常操作。</a></p><h3 id=安装etcd>安装etcd</h3><p>我们用etcd作为服务发现中心，etcd是一款go开发的高性能的配置中心</p><p><a class=link href=https://github.com/etcd-io/etcd/releases target=_blank rel=noopener>Releases · etcd-io/etcd · GitHub</a> 下载并运行即可</p><h3 id=安装protoc-gen-go>安装protoc-gen-go</h3><p>rpc协议的代码生成器，用下面的代码安装即可</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl> go get -u github.com/golang/protobuf/protoc-gen-go@v1.3.2
+</span></span></code></pre></td></tr></table></div></div><h3 id=安装goctl>安装goctl</h3><p>goctl是go-zero提供的一款代码生成工具，用于生成go-zero框架的代码，加速开发速度</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>go get -u github.com/zeromicro/go-zero/tools/goctl@latest
+</span></span></code></pre></td></tr></table></div></div><h3 id=创建目录>创建目录</h3><p>下面创建一个目录<code>bookstore</code></p><p>在目录中执行go mod init命令初始化项目</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>go mod init bookstore
+</span></span></code></pre></td></tr></table></div></div><h2 id=编写中心网关>编写中心网关</h2><p>在上一步中我们安装了goctl，我们可以通过生成并编写api文件，来让goctl帮我们生成代码，迅速的把微服务的框架大家起来。</p><h3 id=创建api文件>创建api文件</h3><p>首先，创建api文件夹并进入，在文件夹下执行</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>goctl api -o bookstore.api
+</span></span></code></pre></td></tr></table></div></div><p>可以看到目录下已经新建了bookstore.api文件。</p><p>编辑它，我们把该项目的api设计为如下</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=nx>addReq</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>book</span> <span class=kt>string</span> <span class=s>`form:&#34;book&#34;`</span>
+</span></span><span class=line><span class=cl>		<span class=nx>price</span> <span class=kt>int64</span> <span class=s>`form:&#34;price&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	
+</span></span><span class=line><span class=cl>	<span class=nx>addResp</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>ok</span> <span class=kt>bool</span> <span class=s>`json:&#34;ok&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=nx>checkReq</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>book</span> <span class=kt>string</span> <span class=s>`form:&#34;book&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	
+</span></span><span class=line><span class=cl>	<span class=nx>checkResp</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>found</span> <span class=kt>bool</span> <span class=s>`json:&#34;found&#34;`</span>
+</span></span><span class=line><span class=cl>		<span class=nx>price</span> <span class=kt>int64</span> <span class=s>`json:&#34;price&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>service</span> <span class=nx>bookstore</span><span class=o>-</span><span class=nx>api</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=err>@</span><span class=nx>handler</span> <span class=nx>AddHandler</span>
+</span></span><span class=line><span class=cl>	<span class=nx>get</span> <span class=o>/</span><span class=nf>add</span> <span class=p>(</span><span class=nx>addReq</span><span class=p>)</span> <span class=nf>returns</span> <span class=p>(</span><span class=nx>addResp</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	
+</span></span><span class=line><span class=cl>	<span class=err>@</span><span class=nx>handler</span> <span class=nx>CheckHandler</span>
+</span></span><span class=line><span class=cl>	<span class=nx>get</span> <span class=o>/</span><span class=nf>check</span> <span class=p>(</span><span class=nx>checkReq</span><span class=p>)</span> <span class=nf>returns</span> <span class=p>(</span><span class=nx>checkResp</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>type用法和go一致，service用来定义get/post/head/delete等api请求，解释如下：</p><ul><li><code>service bookstore-api {</code>这一行定义了service名字</li><li><code>@handler</code>定义了服务端handler名字</li><li><code>get /add(addReq) returns(addResp)</code>定义了get方法的路由、请求参数、返回参数等</li></ul><p>api文件的具体语法可以前往官网查看。</p><p><a class=link href=https://go-zero.dev/docs/tutorials target=_blank rel=noopener>点我，点我查看具体语法</a></p><p>然后我们就可以使用goctl为我们一键式生成代码</p><h3 id=生成网关代码>生成网关代码</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>goctl api go -api bookstore.api -dir .
+</span></span></code></pre></td></tr></table></div></div><p>生成的文件结构如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>api
+</span></span><span class=line><span class=cl>├── bookstore.api                  // api定义
+</span></span><span class=line><span class=cl>├── bookstore.go                   // main入口定义
+</span></span><span class=line><span class=cl>├── etc
+</span></span><span class=line><span class=cl>│   └── bookstore-api.yaml         // 配置文件
+</span></span><span class=line><span class=cl>└── internal
+</span></span><span class=line><span class=cl>    ├── config
+</span></span><span class=line><span class=cl>    │   └── config.go              // 定义配置
+</span></span><span class=line><span class=cl>    ├── handler
+</span></span><span class=line><span class=cl>    │   ├── addhandler.go          // 实现addHandler
+</span></span><span class=line><span class=cl>    │   ├── checkhandler.go        // 实现checkHandler
+</span></span><span class=line><span class=cl>    │   └── routes.go              // 定义路由处理
+</span></span><span class=line><span class=cl>    ├── logic
+</span></span><span class=line><span class=cl>    │   ├── addlogic.go            // 实现AddLogic
+</span></span><span class=line><span class=cl>    │   └── checklogic.go          // 实现CheckLogic
+</span></span><span class=line><span class=cl>    ├── svc
+</span></span><span class=line><span class=cl>    │   └── servicecontext.go      // 定义ServiceContext
+</span></span><span class=line><span class=cl>    └── types
+</span></span><span class=line><span class=cl>        └── types.go               // 定义请求、返回结构体
+</span></span></code></pre></td></tr></table></div></div><p>此时网关便是符合我们api文件中声明的结构。</p><p>你可以直接在api文件夹<code>go build</code>来生成网关的可执行文件</p><blockquote><p>如果遇到依赖相关的报错，记得<code>go mod tidy</code>更新下依赖哦</p></blockquote><h3 id=总结>总结</h3><p>目前的这个中心网关并没有实现对应的功能，只是一个空壳子，下面让我们分别完成add和check这部分的微服务。</p><h2 id=编写微服务>编写微服务</h2><h3 id=add-rpc服务>add rpc服务</h3><p>在bookstore下创建rpc目录。</p><p>在rpc目录中分别创建add和check的文件夹。</p><p>首先我们来编写add的服务声明，进入add文件夹中</p><p>通过命令生成rpc声明的文件模版</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>goctl rpc template -o add.proto
+</span></span></code></pre></td></tr></table></div></div><p>修改文件如下</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-protobuf data-lang=protobuf><span class=line><span class=cl><span class=n>syntax</span> <span class=o>=</span> <span class=s>&#34;proto3&#34;</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=kn>package</span> <span class=nn>add</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>option</span> <span class=n>go_package</span> <span class=o>=</span> <span class=s>&#34;./add&#34;</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=kd>message</span> <span class=nc>addReq</span> <span class=p>{</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>    <span class=kt>string</span> <span class=n>book</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>    <span class=kt>int64</span> <span class=n>price</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=p>}</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=kd>message</span> <span class=nc>addResp</span> <span class=p>{</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>    <span class=kt>bool</span> <span class=n>ok</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=p>}</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=kd>service</span> <span class=n>adder</span> <span class=p>{</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>    <span class=k>rpc</span> <span class=n>add</span><span class=p>(</span><span class=n>addReq</span><span class=p>)</span> <span class=k>returns</span><span class=p>(</span><span class=n>addResp</span><span class=p>);</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=p>}</span><span class=err>
+</span></span></span></code></pre></td></tr></table></div></div><p>该文件是用来为grpc定义微服务传输的格式和相关信息。</p><p>通过下面的命令生成rpc的代码</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>goctl rpc protoc add.proto --go_out<span class=o>=</span>. --go-grpc_out<span class=o>=</span>. --zrpc_out<span class=o>=</span>.
+</span></span></code></pre></td></tr></table></div></div><p>文件结构如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>rpc/add
+</span></span><span class=line><span class=cl>├── add                   // pb.go
+</span></span><span class=line><span class=cl>│   ├── add.pb.go
+</span></span><span class=line><span class=cl>│   └── add_grpc.pb.go
+</span></span><span class=line><span class=cl>├── add.go                // main函数入口
+</span></span><span class=line><span class=cl>├── add.proto             // proto源文件
+</span></span><span class=line><span class=cl>├── adder                 // rpc client call entry
+</span></span><span class=line><span class=cl>│   └── adder.go
+</span></span><span class=line><span class=cl>├── etc                   // yaml配置文件
+</span></span><span class=line><span class=cl>│   └── add.yaml
+</span></span><span class=line><span class=cl>└── internal              
+</span></span><span class=line><span class=cl>    ├── config            // yaml配置文件对应的结构体定义
+</span></span><span class=line><span class=cl>    │   └── config.go
+</span></span><span class=line><span class=cl>    ├── logic             // 业务逻辑
+</span></span><span class=line><span class=cl>    │   └── addlogic.go
+</span></span><span class=line><span class=cl>    ├── server            // rpc server
+</span></span><span class=line><span class=cl>    │   └── adderserver.go
+</span></span><span class=line><span class=cl>    └── svc               // 资源依赖
+</span></span><span class=line><span class=cl>        └── servicecontext.go
+</span></span></code></pre></td></tr></table></div></div><p>此时的add rpc已经编写完成，同样是可以<code>go build</code>并运行的</p><h3 id=check-rpc服务>check rpc服务</h3><p>与add rpc服务想似</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>goctl rpc template -o check.proto
+</span></span></code></pre></td></tr></table></div></div><p>修改check.proto如下</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-protobuf data-lang=protobuf><span class=line><span class=cl><span class=n>syntax</span> <span class=o>=</span> <span class=s>&#34;proto3&#34;</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=kn>package</span> <span class=nn>check</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>option</span> <span class=n>go_package</span> <span class=o>=</span> <span class=s>&#34;./check&#34;</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=kd>message</span> <span class=nc>checkReq</span> <span class=p>{</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>    <span class=kt>string</span> <span class=n>book</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=p>}</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=kd>message</span> <span class=nc>checkResp</span> <span class=p>{</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>    <span class=kt>bool</span> <span class=n>found</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>    <span class=kt>int64</span> <span class=n>price</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=p>}</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=kd>service</span> <span class=n>checker</span> <span class=p>{</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>    <span class=k>rpc</span> <span class=n>check</span><span class=p>(</span><span class=n>checkReq</span><span class=p>)</span> <span class=k>returns</span><span class=p>(</span><span class=n>checkResp</span><span class=p>);</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=p>}</span><span class=err>
+</span></span></span></code></pre></td></tr></table></div></div><p>生成代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>goctl rpc protoc check.proto --go_out<span class=o>=</span>. --go-grpc_out<span class=o>=</span>. --zrpc_out<span class=o>=</span>.
+</span></span></code></pre></td></tr></table></div></div><p><code>etc/check.yaml</code>文件里可以修改侦听端口等配置</p><p>需要修改<code>etc/check.yaml</code>的端口为<code>8081</code>，因为<code>8080</code>已经被<code>add</code>服务使用了</p><h2 id=中心网关对接微服务>中心网关对接微服务</h2><p>修改配置文件<code>api/etc/bookstorrer-api.yaml</code>，增加如下内容</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>Add</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>Etcd</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>Hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>localhost:2379</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>Key</span><span class=p>:</span><span class=w> </span><span class=l>add.rpc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>Check</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>Etcd</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>Hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>localhost:2379</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>Key</span><span class=p>:</span><span class=w> </span><span class=l>check.rpc</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>通过etcd自动去发现可用的add/check服务</p><p>修改<code>api/internal/config/config.go</code>如下，增加add/check服务依赖</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Config</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>rest</span><span class=p>.</span><span class=nx>RestConf</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Add</span>   <span class=nx>zrpc</span><span class=p>.</span><span class=nx>RpcClientConf</span>     <span class=c1>// 手动代码
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>Check</span> <span class=nx>zrpc</span><span class=p>.</span><span class=nx>RpcClientConf</span>     <span class=c1>// 手动代码
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>修改<code>api/internal/svc/servicecontext.go</code>，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>ServiceContext</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Config</span>  <span class=nx>config</span><span class=p>.</span><span class=nx>Config</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Adder</span>   <span class=nx>adder</span><span class=p>.</span><span class=nx>Adder</span>          <span class=c1>// 手动代码
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>Checker</span> <span class=nx>checker</span><span class=p>.</span><span class=nx>Checker</span>      <span class=c1>// 手动代码
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>NewServiceContext</span><span class=p>(</span><span class=nx>c</span> <span class=nx>config</span><span class=p>.</span><span class=nx>Config</span><span class=p>)</span> <span class=o>*</span><span class=nx>ServiceContext</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>ServiceContext</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Config</span><span class=p>:</span>  <span class=nx>c</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Adder</span><span class=p>:</span>   <span class=nx>adder</span><span class=p>.</span><span class=nf>NewAdder</span><span class=p>(</span><span class=nx>zrpc</span><span class=p>.</span><span class=nf>MustNewClient</span><span class=p>(</span><span class=nx>c</span><span class=p>.</span><span class=nx>Add</span><span class=p>)),</span>         <span class=c1>// 手动代码
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=nx>Checker</span><span class=p>:</span> <span class=nx>checker</span><span class=p>.</span><span class=nf>NewChecker</span><span class=p>(</span><span class=nx>zrpc</span><span class=p>.</span><span class=nf>MustNewClient</span><span class=p>(</span><span class=nx>c</span><span class=p>.</span><span class=nx>Check</span><span class=p>)),</span>   <span class=c1>// 手动代码
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>修改<code>api/internal/logic/addlogic.go</code>里的<code>Add</code>方法，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>AddLogic</span><span class=p>)</span> <span class=nf>Add</span><span class=p>(</span><span class=nx>req</span> <span class=o>*</span><span class=nx>types</span><span class=p>.</span><span class=nx>AddReq</span><span class=p>)</span> <span class=p>(</span><span class=nx>resp</span> <span class=o>*</span><span class=nx>types</span><span class=p>.</span><span class=nx>AddResp</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 手动代码开始
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>r</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>svcCtx</span><span class=p>.</span><span class=nx>Adder</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>l</span><span class=p>.</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>adder</span><span class=p>.</span><span class=nx>AddReq</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Book</span><span class=p>:</span>  <span class=nx>req</span><span class=p>.</span><span class=nx>Book</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Price</span><span class=p>:</span> <span class=nx>req</span><span class=p>.</span><span class=nx>Price</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=o>&amp;</span><span class=nx>types</span><span class=p>.</span><span class=nx>AddResp</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Ok</span><span class=p>:</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Ok</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=p>},</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 手动代码结束
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过调用<code>adder</code>的<code>Add</code>方法实现添加图书到bookstore系统</p><p>修改<code>api/internal/logic/checklogic.go</code>里的<code>Check</code>方法，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>CheckLogic</span><span class=p>)</span> <span class=nf>Check</span><span class=p>(</span><span class=nx>req</span> <span class=o>*</span><span class=nx>types</span><span class=p>.</span><span class=nx>CheckReq</span><span class=p>)</span> <span class=p>(</span><span class=nx>resp</span> <span class=o>*</span><span class=nx>types</span><span class=p>.</span><span class=nx>CheckResp</span><span class=p>,</span><span class=nx>err</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 手动代码开始
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>r</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>svcCtx</span><span class=p>.</span><span class=nx>Checker</span><span class=p>.</span><span class=nf>Check</span><span class=p>(</span><span class=nx>l</span><span class=p>.</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>checker</span><span class=p>.</span><span class=nx>CheckReq</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Book</span><span class=p>:</span> <span class=nx>req</span><span class=p>.</span><span class=nx>Book</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>logx</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=o>&amp;</span><span class=nx>types</span><span class=p>.</span><span class=nx>CheckResp</span><span class=p>{},</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=o>&amp;</span><span class=nx>types</span><span class=p>.</span><span class=nx>CheckResp</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Found</span><span class=p>:</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Found</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Price</span><span class=p>:</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Price</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=p>},</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 手动代码结束
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过调用<code>checker</code>的<code>Check</code>方法实现从bookstore系统中查询图书的价格</p><h2 id=定义数据库表结构并生成crud代码>定义数据库表结构，并生成CRUD代码</h2><p>好的，做到目前这一步，我们已经完成了中心网关的全部内容，下面我们就需要挨个实现add、check两个服务的具体功能。</p><p>数据库操作无疑是主要的。</p><p>让我们来定义数据库表结构，并生成CRUD代码</p><p>bookstore下创建<code>rpc/model</code>目录</p><h3 id=定义表结构>定义表结构</h3><p>在rpc/model目录下编写创建book表的sql文件<code>book.sql</code>，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=k>CREATE</span><span class=w> </span><span class=k>TABLE</span><span class=w> </span><span class=o>`</span><span class=n>book</span><span class=o>`</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=o>`</span><span class=n>book</span><span class=o>`</span><span class=w> </span><span class=nb>varchar</span><span class=p>(</span><span class=mi>255</span><span class=p>)</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=w> </span><span class=k>COMMENT</span><span class=w> </span><span class=s1>&#39;book name&#39;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=o>`</span><span class=n>price</span><span class=o>`</span><span class=w> </span><span class=nb>int</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=w> </span><span class=k>COMMENT</span><span class=w> </span><span class=s1>&#39;book price&#39;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>PRIMARY</span><span class=w> </span><span class=k>KEY</span><span class=p>(</span><span class=o>`</span><span class=n>book</span><span class=o>`</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>)</span><span class=w> </span><span class=n>ENGINE</span><span class=o>=</span><span class=n>InnoDB</span><span class=w> </span><span class=k>DEFAULT</span><span class=w> </span><span class=n>CHARSET</span><span class=o>=</span><span class=n>utf8mb4</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>在mysql数据库中创建一个库，并运行这个sql文件建立表<code>book</code></p><h3 id=通过goctl命令生成crud代码>通过goctl命令生成CRUD代码</h3><p>rpc/model目录下执行该命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>goctl model mysql ddl -c -src book.sql -dir .
+</span></span></code></pre></td></tr></table></div></div><p>生成后的文件结构如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=n>rpc</span><span class=o>/</span><span class=n>model</span>
+</span></span><span class=line><span class=cl><span class=err>├──</span> <span class=n>book</span><span class=o>.</span><span class=n>sql</span>
+</span></span><span class=line><span class=cl><span class=err>├──</span> <span class=n>bookstoremodel</span><span class=o>.</span><span class=n>go</span>     <span class=o>//</span> <span class=n>CRUD</span><span class=o>+</span><span class=n>cache代码</span>
+</span></span><span class=line><span class=cl><span class=err>└──</span> <span class=n>vars</span><span class=o>.</span><span class=n>go</span>               <span class=o>//</span> <span class=err>定义常量和变量</span>
+</span></span></code></pre></td></tr></table></div></div><p>amazing，curd的结构已经全部生成，我们只要调用即可。</p><h2 id=rpc中处理数据库>rpc中处理数据库</h2><p>修改<code>rpc/add/etc/add.yaml</code>和<code>rpc/check/etc/check.yaml</code>，增加如下内容：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>DataSource</span><span class=p>:</span><span class=w> </span><span class=l>root:@tcp(localhost:3306)/gozero </span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c># mysql链接地址，满足 $user:$password@tcp($ip:$port)/$db?$queries 格式即可</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>修改<code>rpc/add/internal/config/config.go</code>和<code>rpc/check/internal/config/config.go</code>，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Config</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>zrpc</span><span class=p>.</span><span class=nx>RpcServerConf</span>
+</span></span><span class=line><span class=cl>    <span class=nx>DataSource</span> <span class=kt>string</span>             <span class=c1>// 手动代码
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>增加了mysql配置</p><p>修改<code>rpc/add/internal/svc/servicecontext.go</code>和<code>rpc/check/internal/svc/servicecontext.go</code>，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>ServiceContext</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span>     <span class=nx>config</span><span class=p>.</span><span class=nx>Config</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Model</span> <span class=nx>model</span><span class=p>.</span><span class=nx>BookModel</span>   <span class=c1>// 手动代码
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>NewServiceContext</span><span class=p>(</span><span class=nx>c</span> <span class=nx>config</span><span class=p>.</span><span class=nx>Config</span><span class=p>)</span> <span class=o>*</span><span class=nx>ServiceContext</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>ServiceContext</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>c</span><span class=p>:</span>             <span class=nx>c</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Model</span><span class=p>:</span> <span class=nx>model</span><span class=p>.</span><span class=nf>NewBookModel</span><span class=p>(</span><span class=nx>sqlx</span><span class=p>.</span><span class=nf>NewMysql</span><span class=p>(</span><span class=nx>c</span><span class=p>.</span><span class=nx>DataSource</span><span class=p>),</span> <span class=nx>c</span><span class=p>.</span><span class=nx>Cache</span><span class=p>),</span> <span class=c1>// 手动代码
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>修改<code>rpc/add/internal/logic/addlogic.go</code>，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>AddLogic</span><span class=p>)</span> <span class=nf>Add</span><span class=p>(</span><span class=nx>in</span> <span class=o>*</span><span class=nx>add</span><span class=p>.</span><span class=nx>AddReq</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>add</span><span class=p>.</span><span class=nx>AddResp</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 手动代码开始
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>_</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>svcCtx</span><span class=p>.</span><span class=nx>Model</span><span class=p>.</span><span class=nf>Insert</span><span class=p>(</span><span class=nx>l</span><span class=p>.</span><span class=nx>ctx</span><span class=p>,</span><span class=o>&amp;</span><span class=nx>model</span><span class=p>.</span><span class=nx>Book</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Book</span><span class=p>:</span>  <span class=nx>in</span><span class=p>.</span><span class=nx>Book</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Price</span><span class=p>:</span> <span class=nx>in</span><span class=p>.</span><span class=nx>Price</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>add</span><span class=p>.</span><span class=nx>AddResp</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Ok</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 手动代码结束
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>修改<code>rpc/check/internal/logic/checklogic.go</code>，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>CheckLogic</span><span class=p>)</span> <span class=nf>Check</span><span class=p>(</span><span class=nx>in</span> <span class=o>*</span><span class=nx>check</span><span class=p>.</span><span class=nx>CheckReq</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>check</span><span class=p>.</span><span class=nx>CheckResp</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 手动代码开始
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>resp</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>svcCtx</span><span class=p>.</span><span class=nx>Model</span><span class=p>.</span><span class=nf>FindOne</span><span class=p>(</span><span class=nx>l</span><span class=p>.</span><span class=nx>ctx</span><span class=p>,</span><span class=nx>in</span><span class=p>.</span><span class=nx>Book</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span><span class=nx>err</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>check</span><span class=p>.</span><span class=nx>CheckResp</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Found</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Price</span><span class=p>:</span> <span class=nx>resp</span><span class=p>.</span><span class=nx>Price</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 手动代码结束
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这几步是在调用数据库存储数据，所见即所得。</p><h2 id=测试>测试</h2><p>我们分别在add，check，api文件夹中运行<code>go build</code></p><p>生成了add.exe，check.exe，api.exe</p><p>首先运行etcd，启动mysql</p><p>再依次运行add，check和api（add和check运行顺序无所谓）即可启动服务</p><p>让我们用curl调用测试一下</p><h3 id=add>add</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>curl -i <span class=s2>&#34;http://localhost:8888/add?book=go-zero&amp;price=10&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><p>返回</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-http data-lang=http><span class=line><span class=cl><span class=kr>HTTP</span><span class=o>/</span><span class=m>1.1</span> <span class=m>200</span> <span class=ne>OK</span>
+</span></span><span class=line><span class=cl><span class=n>Content-Type</span><span class=o>:</span> <span class=l>application/json</span>
+</span></span><span class=line><span class=cl><span class=n>Date</span><span class=o>:</span> <span class=l>Thu, 03 Sep 2020 09:42:13 GMT</span>
+</span></span><span class=line><span class=cl><span class=n>Content-Length</span><span class=o>:</span> <span class=l>11</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;ok&#34;</span><span class=p>:</span><span class=kc>true</span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>成功添加了一本书</p><h3 id=check>check</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>curl -i <span class=s2>&#34;http://localhost:8888/check?book=go-zero&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><p>返回如下</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-http data-lang=http><span class=line><span class=cl><span class=kr>HTTP</span><span class=o>/</span><span class=m>1.1</span> <span class=m>200</span> <span class=ne>OK</span>
+</span></span><span class=line><span class=cl><span class=n>Content-Type</span><span class=o>:</span> <span class=l>application/json</span>
+</span></span><span class=line><span class=cl><span class=n>Date</span><span class=o>:</span> <span class=l>Thu, 03 Sep 2020 09:47:34 GMT</span>
+</span></span><span class=line><span class=cl><span class=n>Content-Length</span><span class=o>:</span> <span class=l>25</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;found&#34;</span><span class=p>:</span><span class=kc>true</span><span class=p>,</span><span class=nt>&#34;price&#34;</span><span class=p>:</span><span class=mi>10</span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>成功查询到了这本书！</p><h2 id=本文所做项目的完整代码>本文所做项目的完整代码</h2><p><a class=link href=https://github.com/zeromicro/zero-examples/tree/main/bookstore target=_blank rel=noopener>zero-examples/bookstore at main · zeromicro/zero-examples · GitHub</a></p><h2 id=反思与总结>反思与总结</h2><p>本文所做的事情其实仅仅是搭建了一个微服务的体系，然后实现了两个非常简单的功能</p><p>真实的项目中需要完成完整的逻辑，并完成其他功能，比如redis缓存，限流器，鉴权等等，这些在go-zero中都为我们提供了现成的组件，不得不说，go-zero是一个强大的框架，同时，由于被众多公司用于真实项目，稳定性与安全性也是可以保障的。</p><h2 id=参考资料>参考资料</h2><p><a class=link href=https://github.com/zeromicro/zero-doc/blob/main/docs/zero/bookstore.md target=_blank rel=noopener>zero-doc/docs/zero/bookstore.md at main · zeromicro/zero-doc · GitHub</a></p><p><a class=link href=https://go-zero.dev/ target=_blank rel=noopener>Go-zero</a></p></section><footer class=article-footer><section class=article-tags><a href=/tags/golang/>Golang</a></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>Last updated on Jan 15, 2025 02:00 UTC</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-go-1.23-iter-%E5%8C%85/><div class=article-details><h2 class=article-title>深入理解 Go 1.23 iter 包</h2></div></a></article><article><a href=/p/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%AB%98%E6%95%88%E7%9A%84%E7%BD%91%E7%AB%99%E5%90%8E%E7%AB%AF%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>如何构建一个高效的网站后端应用</h2></div></a></article><article><a href=/p/mcp-with-golang/><div class=article-details><h2 class=article-title>Mcp with golang</h2></div></a></article><article><a href=/p/etcd%E7%9A%84%E5%8A%9F%E8%83%BD%E4%B8%8E%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>etcd的功能与应用</h2></div></a></article><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%857-geospatial/><div class=article-details><h2 class=article-title>Redis学习之旅(7) Geospatial</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2024 -
+2026 Dinglz 's Blog</section><section class=powerby>copyright &copy; dinglz<br>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.33.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

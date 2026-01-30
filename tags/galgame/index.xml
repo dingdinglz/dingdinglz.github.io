@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Galgame on Dinglz 's Blog</title><link>https://dingdinglz.github.io/tags/galgame/</link><description>Recent content in Galgame on Dinglz 's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 29 Dec 2025 02:00:00 +0000</lastBuildDate><atom:link href="https://dingdinglz.github.io/tags/galgame/index.xml" rel="self" type="application/rss+xml"/><item><title>如何使用Mac玩galgame</title><link>https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/</link><pubDate>Mon, 29 Dec 2025 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/</guid><description>&lt;h2 id="前言">前言
+&lt;/h2>&lt;p>本篇文章主要用来说明如何在mac上运行由krkr引擎开发的游戏&lt;/p>
+&lt;p>众所周知柚子社的游戏都是用krkr引擎开发的，而mac的屏幕和音响这么好不拿来玩柚子社的游戏真是浪费了&lt;/p>
+&lt;h2 id="安装-playcover">安装 playcover
+&lt;/h2>&lt;p>playcover用来侧载安装ipa文件，用它来安装krkr模拟器&lt;/p>
+&lt;p>这里的安装非常简单，就不多说了，进入官网下载安装即可：https://playcover.io/&lt;/p>
+&lt;h2 id="下载-krkr模拟器">下载 krkr模拟器
+&lt;/h2>&lt;p>来到https://github.com/zeas2/Kirikiroid2/releases ，记得下载ipa文件&lt;/p>
+&lt;p>然后打开playcover，导入进去，下面需要调整krkr的配置，右键krkr模拟器，点击设置&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/1.png"
+width="1800"
+height="900"
+srcset="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/1_hu11008928066575600751.png 480w, https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/1_hu6630949672948005932.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="200"
+data-flex-basis="480px"
+>&lt;/p>
+&lt;p>来到杂项，然后把类型设置成games&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/2.png"
+width="1800"
+height="900"
+srcset="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/2_hu10289823984949751963.png 480w, https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/2_hu13229360957539437531.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="200"
+data-flex-basis="480px"
+>&lt;/p>
+&lt;p>然后右键显示应用数据&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/3.png"
+width="1800"
+height="900"
+srcset="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/3_hu10696192600575929665.png 480w, https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/3_hu4312980971514330539.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="200"
+data-flex-basis="480px"
+>&lt;/p>
+&lt;p>打开Data/Documents文件夹，把游戏文件扔进去&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/4.png"
+width="1840"
+height="872"
+srcset="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/4_hu190988160933428002.png 480w, https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/4_hu8152357871078352863.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="211"
+data-flex-basis="506px"
+>&lt;/p>
+&lt;p>然后就可以启动游戏啦&lt;/p>
+&lt;p>如果你想要空格就下一个剧情等等，你可以用按键编辑绑定按键&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/5.png"
+width="1156"
+height="400"
+srcset="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/5_hu12435666789775539560.png 480w, https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/5_hu17405762281159636323.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="289"
+data-flex-basis="693px"
+>&lt;/p>
+&lt;p>完毕&lt;/p>
+&lt;h2 id="总之">总之
+&lt;/h2>&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/6.png"
+width="3024"
+height="1890"
+srcset="https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/6_hu13105116421473229044.png 480w, https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8mac%E7%8E%A9galgame/6_hu11927386242557307098.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="160"
+data-flex-basis="384px"
+>&lt;/p>
+&lt;p>0d00可爱捏&lt;/p></description></item></channel></rss>

@@ -1,0 +1,294 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="iter包的使用和原理"><title>深入理解 Go 1.23 iter 包</title>
+<link rel=canonical href=https://dingdinglz.github.io/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-go-1.23-iter-%E5%8C%85/><link rel=stylesheet href=/scss/style.min.81579ea678e30582aa60028bfe3192821d6c0fee666ee279be318fb5b558916b.css><meta property='og:title' content="深入理解 Go 1.23 iter 包"><meta property='og:description' content="iter包的使用和原理"><meta property='og:url' content='https://dingdinglz.github.io/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-go-1.23-iter-%E5%8C%85/'><meta property='og:site_name' content="Dinglz 's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='golang'><meta property='article:published_time' content='2026-01-30T02:00:00+00:00'><meta property='article:modified_time' content='2026-01-30T02:00:00+00:00'><meta name=twitter:title content="深入理解 Go 1.23 iter 包"><meta name=twitter:description content="iter包的使用和原理"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu9713755695089526605.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Dinglz 's Blog</a></h1><h2 class=site-description>keep learning...</h2></div></header><ol class=menu-social><li><a href=https://github.com/dingdinglz target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>分类</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#概述>概述</a></li><li><a href=#核心概念什么是-iterseq>核心概念：什么是 <code>iter.Seq</code>？</a><ol><li><a href=#iterseqv-单值迭代器><code>iter.Seq[V]</code> (单值迭代器)</a></li><li><a href=#iterseq2k-v-双值迭代器><code>iter.Seq2[K, V]</code> (双值迭代器)</a></li></ol></li><li><a href=#基础用法自定义迭代器>基础用法：自定义迭代器</a><ol><li><a href=#示例-1创建一个简单的数字生成器-iterseq>示例 1：创建一个简单的数字生成器 (<code>iter.Seq</code>)</a></li><li><a href=#示例-2遍历自定义数据结构-iterseq2>示例 2：遍历自定义数据结构 (<code>iter.Seq2</code>)</a></li></ol></li><li><a href=#高级用法iterpull-拉取式迭代>高级用法：<code>iter.Pull</code> (拉取式迭代)</a><ol><li><a href=#函数签名>函数签名</a></li><li><a href=#示例-3手动拉取数据>示例 3：手动拉取数据</a></li></ol></li><li><a href=#标准库的配合-slices-和-maps>标准库的配合 (<code>slices</code> 和 <code>maps</code>)</a><ol><li><a href=#示例-4结合-slices-包进行过滤和转换>示例 4：结合 <code>slices</code> 包进行过滤和转换</a></li></ol></li><li><a href=#总结>总结</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/go/ style=background-color:#c71585;color:#fff>Go</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-go-1.23-iter-%E5%8C%85/>深入理解 Go 1.23 iter 包</a></h2><h3 class=article-subtitle>iter包的使用和原理</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2026-01-30T02:00:00Z>Jan 30, 2026</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>4 minute read</time></div></footer></div></header><section class=article-content><h2 id=概述>概述</h2><p>Go 语言在 <strong>1.23 版本</strong>中正式引入了 <code>iter</code> 包，这是 Go 语言迭代器机制的一个重大变革。它配合语言层面的新特性 <strong>Range Over Function</strong>（函数迭代），让开发者能够以统一、标准的方式自定义迭代逻辑。</p><p>过去我们只能对 slice、map、channel 进行 <code>for-range</code> 遍历，现在任何符合 <code>iter.Seq</code> 或 <code>iter.Seq2</code> 签名的函数都可以直接被 <code>for-range</code> 使用。这让 Go 在保持简洁的同时，拥有了类似 Python 生成器的能力，但实现上更加轻量。</p><p><strong>本文内容紧跟 Go 1.23 官方发布，建议配合官方文档食用：https://pkg.go.dev/iter</strong></p><p>但是！我在网上找到的所有教程讲的都极其晦涩难懂，于是我写了下面的内容希望能帮助大家理解。</p><hr><h2 id=核心概念什么是-iterseq>核心概念：什么是 <code>iter.Seq</code>？</h2><p><code>iter</code> 包定义了两个核心类型，它们本质上是<strong>函数类型</strong>。</p><h3 id=iterseqv-单值迭代器><code>iter.Seq[V]</code> (单值迭代器)</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Seq</span><span class=p>[</span><span class=nx>V</span> <span class=nx>any</span><span class=p>]</span> <span class=kd>func</span><span class=p>(</span><span class=nx>yield</span> <span class=kd>func</span><span class=p>(</span><span class=nx>V</span><span class=p>)</span> <span class=kt>bool</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><strong>用途</strong>：用于每次迭代产出一个值（例如遍历切片的值）</li><li><strong>工作原理</strong>：<ul><li><code>Seq</code> 是一个高阶函数，它接受一个名为 <code>yield</code> 的回调函数</li><li>编写迭代器时，调用 <code>yield(value)</code> 把数据"推"给调用者</li><li>如果 <code>yield</code> 返回 <code>false</code>，表示调用者希望停止迭代（比如循环里遇到了 <code>break</code>），此时迭代器函数应该立即返回</li></ul></li></ul><h3 id=iterseq2k-v-双值迭代器><code>iter.Seq2[K, V]</code> (双值迭代器)</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Seq2</span><span class=p>[</span><span class=nx>K</span><span class=p>,</span> <span class=nx>V</span> <span class=nx>any</span><span class=p>]</span> <span class=kd>func</span><span class=p>(</span><span class=nx>yield</span> <span class=kd>func</span><span class=p>(</span><span class=nx>K</span><span class=p>,</span> <span class=nx>V</span><span class=p>)</span> <span class=kt>bool</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>和上面很类似</p><ul><li><strong>用途</strong>：用于每次迭代产出两个值（例如遍历 map 的 key 和 value，或者 slice 的 index 和 value）</li></ul><hr><h2 id=基础用法自定义迭代器>基础用法：自定义迭代器</h2><h3 id=示例-1创建一个简单的数字生成器-iterseq>示例 1：创建一个简单的数字生成器 (<code>iter.Seq</code>)</h3><p>假设我们需要一个生成器，生成从 0 到 n-1 的整数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;iter&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// GenNumbers 返回一个迭代器，生成 [0, n)
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>GenNumbers</span><span class=p>(</span><span class=nx>n</span> <span class=kt>int</span><span class=p>)</span> <span class=nx>iter</span><span class=p>.</span><span class=nx>Seq</span><span class=p>[</span><span class=kt>int</span><span class=p>]</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=kd>func</span><span class=p>(</span><span class=nx>yield</span> <span class=kd>func</span><span class=p>(</span><span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>n</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=c1>// 核心逻辑：
+</span></span></span><span class=line><span class=cl><span class=c1></span>			<span class=c1>// 1. 调用 yield(i) 发送数据
+</span></span></span><span class=line><span class=cl><span class=c1></span>			<span class=c1>// 2. 检查返回值。如果是 false，说明外部循环触发了 break，必须停止
+</span></span></span><span class=line><span class=cl><span class=c1></span>			<span class=k>if</span> <span class=p>!</span><span class=nf>yield</span><span class=p>(</span><span class=nx>i</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>return</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 直接使用 for-range 遍历函数
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=k>for</span> <span class=nx>num</span> <span class=o>:=</span> <span class=k>range</span> <span class=nf>GenNumbers</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>num</span><span class=p>)</span> <span class=c1>// 输出 0, 1, 2, 3, 4
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=k>if</span> <span class=nx>num</span> <span class=o>==</span> <span class=mi>3</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>break</span> <span class=c1>// 这里触发 break，yield 会返回 false，让 GenNumbers 退出
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=示例-2遍历自定义数据结构-iterseq2>示例 2：遍历自定义数据结构 (<code>iter.Seq2</code>)</h3><p>假设我们有一个自定义的 <code>MyList</code> 结构，想要遍历其中的元素：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;iter&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>MyList</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>items</span> <span class=p>[]</span><span class=kt>string</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// All 返回索引和值的迭代器
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>MyList</span><span class=p>)</span> <span class=nf>All</span><span class=p>()</span> <span class=nx>iter</span><span class=p>.</span><span class=nx>Seq2</span><span class=p>[</span><span class=kt>int</span><span class=p>,</span> <span class=kt>string</span><span class=p>]</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=kd>func</span><span class=p>(</span><span class=nx>yield</span> <span class=kd>func</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>bool</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>for</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>v</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>l</span><span class=p>.</span><span class=nx>items</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=c1>// 发送两个值：索引和内容
+</span></span></span><span class=line><span class=cl><span class=c1></span>			<span class=k>if</span> <span class=p>!</span><span class=nf>yield</span><span class=p>(</span><span class=nx>i</span><span class=p>,</span> <span class=nx>v</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>return</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>list</span> <span class=o>:=</span> <span class=nx>MyList</span><span class=p>{</span><span class=nx>items</span><span class=p>:</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;Go&#34;</span><span class=p>,</span> <span class=s>&#34;Rust&#34;</span><span class=p>,</span> <span class=s>&#34;Python&#34;</span><span class=p>}}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 像遍历 map 一样遍历自定义结构
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=k>for</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>v</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>list</span><span class=p>.</span><span class=nf>All</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Index: %d, Value: %s\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>v</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><hr><h2 id=高级用法iterpull-拉取式迭代>高级用法：<code>iter.Pull</code> (拉取式迭代)</h2><p>默认的 <code>for-range</code> 是一种<strong>推送式 (Push)</strong> 迭代：迭代器控制逻辑，不断把数据 <code>yield</code> 给循环体。</p><p>有时候我们需要<strong>拉取式 (Pull)</strong> 迭代，即手动控制"取下一个"的时机（例如：比较两个序列、合并排序等）。<code>iter.Pull</code> 可以把一个 <code>Seq</code> 转换为 <code>next</code> 函数。</p><h3 id=函数签名>函数签名</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nx>Pull</span><span class=p>[</span><span class=nx>V</span> <span class=nx>any</span><span class=p>](</span><span class=nx>seq</span> <span class=nx>Seq</span><span class=p>[</span><span class=nx>V</span><span class=p>])</span> <span class=p>(</span><span class=nx>next</span> <span class=kd>func</span><span class=p>()</span> <span class=p>(</span><span class=nx>V</span><span class=p>,</span> <span class=kt>bool</span><span class=p>),</span> <span class=nx>stop</span> <span class=kd>func</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=示例-3手动拉取数据>示例 3：手动拉取数据</h3><p>假设我们要同时遍历两个切片（Zip 操作）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;iter&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;slices&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>s1</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>int</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>s2</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;A&#34;</span><span class=p>,</span> <span class=s>&#34;B&#34;</span><span class=p>,</span> <span class=s>&#34;C&#34;</span><span class=p>,</span> <span class=s>&#34;D&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 获取 slice 的标准迭代器
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>iter1</span> <span class=o>:=</span> <span class=nx>slices</span><span class=p>.</span><span class=nf>Values</span><span class=p>(</span><span class=nx>s1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>iter2</span> <span class=o>:=</span> <span class=nx>slices</span><span class=p>.</span><span class=nf>Values</span><span class=p>(</span><span class=nx>s2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 将 Push 迭代器转换为 Pull 迭代器
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>next1</span><span class=p>,</span> <span class=nx>stop1</span> <span class=o>:=</span> <span class=nx>iter</span><span class=p>.</span><span class=nf>Pull</span><span class=p>(</span><span class=nx>iter1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nf>stop1</span><span class=p>()</span> <span class=c1>// 确保资源释放（如果迭代器涉及文件/网络操作很重要）
+</span></span></span><span class=line><span class=cl><span class=c1></span>	
+</span></span><span class=line><span class=cl>	<span class=nx>next2</span><span class=p>,</span> <span class=nx>stop2</span> <span class=o>:=</span> <span class=nx>iter</span><span class=p>.</span><span class=nf>Pull</span><span class=p>(</span><span class=nx>iter2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nf>stop2</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=c1>// 手动拉取数据
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=nx>v1</span><span class=p>,</span> <span class=nx>ok1</span> <span class=o>:=</span> <span class=nf>next1</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>		<span class=nx>v2</span><span class=p>,</span> <span class=nx>ok2</span> <span class=o>:=</span> <span class=nf>next2</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=c1>// 只要有一个序列结束，就停止
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=k>if</span> <span class=p>!</span><span class=nx>ok1</span> <span class=o>||</span> <span class=p>!</span><span class=nx>ok2</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>break</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%d -&gt; %s\n&#34;</span><span class=p>,</span> <span class=nx>v1</span><span class=p>,</span> <span class=nx>v2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>注意</strong>：<code>iter.Pull</code> 会启动一个新的 goroutine 来运行原有的迭代器函数，并通过 channel（底层实现优化过，不仅仅是 channel）进行同步。因此，使用完后<strong>必须调用 <code>stop()</code></strong>，以防止 goroutine 泄露。</p><hr><h2 id=标准库的配合-slices-和-maps>标准库的配合 (<code>slices</code> 和 <code>maps</code>)</h2><p>Go 1.23 更新了 <code>slices</code> 和 <code>maps</code> 包，提供了很多基于 <code>iter</code> 的辅助函数：</p><div class=table-wrapper><table><thead><tr><th>函数</th><th>返回值</th><th>说明</th></tr></thead><tbody><tr><td><code>slices.All(s)</code></td><td><code>iter.Seq2[int, V]</code></td><td>返回 index, value 迭代器</td></tr><tr><td><code>slices.Values(s)</code></td><td><code>iter.Seq[V]</code></td><td>仅返回 value 迭代器</td></tr><tr><td><code>slices.Collect(seq)</code></td><td><code>[]V</code></td><td>将迭代器元素收集到 slice（非常常用）</td></tr><tr><td><code>slices.Sorted(seq)</code></td><td><code>[]V</code></td><td>收集并排序后返回 slice</td></tr><tr><td><code>maps.Keys(m)</code></td><td><code>iter.Seq[K]</code></td><td>返回 map 的键迭代器</td></tr><tr><td><code>maps.Values(m)</code></td><td><code>iter.Seq[V]</code></td><td>返回 map 的值迭代器</td></tr></tbody></table></div><h3 id=示例-4结合-slices-包进行过滤和转换>示例 4：结合 <code>slices</code> 包进行过滤和转换</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;iter&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;slices&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;strings&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// Filter 是一个简单的中间件，过滤符合条件的元素
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>Filter</span><span class=p>(</span><span class=nx>seq</span> <span class=nx>iter</span><span class=p>.</span><span class=nx>Seq</span><span class=p>[</span><span class=kt>string</span><span class=p>],</span> <span class=nx>keep</span> <span class=kd>func</span><span class=p>(</span><span class=kt>string</span><span class=p>)</span> <span class=kt>bool</span><span class=p>)</span> <span class=nx>iter</span><span class=p>.</span><span class=nx>Seq</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=kd>func</span><span class=p>(</span><span class=nx>yield</span> <span class=kd>func</span><span class=p>(</span><span class=kt>string</span><span class=p>)</span> <span class=kt>bool</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>for</span> <span class=nx>v</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>seq</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>if</span> <span class=nf>keep</span><span class=p>(</span><span class=nx>v</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>if</span> <span class=p>!</span><span class=nf>yield</span><span class=p>(</span><span class=nx>v</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>					<span class=k>return</span>
+</span></span><span class=line><span class=cl>				<span class=p>}</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>data</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;apple&#34;</span><span class=p>,</span> <span class=s>&#34;banana&#34;</span><span class=p>,</span> <span class=s>&#34;avocado&#34;</span><span class=p>,</span> <span class=s>&#34;cherry&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 1. 获取迭代器
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>src</span> <span class=o>:=</span> <span class=nx>slices</span><span class=p>.</span><span class=nf>Values</span><span class=p>(</span><span class=nx>data</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 2. 包装迭代器（过滤出以 &#39;a&#39; 开头的）
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>filtered</span> <span class=o>:=</span> <span class=nf>Filter</span><span class=p>(</span><span class=nx>src</span><span class=p>,</span> <span class=kd>func</span><span class=p>(</span><span class=nx>s</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>HasPrefix</span><span class=p>(</span><span class=nx>s</span><span class=p>,</span> <span class=s>&#34;a&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 3. 将结果收集回 slice
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>result</span> <span class=o>:=</span> <span class=nx>slices</span><span class=p>.</span><span class=nf>Collect</span><span class=p>(</span><span class=nx>filtered</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>result</span><span class=p>)</span> <span class=c1>// [apple avocado]
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><hr><h2 id=总结>总结</h2><ol><li><strong>标准化</strong>：<code>iter</code> 包为 Go 提供了统一的迭代协议</li><li><strong><code>iter.Seq</code> / <code>iter.Seq2</code></strong>：通过定义接受 <code>yield</code> 回调的函数，即可让自定义类型支持 <code>for-range</code></li><li><strong>控制流</strong>：在自定义迭代器中，务必判断 <code>yield</code> 的返回值，如果为 <code>false</code> 必须 return</li><li><strong><code>iter.Pull</code></strong>：用于将被动的"推送"转换为主动的"拉取"，适合处理多流合并等复杂逻辑，记得 <code>defer stop()</code></li><li><strong>生态整合</strong>：优先配合 <code>slices</code> 和 <code>maps</code> 包中的新函数使用，能极大简化代码（如 <code>Collect</code>）</li></ol><p>这个特性让 Go 在保持简洁的同时，拥有了类似 Python 生成器或 Java Stream API 的部分能力，但实现上更加轻量且无额外的内存分配（编译器会进行内联优化）。</p><p>虽然iter还是相当不像人话，但是你还是可以积极使用在你的项目里hhh。</p></section><footer class=article-footer><section class=article-tags><a href=/tags/golang/>Golang</a></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>Last updated on Jan 30, 2026 02:00 UTC</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%AB%98%E6%95%88%E7%9A%84%E7%BD%91%E7%AB%99%E5%90%8E%E7%AB%AF%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>如何构建一个高效的网站后端应用</h2></div></a></article><article><a href=/p/mcp-with-golang/><div class=article-details><h2 class=article-title>Mcp with golang</h2></div></a></article><article><a href=/p/etcd%E7%9A%84%E5%8A%9F%E8%83%BD%E4%B8%8E%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>etcd的功能与应用</h2></div></a></article><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%857-geospatial/><div class=article-details><h2 class=article-title>Redis学习之旅(7) Geospatial</h2></div></a></article><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%856-streams/><div class=article-details><h2 class=article-title>Redis学习之旅(6) Streams</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2024 -
+2026 Dinglz 's Blog</section><section class=powerby>copyright &copy; dinglz<br>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.33.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

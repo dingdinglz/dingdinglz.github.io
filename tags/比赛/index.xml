@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>比赛 on Dinglz 's Blog</title><link>https://dingdinglz.github.io/tags/%E6%AF%94%E8%B5%9B/</link><description>Recent content in 比赛 on Dinglz 's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 18 Dec 2025 02:00:00 +0000</lastBuildDate><atom:link href="https://dingdinglz.github.io/tags/%E6%AF%94%E8%B5%9B/index.xml" rel="self" type="application/rss+xml"/><item><title>2025软创赛题解读</title><link>https://dingdinglz.github.io/p/2025%E8%BD%AF%E5%88%9B%E8%B5%9B%E9%A2%98%E8%A7%A3%E8%AF%BB/</link><pubDate>Thu, 18 Dec 2025 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/2025%E8%BD%AF%E5%88%9B%E8%B5%9B%E9%A2%98%E8%A7%A3%E8%AF%BB/</guid><description>&lt;blockquote>
+&lt;p>&lt;strong>以下内容均为dinglz个人看法与建议，仅供参考，可能存在部分误区&lt;/strong>&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>今年的赛题在这里：&lt;a class="link" href="https://www.swcontest.com.cn/topic/questionDetails?id=d6062b302f3446eb9906c6b85a3fdaed" target="_blank" rel="noopener"
+>AI无界 · 创见未来&lt;/a>，我当时看到第一眼的就是三个字：“&lt;strong>移动端&lt;/strong>”，&lt;del>我心想完蛋了，好多Idea做不了了&lt;/del>，后来想想也不奇怪，组委会oppo是做手机的，总之我认为，今年的赛题主要强调的关键点有四个：“全场景”、“随身智能体（Agent）”、“多模态”和“端云协同”&lt;/p>
+&lt;p>与往年不同的是，今年强调的是Agent：这不仅仅要求是回答问题的能力（直接弄死去年接近一半的获奖项目），更主要的是要能感知环境-&amp;gt;&lt;strong>主动&lt;/strong>决策-&amp;gt;执行任务（这下做agent的笑嘻嘻地把做workflow的给踹进下水道了）我倒是觉得还挺合理，作为面向大学生的赛事，不需要考虑商用级的稳定性，那自然是要对标最前沿的agent，狠狠地信任llm的能力（关于这点，我倒是觉得有点不公平，即大家能接触到的模型水平，感觉玩gemini和claude的，在二者水平一致的情况下，狠狠把玩deepseek和qwen的甩在后面了；但是，showcase可以是&lt;strong>理想&lt;/strong>场景，希望大家有所领悟）&lt;/p>
+&lt;p>下面进入正式的分析：&lt;/p>
+&lt;h2 id="赛题核心逻辑">赛题核心逻辑
+&lt;/h2>&lt;p>在完成你的作品之前，首先你要明确评委看重的到底是什么&lt;/p>
+&lt;h3 id="1-移动端">1. 移动端
+&lt;/h3>&lt;p>本次强调了移动端，但注意，你的想法不需要被手机所局限，平板、手表、&lt;strong>AR眼镜、VR眼镜&lt;/strong>都属于移动设备，后面两个可能在创新性上具有很大的优势，但限制于设备，仅供参考&lt;/p>
+&lt;p>在这方面，你需要考虑到，移动端的优势到底是什么：&lt;/p>
+&lt;ul>
+&lt;li>移动优势：随身、方便 -&amp;gt; 对比示例idea：随身会议总结&lt;/li>
+&lt;li>硬件优势：摄像头、麦克风、GPS、陀螺仪等等各类传感器，怎么把这些利用起来将成为你&lt;strong>最核心&lt;/strong>的思考&lt;/li>
+&lt;/ul>
+&lt;p>根据以上，我可以断言：如果你的idea可以在网页端完美运行，那它对于本赛题来说，大概率不是一个好的idea&lt;/p>
+&lt;h3 id="2-多模态">2. 多模态
+&lt;/h3>&lt;p>你的交互一定不能局限在文字上，必须要包含视觉 &amp;amp;&amp;amp; 听觉 甚至是触觉or生理数据（手表），只有文字的交互是一个巨大的灾难&lt;/p>
+&lt;p>因此，如何借助移动端硬件优势？你或许得好好想想&lt;/p>
+&lt;h3 id="3-智能体agent">3. 智能体Agent
+&lt;/h3>&lt;p>你需要把更多自主权交还给AI，抛弃掉所有简单的prompt交互、workflow；&lt;strong>把决策还给AI&lt;/strong>&lt;/p>
+&lt;p>拿天气感知来说，从以前的调用api查询天气，要转变成 感知到下雨 -&amp;gt; 自动查询路况 -&amp;gt; 调整闹钟 -&amp;gt; 叫车这种自动范式上来&lt;/p>
+&lt;p>我后面会有一篇详细的关于google agent development kid的教程，带大家入门agent，敬请期待&lt;/p>
+&lt;h3 id="4-端侧能力">4. 端侧能力
+&lt;/h3>&lt;p>赛题中提到了端云协同、设备支持、低bit量化等等，那么说明你需要考虑到端侧小模型，应该端侧和云端协调&lt;/p>
+&lt;p>要考虑考虑端侧小模型的优点（响应快、隐私好）来考虑考虑是否要在自己的idea中引入端侧小模型，大家或许都忘了，手机也是一个性能相当不错的计算终端；上届vivo aigc决赛我在作品中引入了7B小模型的直接在端侧上推理，结合云端可以大大提速 &amp;amp;&amp;amp; 提效&lt;/p>
+&lt;h2 id="误区解析">误区解析
+&lt;/h2>&lt;ol>
+&lt;li>不要做一个prompt调用机器，不要套壳；&lt;strong>要把AI隐藏在功能背后&lt;/strong>，比如“一键生成PPT”显然优于“教我怎么写PPT”。（说句题外话，我一直觉得对话不是llm的最终范式，只是当时chatgpt打了个样罢了）&lt;/li>
+&lt;li>不要忽略移动端优势，多想想什么是移动端能做但是网页端做不了的&lt;/li>
+&lt;li>一定要闭环；不光是感知，更重要的是行动：比如 | 识别到用户想去旅行（感知） -&amp;gt; 自动规划行程（决策） -&amp;gt; &lt;strong>（关键一步）调用 API 把行程添加到系统日历，并唤起地图导航（执行）。&lt;/strong> | 最后一步才是最重要的&lt;/li>
+&lt;/ol>
+&lt;h2 id="赛题之外">赛题之外
+&lt;/h2>&lt;ol>
+&lt;li>好好做ui！好看的ui比什么都重要&lt;/li>
+&lt;li>好好写文档！全篇ai会被评委一脚踢死&lt;/li>
+&lt;li>好好优化用户体验，dog feed，要让自己愿意用自己的app&lt;/li>
+&lt;li>把功能实现了优于牛逼的技术，当一个实干家&lt;/li>
+&lt;/ol>
+&lt;h2 id="技术栈推荐">技术栈推荐
+&lt;/h2>&lt;p>&lt;a class="link" href="https://www.yuque.com/dinglz/github/ir4s2lt5lm64gods#" target="_blank" rel="noopener"
+>点这里看我的全部推荐 &amp;amp;&amp;amp; 优缺点解析&lt;/a>&lt;/p>
+&lt;h2 id="结语">结语
+&lt;/h2>&lt;p>祝大家都能取得自己满意的成绩，遇到问题也欢迎和我沟通&lt;/p></description></item></channel></rss>

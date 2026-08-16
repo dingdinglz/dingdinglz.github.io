@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="强化学习网格世界图标">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3159d8"/>
+      <stop offset="1" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="target" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#2dd4bf"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="104" fill="url(#bg)"/>
+  <g transform="translate(83 83)" stroke="#dbeafe" stroke-width="7">
+    <rect x="0" y="0" width="106" height="106" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+    <rect x="120" y="0" width="106" height="106" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+    <rect x="240" y="0" width="106" height="106" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+    <rect x="0" y="120" width="106" height="106" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+    <rect x="120" y="120" width="106" height="106" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+    <rect x="240" y="120" width="106" height="106" rx="21" fill="#ffd166" stroke="#ffe3a4"/>
+    <rect x="0" y="240" width="106" height="106" rx="21" fill="#ffd166" stroke="#ffe3a4"/>
+    <rect x="120" y="240" width="106" height="106" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+    <rect x="240" y="240" width="106" height="106" rx="21" fill="url(#target)" stroke="#b5fff2"/>
+  </g>
+  <path d="M136 136 H256 V256 V376 H376" fill="none" stroke="#ffffff" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="136" cy="136" r="36" fill="#ffffff"/>
+  <circle cx="124" cy="131" r="4.5" fill="#3159d8"/>
+  <circle cx="148" cy="131" r="4.5" fill="#3159d8"/>
+  <path d="M122 147 Q136 159 150 147" fill="none" stroke="#3159d8" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="376" cy="376" r="43" fill="#ffffff"/>
+  <path d="M356 377 L370 391 L397 358" fill="none" stroke="#0d9488" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

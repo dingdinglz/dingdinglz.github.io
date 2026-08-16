@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">从零开始学强化学习：基本概念</title>
+  <desc id="desc">一个机器人在三乘三网格世界中沿策略走向目标</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101b3f"/>
+      <stop offset="0.55" stop-color="#182e5f"/>
+      <stop offset="1" stop-color="#0b6b78"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6ee7f2"/>
+      <stop offset="1" stop-color="#22c7b8"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#f59e42"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#06112d" flood-opacity="0.45"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7df3d2"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="140" cy="90" r="250" fill="#5b7cff" opacity="0.10"/>
+  <circle cx="1480" cy="820" r="330" fill="#4cf0d3" opacity="0.08"/>
+  <path d="M0 710 C260 615 480 790 760 690 C1000 605 1230 630 1600 500 L1600 900 L0 900Z" fill="#071329" opacity="0.34"/>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <g transform="translate(110 118)">
+      <rect x="0" y="0" width="122" height="52" rx="26" fill="#6ee7f2" opacity="0.16" stroke="#7df3d2" stroke-width="2"/>
+      <text x="61" y="35" text-anchor="middle" fill="#9ff7e7" font-size="24" font-weight="700">SERIES 01</text>
+
+      <text x="0" y="170" fill="#ffffff" font-size="72" font-weight="800" letter-spacing="2">从零开始学</text>
+      <text x="0" y="264" fill="#ffffff" font-size="92" font-weight="900" letter-spacing="3">强化学习</text>
+
+      <rect x="0" y="318" width="445" height="82" rx="18" fill="#ffffff" opacity="0.10" stroke="#ffffff" stroke-opacity="0.15"/>
+      <text x="26" y="372" fill="#d8f5ff" font-size="34" font-weight="650">第一篇 · 先把基本概念说人话</text>
+
+      <text x="0" y="476" fill="#b5c9e8" font-size="27">STATE · ACTION · POLICY · REWARD · RETURN · MDP</text>
+
+      <g transform="translate(0 540)">
+        <rect x="0" y="0" width="220" height="70" rx="18" fill="#101d3d" stroke="#496793" stroke-width="2"/>
+        <text x="110" y="45" text-anchor="middle" fill="#a8d7ff" font-size="30" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">π(a | s)</text>
+        <rect x="242" y="0" width="270" height="70" rx="18" fill="#101d3d" stroke="#496793" stroke-width="2"/>
+        <text x="377" y="45" text-anchor="middle" fill="#a8d7ff" font-size="30" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">p(s' | s, a)</text>
+      </g>
+    </g>
+
+    <g transform="translate(930 132)" filter="url(#shadow)">
+      <rect x="-42" y="-42" width="586" height="586" rx="42" fill="#ffffff" opacity="0.08" stroke="#ffffff" stroke-opacity="0.13" stroke-width="2"/>
+
+      <g stroke="#a8c0dc" stroke-opacity="0.62" stroke-width="3">
+        <rect x="0" y="0" width="160" height="160" rx="16" fill="#ffffff" fill-opacity="0.10"/>
+        <rect x="170" y="0" width="160" height="160" rx="16" fill="#ffffff" fill-opacity="0.10"/>
+        <rect x="340" y="0" width="160" height="160" rx="16" fill="#ffffff" fill-opacity="0.10"/>
+        <rect x="0" y="170" width="160" height="160" rx="16" fill="#ffffff" fill-opacity="0.10"/>
+        <rect x="170" y="170" width="160" height="160" rx="16" fill="#ffffff" fill-opacity="0.10"/>
+        <rect x="340" y="170" width="160" height="160" rx="16" fill="url(#gold)" fill-opacity="0.96" stroke="#ffcf70"/>
+        <rect x="0" y="340" width="160" height="160" rx="16" fill="url(#gold)" fill-opacity="0.96" stroke="#ffcf70"/>
+        <rect x="170" y="340" width="160" height="160" rx="16" fill="#ffffff" fill-opacity="0.10"/>
+        <rect x="340" y="340" width="160" height="160" rx="16" fill="url(#cyan)" fill-opacity="0.98" stroke="#a7fff0"/>
+      </g>
+
+      <g fill="#d4e0f0" font-size="24" font-weight="650">
+        <text x="18" y="32">s₁</text><text x="188" y="32">s₂</text><text x="358" y="32">s₃</text>
+        <text x="18" y="202">s₄</text><text x="188" y="202">s₅</text><text x="358" y="202" fill="#5a3a0b">s₆</text>
+        <text x="18" y="372" fill="#5a3a0b">s₇</text><text x="188" y="372">s₈</text><text x="358" y="372" fill="#064f55">s₉</text>
+      </g>
+
+      <polyline points="80,80 250,80 250,250 250,420 420,420" fill="none" stroke="#7df3d2" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+      <g fill="#10214a" stroke="#b8fbff" stroke-width="5">
+        <circle cx="80" cy="80" r="38" fill="#e7f8ff"/>
+        <circle cx="67" cy="72" r="5"/><circle cx="93" cy="72" r="5"/>
+        <path d="M64 91 Q80 104 96 91" fill="none" stroke="#10214a" stroke-width="5" stroke-linecap="round"/>
+        <path d="M80 42 V29" stroke="#b8fbff" stroke-width="5"/><circle cx="80" cy="23" r="6" fill="#7df3d2" stroke="none"/>
+      </g>
+
+      <g transform="translate(392 389)">
+        <circle cx="28" cy="31" r="40" fill="#ffffff" opacity="0.92"/>
+        <path d="M9 31 L23 45 L49 17" fill="none" stroke="#0b8f87" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+
+    <text x="1110" y="760" text-anchor="middle" fill="#cae6f5" font-size="28" font-weight="600">在试错中找到长期回报最大的策略</text>
+  </g>
+</svg>

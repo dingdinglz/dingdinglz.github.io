@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">状态价值与动作价值的关系</title>
+  <desc id="desc">状态一的动作价值分别展示，当前随机策略对向右和向下动作价值各按一半加权得到状态价值八点五</desc>
+  <defs>
+    <linearGradient id="state" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#546fe0"/>
+      <stop offset="1" stop-color="#5145bb"/>
+    </linearGradient>
+    <linearGradient id="selected" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4cdec9"/>
+      <stop offset="1" stop-color="#14988f"/>
+    </linearGradient>
+    <linearGradient id="idle" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef2f7"/>
+      <stop offset="1" stop-color="#dce3ed"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="9" stdDeviation="13" flood-color="#334155" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#5268d0"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="700" rx="32" fill="#f6f8fc"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="600" y="57" text-anchor="middle" fill="#17233f" font-size="36" font-weight="850">v 是策略下的平均，q 是先指定一个动作</text>
+    <text x="600" y="95" text-anchor="middle" fill="#64748b" font-size="22">当前动作执行完以后，仍然继续遵循同一个策略 π</text>
+
+    <g transform="translate(45 130)" filter="url(#shadow)">
+      <rect width="725" height="490" rx="30" fill="#ffffff" stroke="#d9e2ef" stroke-width="2"/>
+      <text x="32" y="53" fill="#24324b" font-size="26" font-weight="850">s₁ 的五个动作都有 action value</text>
+      <rect x="515" y="22" width="178" height="42" rx="21" fill="#edf0ff"/>
+      <text x="604" y="50" text-anchor="middle" fill="#4559ba" font-size="19" font-weight="850">γ = 0.9</text>
+
+      <g transform="translate(52 178)">
+        <circle cx="103" cy="103" r="91" fill="url(#state)"/>
+        <text x="103" y="87" text-anchor="middle" fill="#dfe7ff" font-size="20">当前状态</text>
+        <text x="103" y="135" text-anchor="middle" fill="#ffffff" font-size="43" font-weight="900">s₁</text>
+      </g>
+
+      <path d="M237 245C305 177 345 144 413 135" fill="none" stroke="#14988f" stroke-width="7" marker-end="url(#arrow)"/>
+      <path d="M253 281C331 281 357 281 425 281" fill="none" stroke="#14988f" stroke-width="7" marker-end="url(#arrow)"/>
+      <path d="M237 318C305 385 345 417 413 427" fill="none" stroke="#9aa8ba" stroke-width="6" stroke-dasharray="10 9" marker-end="url(#arrow)"/>
+
+      <g transform="translate(430 88)">
+        <rect width="255" height="100" rx="23" fill="url(#selected)"/>
+        <text x="24" y="37" fill="#dffff9" font-size="19" font-weight="750">向右 · π=0.5</text>
+        <text x="24" y="76" fill="#ffffff" font-size="30" font-weight="900">qπ(s₁,right)=8</text>
+      </g>
+      <g transform="translate(430 230)">
+        <rect width="255" height="100" rx="23" fill="url(#selected)"/>
+        <text x="24" y="37" fill="#dffff9" font-size="19" font-weight="750">向下 · π=0.5</text>
+        <text x="24" y="76" fill="#ffffff" font-size="30" font-weight="900">qπ(s₁,down)=9</text>
+      </g>
+      <g transform="translate(430 372)">
+        <rect width="255" height="90" rx="23" fill="url(#idle)" stroke="#cbd4e0" stroke-width="2"/>
+        <text x="24" y="34" fill="#5f6d81" font-size="18" font-weight="750">未被策略选择 · π=0</text>
+        <text x="24" y="66" fill="#3f4d62" font-size="20" font-weight="850">up 6.65 · stay 7.65 ···</text>
+      </g>
+
+      <rect x="38" y="82" width="220" height="52" rx="18" fill="#fff5e6" stroke="#efc47f" stroke-width="2"/>
+      <text x="148" y="116" text-anchor="middle" fill="#915215" font-size="19" font-weight="800">π=0 也不代表 q=0</text>
+    </g>
+
+    <path d="M784 374H842" stroke="#5268d0" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+    <g transform="translate(850 180)" filter="url(#shadow)">
+      <rect width="305" height="375" rx="32" fill="#17264c"/>
+      <text x="152.5" y="53" text-anchor="middle" fill="#c2d2ee" font-size="21" font-weight="750">按当前策略加权</text>
+      <text x="152.5" y="96" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="900">State Value</text>
+      <circle cx="152.5" cy="184" r="76" fill="#ffffff" opacity="0.09" stroke="#a9fff0" stroke-width="3"/>
+      <text x="152.5" y="178" text-anchor="middle" fill="#bdf8ef" font-size="20">vπ(s₁)</text>
+      <text x="152.5" y="220" text-anchor="middle" fill="#ffffff" font-size="45" font-weight="900">8.5</text>
+      <text x="152.5" y="290" text-anchor="middle" fill="#c9d8ee" font-size="21">0.5 × 8</text>
+      <text x="152.5" y="322" text-anchor="middle" fill="#c9d8ee" font-size="21">+ 0.5 × 9</text>
+      <text x="152.5" y="353" text-anchor="middle" fill="#8feadd" font-size="18">未选动作权重为 0</text>
+    </g>
+
+    <rect x="120" y="642" width="960" height="40" rx="20" fill="#e9edff"/>
+    <text x="600" y="669" text-anchor="middle" fill="#4055b5" font-size="23" font-weight="850">vπ(s) = Σₐ π(a|s) qπ(s,a)</text>
+  </g>
+</svg>

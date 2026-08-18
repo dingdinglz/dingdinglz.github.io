@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">Return 与 State Value 的区别</title>
+  <desc id="desc">从状态一按照随机策略可能得到回报九或八，状态价值是二者按概率加权后的八点五</desc>
+  <defs>
+    <linearGradient id="state" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4869de"/>
+      <stop offset="1" stop-color="#5145ba"/>
+    </linearGradient>
+    <linearGradient id="good" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5ee6d0"/>
+      <stop offset="1" stop-color="#16a99e"/>
+    </linearGradient>
+    <linearGradient id="bad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd06b"/>
+      <stop offset="1" stop-color="#ee8e3e"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#334155" flood-opacity="0.15"/>
+    </filter>
+    <marker id="blueArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#4966d5"/>
+    </marker>
+    <marker id="greenArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#16a99e"/>
+    </marker>
+    <marker id="orangeArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#e88135"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="650" rx="32" fill="#f6f8fc"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="600" y="57" text-anchor="middle" fill="#17233f" font-size="36" font-weight="850">同一个状态，可以通向不止一种 Return</text>
+    <text x="600" y="95" text-anchor="middle" fill="#64748b" font-size="22">Return 属于一次采样；State Value 属于状态与策略</text>
+
+    <g transform="translate(65 205)" filter="url(#shadow)">
+      <circle cx="115" cy="115" r="105" fill="url(#state)"/>
+      <text x="115" y="89" text-anchor="middle" fill="#dfe7ff" font-size="23" font-weight="700">从状态出发</text>
+      <text x="115" y="143" text-anchor="middle" fill="#ffffff" font-size="51" font-weight="900">s₁</text>
+      <text x="115" y="183" text-anchor="middle" fill="#dfe7ff" font-size="20">策略 π 随机选择</text>
+    </g>
+
+    <path d="M290 270C375 180 420 180 500 180" fill="none" stroke="#16a99e" stroke-width="8" stroke-linecap="round" marker-end="url(#greenArrow)"/>
+    <rect x="350" y="176" width="114" height="40" rx="20" fill="#dcf8f3"/>
+    <text x="407" y="203" text-anchor="middle" fill="#08766f" font-size="20" font-weight="800">p = 0.5</text>
+
+    <path d="M290 370C375 455 420 455 500 455" fill="none" stroke="#e88135" stroke-width="8" stroke-linecap="round" marker-end="url(#orangeArrow)"/>
+    <rect x="350" y="424" width="114" height="40" rx="20" fill="#fff0df"/>
+    <text x="407" y="451" text-anchor="middle" fill="#a85217" font-size="20" font-weight="800">p = 0.5</text>
+
+    <g transform="translate(520 125)" filter="url(#shadow)">
+      <rect width="310" height="165" rx="28" fill="#ffffff" stroke="#9ddfd5" stroke-width="2"/>
+      <rect width="310" height="54" rx="28" fill="url(#good)"/>
+      <path d="M0 28Q0 54 28 54H282Q310 54 310 28V54H0Z" fill="url(#good)"/>
+      <text x="155" y="37" text-anchor="middle" fill="#ffffff" font-size="23" font-weight="850">轨迹 A · 向下</text>
+      <text x="155" y="93" text-anchor="middle" fill="#41615f" font-size="20">第一步奖励 0</text>
+      <text x="155" y="139" text-anchor="middle" fill="#08766f" font-size="36" font-weight="900">Gᴬ = 9</text>
+    </g>
+
+    <g transform="translate(520 375)" filter="url(#shadow)">
+      <rect width="310" height="165" rx="28" fill="#ffffff" stroke="#efbd8d" stroke-width="2"/>
+      <rect width="310" height="54" rx="28" fill="url(#bad)"/>
+      <path d="M0 28Q0 54 28 54H282Q310 54 310 28V54H0Z" fill="url(#bad)"/>
+      <text x="155" y="37" text-anchor="middle" fill="#69420b" font-size="23" font-weight="850">轨迹 B · 向右</text>
+      <text x="155" y="93" text-anchor="middle" fill="#72523a" font-size="20">第一步奖励 -1</text>
+      <text x="155" y="139" text-anchor="middle" fill="#bd5b20" font-size="36" font-weight="900">Gᴮ = 8</text>
+    </g>
+
+    <path d="M846 207C913 219 913 270 955 292" fill="none" stroke="#4966d5" stroke-width="7" stroke-linecap="round" marker-end="url(#blueArrow)"/>
+    <path d="M846 457C913 444 913 392 955 371" fill="none" stroke="#4966d5" stroke-width="7" stroke-linecap="round" marker-end="url(#blueArrow)"/>
+
+    <g transform="translate(930 235)" filter="url(#shadow)">
+      <rect width="230" height="210" rx="32" fill="#17254c"/>
+      <text x="115" y="48" text-anchor="middle" fill="#bcd0f1" font-size="21" font-weight="700">取期望</text>
+      <text x="115" y="91" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="900">State Value</text>
+      <text x="115" y="143" text-anchor="middle" fill="#a9fff0" font-size="38" font-weight="900">vπ(s₁)=8.5</text>
+      <text x="115" y="179" text-anchor="middle" fill="#c9d8ee" font-size="17">0.5 × 9 + 0.5 × 8</text>
+    </g>
+
+    <rect x="84" y="558" width="1032" height="58" rx="20" fill="#ffffff" stroke="#d9e2ef" stroke-width="2"/>
+    <text x="600" y="596" text-anchor="middle" fill="#334155" font-size="23" font-weight="750">γ = 0.9：一次运行只看到一个 G，价值函数描述所有可能 G 的概率平均</text>
+  </g>
+</svg>

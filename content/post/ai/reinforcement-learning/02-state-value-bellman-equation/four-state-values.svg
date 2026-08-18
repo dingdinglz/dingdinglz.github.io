@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">三个策略对应不同的状态价值</title>
+  <desc id="desc">在四状态世界中，从状态一向下、随机选择、向右三种策略的状态价值分别为九、八点五与八</desc>
+  <defs>
+    <linearGradient id="good" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#43d8c5"/>
+      <stop offset="1" stop-color="#12978f"/>
+    </linearGradient>
+    <linearGradient id="mixed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#657fe6"/>
+      <stop offset="1" stop-color="#4d4ac2"/>
+    </linearGradient>
+    <linearGradient id="bad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffc960"/>
+      <stop offset="1" stop-color="#ed8e3d"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="9" stdDeviation="13" flood-color="#334155" flood-opacity="0.14"/>
+    </filter>
+    <marker id="greenArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#12978f"/>
+    </marker>
+    <marker id="blueArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#5268d2"/>
+    </marker>
+    <marker id="orangeArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#df7c31"/>
+    </marker>
+    <g id="grid">
+      <rect width="220" height="220" rx="22" fill="#ffffff" stroke="#aebbcf" stroke-width="3"/>
+      <path d="M110 0V220M0 110H220" stroke="#aebbcf" stroke-width="3"/>
+      <rect x="110" width="110" height="110" rx="18" fill="#ffd16c" opacity="0.92"/>
+      <rect x="110" y="110" width="110" height="110" rx="18" fill="#64e4d5" opacity="0.88"/>
+      <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="800">
+        <text x="14" y="28" fill="#39465e">s₁</text>
+        <text x="124" y="28" fill="#70450d">s₂ · -1</text>
+        <text x="14" y="138" fill="#39465e">s₃ · +1</text>
+        <text x="124" y="138" fill="#075f59">s₄ · +1</text>
+      </g>
+      <circle cx="55" cy="55" r="24" fill="#eef1ff" stroke="#5268d2" stroke-width="3"/>
+      <circle cx="48" cy="51" r="3" fill="#5268d2"/>
+      <circle cx="62" cy="51" r="3" fill="#5268d2"/>
+      <path d="M47 63Q55 70 63 63" fill="none" stroke="#5268d2" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="165" cy="165" r="27" fill="#ffffff" opacity="0.95"/>
+      <path d="M152 165L161 174L179 153" fill="none" stroke="#0f766e" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </defs>
+
+  <rect width="1200" height="720" rx="32" fill="#f6f8fc"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="600" y="57" text-anchor="middle" fill="#17233f" font-size="36" font-weight="850">同一个 s₁，换个策略，价值就变了</text>
+    <text x="600" y="96" text-anchor="middle" fill="#64748b" font-size="22">γ = 0.9，差别只发生在 s₁ 的动作选择</text>
+
+    <g transform="translate(45 130)" filter="url(#shadow)">
+      <rect width="350" height="515" rx="30" fill="#ffffff" stroke="#b9e4dc" stroke-width="2"/>
+      <rect width="350" height="72" rx="30" fill="url(#good)"/>
+      <path d="M0 42Q0 72 30 72H320Q350 72 350 42V72H0Z" fill="url(#good)"/>
+      <text x="175" y="46" text-anchor="middle" fill="#ffffff" font-size="25" font-weight="850">策略 A · 一定向下</text>
+      <g transform="translate(65 104)">
+        <use href="#grid"/>
+        <path d="M55 79V151" stroke="#12978f" stroke-width="8" stroke-linecap="round" marker-end="url(#greenArrow)"/>
+        <path d="M79 165H151" stroke="#12978f" stroke-width="8" stroke-linecap="round" marker-end="url(#greenArrow)"/>
+        <path d="M165 190V211" stroke="#12978f" stroke-width="7" stroke-linecap="round"/>
+      </g>
+      <rect x="44" y="351" width="262" height="58" rx="20" fill="#e6faf6"/>
+      <text x="175" y="390" text-anchor="middle" fill="#08766f" font-size="31" font-weight="900">vπ(s₁) = 9</text>
+      <text x="175" y="447" text-anchor="middle" fill="#52615f" font-size="21">第一步奖励 0</text>
+      <text x="175" y="482" text-anchor="middle" fill="#52615f" font-size="19">之后进入价值为 10 的状态</text>
+    </g>
+
+    <g transform="translate(425 130)" filter="url(#shadow)">
+      <rect width="350" height="515" rx="30" fill="#ffffff" stroke="#c5cef1" stroke-width="2"/>
+      <rect width="350" height="72" rx="30" fill="url(#mixed)"/>
+      <path d="M0 42Q0 72 30 72H320Q350 72 350 42V72H0Z" fill="url(#mixed)"/>
+      <text x="175" y="46" text-anchor="middle" fill="#ffffff" font-size="25" font-weight="850">策略 B · 各一半</text>
+      <g transform="translate(65 104)">
+        <use href="#grid"/>
+        <path d="M55 79V151" stroke="#5268d2" stroke-width="8" stroke-linecap="round" marker-end="url(#blueArrow)"/>
+        <path d="M79 55H151" stroke="#5268d2" stroke-width="8" stroke-linecap="round" marker-end="url(#blueArrow)"/>
+        <rect x="28" y="88" width="54" height="30" rx="15" fill="#eef1ff"/>
+        <text x="55" y="109" text-anchor="middle" fill="#465bc0" font-size="16" font-weight="800">0.5</text>
+        <rect x="88" y="28" width="54" height="30" rx="15" fill="#eef1ff"/>
+        <text x="115" y="49" text-anchor="middle" fill="#465bc0" font-size="16" font-weight="800">0.5</text>
+      </g>
+      <rect x="44" y="351" width="262" height="58" rx="20" fill="#edf0ff"/>
+      <text x="175" y="390" text-anchor="middle" fill="#4459bd" font-size="31" font-weight="900">vπ(s₁) = 8.5</text>
+      <text x="175" y="447" text-anchor="middle" fill="#535d7a" font-size="21">0.5 × 9 + 0.5 × 8</text>
+      <text x="175" y="482" text-anchor="middle" fill="#535d7a" font-size="19">随机轨迹的期望回报</text>
+    </g>
+
+    <g transform="translate(805 130)" filter="url(#shadow)">
+      <rect width="350" height="515" rx="30" fill="#ffffff" stroke="#efc18f" stroke-width="2"/>
+      <rect width="350" height="72" rx="30" fill="url(#bad)"/>
+      <path d="M0 42Q0 72 30 72H320Q350 72 350 42V72H0Z" fill="url(#bad)"/>
+      <text x="175" y="46" text-anchor="middle" fill="#69400a" font-size="25" font-weight="850">策略 C · 一定向右</text>
+      <g transform="translate(65 104)">
+        <use href="#grid"/>
+        <path d="M79 55H151" stroke="#df7c31" stroke-width="8" stroke-linecap="round" marker-end="url(#orangeArrow)"/>
+        <path d="M165 79V151" stroke="#df7c31" stroke-width="8" stroke-linecap="round" marker-end="url(#orangeArrow)"/>
+      </g>
+      <rect x="44" y="351" width="262" height="58" rx="20" fill="#fff1e2"/>
+      <text x="175" y="390" text-anchor="middle" fill="#b4561d" font-size="31" font-weight="900">vπ(s₁) = 8</text>
+      <text x="175" y="447" text-anchor="middle" fill="#715744" font-size="21">第一步先吃 -1</text>
+      <text x="175" y="482" text-anchor="middle" fill="#715744" font-size="19">之后才进入价值为 10 的状态</text>
+    </g>
+
+    <rect x="163" y="668" width="874" height="34" rx="17" fill="#e8edf5"/>
+    <rect x="163" y="668" width="874" height="34" rx="17" fill="url(#good)" opacity="0.72"/>
+    <text x="600" y="693" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="850">同一环境、同一奖励、同一折扣因子下：9 ＞ 8.5 ＞ 8</text>
+  </g>
+</svg>

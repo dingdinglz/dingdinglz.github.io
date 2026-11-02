@@ -1,0 +1,1087 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>强化学习 on Dinglz 's Blog</title><link>https://dingdinglz.github.io/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/</link><description>Recent content in 强化学习 on Dinglz 's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 19 Aug 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://dingdinglz.github.io/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/index.xml" rel="self" type="application/rss+xml"/><item><title>从零开始学强化学习（二）：Bellman 方程，把无限未来折叠成一步</title><link>https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/</link><pubDate>Wed, 19 Aug 2026 00:00:00 +0800</pubDate><guid>https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/</guid><description>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/cover.svg" alt="Featured image of post 从零开始学强化学习（二）：Bellman 方程，把无限未来折叠成一步" />&lt;h2 id="前言">前言
+&lt;/h2>&lt;p>这是「从零开始学强化学习」系列的第二篇。&lt;/p>
+&lt;p>上一篇我们把 state、action、policy、reward、return 和 MDP 这些基本概念捋了一遍，也留下了一个非常现实的问题：&lt;strong>知道长期回报很重要，然后呢？难道每次评价策略，都要真的跑到世界尽头，再把所有奖励加起来吗？&lt;/strong>&lt;/p>
+&lt;p>显然不太行。轨迹可能是随机的，也可能长到没有尽头。真等它跑完，黄花菜都凉了（甚至它根本不会跑完）。&lt;/p>
+&lt;p>这一篇继续跟着赵世钰老师的 Lecture 2 和教材 Chapter 2，认识整本书真正的数学地基：&lt;strong>状态价值（State Value）与 Bellman 方程（Bellman Equation）&lt;/strong>。&lt;/p>
+&lt;p>&lt;strong>本文书写顺序紧跟教材 Chapter 2 和 Lecture 2，建议配合&lt;a class="link" href="https://shiyuzhao.westlake.edu.cn/Teaching.htm" target="_blank" rel="noopener"
+>赵世钰老师的课程主页&lt;/a>与&lt;a class="link" href="https://github.com/MathFoundationRL/Book-Mathematical-Foundation-of-Reinforcement-Learning" target="_blank" rel="noopener"
+>教材、课件仓库&lt;/a>食用。&lt;/strong>&lt;/p>
+&lt;p>学完本文，你应该能回答下面几个问题：&lt;/p>
+&lt;ul>
+&lt;li>一条轨迹的 return，为什么还不能直接代表一个状态的价值？&lt;/li>
+&lt;li>$v_\pi(s)$ 里的 $\pi$ 为什么绝对不能省略？&lt;/li>
+&lt;li>Bellman 方程为什么能把「无限未来」拆成「眼前一步 + 剩下的未来」？&lt;/li>
+&lt;li>一个未知量依赖另一个未知量，为什么不是死循环？&lt;/li>
+&lt;li>什么是 policy evaluation，它和寻找最优策略有什么区别？&lt;/li>
+&lt;li>$v_\pi(s)$ 与 $q_\pi(s,a)$ 到底是什么关系？&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>本文配图根据赵世钰老师 Lecture 2 与教材 Chapter 2 的四状态示例重新绘制，代码与数值均独立计算验证。&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="先把目标说清楚这一章是在评价策略">先把目标说清楚：这一章是在评价策略
+&lt;/h2>&lt;p>先别急着上公式，我们先确定这一章到底要解决什么问题。&lt;/p>
+&lt;p>假设策略 $\pi$ 已经给定：在每个状态下，各个动作被选择的概率都已经确定。环境模型也已知：做完动作后会去哪里、拿到什么奖励，以及各自的概率都知道。&lt;/p>
+&lt;p>现在的问题是：&lt;/p>
+&lt;blockquote>
+&lt;p>从状态 $s$ 出发，一直按照策略 $\pi$ 行动，长期来看能拿到多少回报？&lt;/p>
+&lt;/blockquote>
+&lt;p>求出所有状态的答案，就叫做&lt;strong>策略评估（Policy Evaluation）&lt;/strong>。&lt;/p>
+&lt;p>注意，这里暂时不是让智能体找最优策略，而是给现有策略做一次「体检」。先会判断一个策略到底好不好，后面才谈得上把它改得更好。&lt;/p>
+&lt;h2 id="return-只属于一条轨迹">Return 只属于一条轨迹
+&lt;/h2>&lt;p>上一篇定义了折扣回报：&lt;/p>
+\[
+G_t=R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\cdots
+\]&lt;p>如果策略和环境都是确定性的，那么从同一个状态出发，每次都会走出同一条轨迹，得到同一个 return。这时，用 return 评价状态完全没问题。&lt;/p>
+&lt;p>但只要策略或环境带一点随机性，事情就变了。&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/return-vs-value.svg"
+loading="lazy"
+alt="同一状态可能产生不同回报，状态价值是这些回报的期望"
+>&lt;/p>
+&lt;p>还是教材里的 $2\times2$ 小世界。机器人从 $s_1$ 出发：&lt;/p>
+&lt;ul>
+&lt;li>有 $0.5$ 的概率向下走，第一步奖励为 $0$，之后每步都拿 $+1$；&lt;/li>
+&lt;li>有 $0.5$ 的概率向右走进禁区，第一步奖励为 $-1$，之后同样每步拿 $+1$。&lt;/li>
+&lt;/ul>
+&lt;p>两条轨迹的 return 分别是：&lt;/p>
+\[
+\begin{aligned}
+G^{\text{down}}
+&amp;=0+\gamma+\gamma^2+\cdots\\
+&amp;=\frac{\gamma}{1-\gamma}
+\end{aligned}
+\]\[
+\begin{aligned}
+G^{\text{right}}
+&amp;=-1+\gamma+\gamma^2+\cdots\\
+&amp;=-1+\frac{\gamma}{1-\gamma}
+\end{aligned}
+\]&lt;p>当 $\gamma=0.9$ 时，它们分别等于 $9$ 和 $8$。&lt;/p>
+&lt;p>所以「从 $s_1$ 出发的 return 是多少」已经没有唯一答案了。一次采样拿到 $9$，另一次可能拿到 $8$。&lt;strong>Return 描述的是一条实际轨迹的结果，而不是这个状态在长期意义上的稳定评价。&lt;/strong>&lt;/p>
+&lt;h2 id="state-value把所有可能未来取平均">State Value：把所有可能未来取平均
+&lt;/h2>&lt;p>既然同一个状态会通向很多条轨迹，那就把这些轨迹的 return 按概率取期望：&lt;/p>
+\[
+\boxed{
+v_\pi(s)=\mathbb{E}_\pi[G_t\mid S_t=s]
+}
+\]&lt;p>这就是策略 $\pi$ 下的&lt;strong>状态价值函数（State-Value Function）&lt;/strong>，通常也简称状态价值。&lt;/p>
+&lt;p>上面随机策略的例子中：&lt;/p>
+\[
+\begin{aligned}
+v_\pi(s_1)
+&amp;=0.5G^{\text{down}}+0.5G^{\text{right}}\\
+&amp;=0.5\times9+0.5\times8\\
+&amp;=8.5.
+\end{aligned}
+\]&lt;p>这时，三个很容易被忽略的细节来了。&lt;/p>
+&lt;h3 id="它依赖状态-s">它依赖状态 $s$
+&lt;/h3>&lt;p>公式里的条件 $S_t=s$ 表示「从哪个状态出发」。起点不同，未来能拿到的回报当然可能不同。&lt;/p>
+&lt;h3 id="它更依赖策略-pi">它更依赖策略 $\pi$
+&lt;/h3>&lt;p>同一个状态，换一套动作选择规则，后面的轨迹分布就变了，价值自然也会变。&lt;/p>
+&lt;p>所以 $v_\pi(s)$ 里的下标 $\pi$ 不是装饰品。只写「$s_1$ 的价值是 8.5」并不完整，必须说清楚：&lt;strong>在策略 $\pi$ 下，$s_1$ 的价值是 8.5。&lt;/strong>&lt;/p>
+&lt;h3 id="它不依赖具体时刻-t">它不依赖具体时刻 $t$
+&lt;/h3>&lt;p>在平稳的 MDP 中，只要当前状态仍然是 $s$，后面的策略和环境规则没有随时间改变，那么状态价值就不会因为「现在是第 3 步还是第 300 步」而改变。&lt;/p>
+&lt;p>一句话总结：&lt;/p>
+&lt;blockquote>
+&lt;p>Return 是一次实际经历的总账；State Value 是从某个状态出发、遵循某个策略时，所有可能总账的期望。&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="最关键的一刀把-return-拆成两段">最关键的一刀：把 Return 拆成两段
+&lt;/h2>&lt;p>现在终于轮到 Bellman 方程登场了。&lt;/p>
+&lt;p>先看折扣回报：&lt;/p>
+\[
+G_t=R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\cdots
+\]&lt;p>把第一项单独拿出来，剩下部分提取一个 $\gamma$：&lt;/p>
+\[
+\begin{aligned}
+G_t
+&amp;=R_{t+1}+\gamma(R_{t+2}+\gamma R_{t+3}+\cdots)\\
+&amp;=R_{t+1}+\gamma G_{t+1}.
+\end{aligned}
+\]&lt;p>就是这么朴素的一步，却是后面几乎所有 value-based 方法的起点：&lt;/p>
+\[
+\boxed{G_t=R_{t+1}+\gamma G_{t+1}}
+\]&lt;p>人话翻译一下：&lt;/p>
+&lt;blockquote>
+&lt;p>从现在开始的全部回报 = 下一步立刻拿到的奖励 + 折扣后的剩余全部回报。&lt;/p>
+&lt;/blockquote>
+&lt;p>一个看起来无限长的序列，被切成了「一步」和「同一种问题的下一时刻版本」。这种用后续估计更新当前估计的思路，叫做 &lt;strong>bootstrapping（自举）&lt;/strong>。&lt;/p>
+&lt;p>注意这里的自举不是凭空猜答案，而是利用问题自身的递归结构。&lt;/p>
+&lt;h2 id="bellman-方程眼前一步--折扣后的未来">Bellman 方程：眼前一步 + 折扣后的未来
+&lt;/h2>&lt;p>对刚才的递推式，在 $S_t=s$ 的条件下取期望：&lt;/p>
+\[
+\begin{aligned}
+v_\pi(s)
+&amp;=\mathbb{E}_\pi[G_t\mid S_t=s]\\
+&amp;=\mathbb{E}_\pi[R_{t+1}+\gamma G_{t+1}\mid S_t=s].
+\end{aligned}
+\]&lt;p>利用期望的线性性质，以及 Markov 性质带来的「到达 $S_{t+1}$ 后，不必再翻旧账」，就得到最直观的形式：&lt;/p>
+\[
+\boxed{
+\begin{aligned}
+v_\pi(s)
+&amp;=\mathbb{E}_\pi\big[
+R_{t+1}+\gamma v_\pi(S_{t+1})\\
+&amp;\qquad\mid S_t=s
+\big]
+\end{aligned}
+}
+\]&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/bellman-backup.svg"
+loading="lazy"
+alt="Bellman 方程把状态价值分解为即时奖励与下一状态价值"
+>&lt;/p>
+&lt;p>这就是 &lt;strong>Bellman 方程&lt;/strong>。在很多资料里，为了和后面的 Bellman optimality equation 区分，它也会被叫做 &lt;strong>Bellman expectation equation&lt;/strong>。&lt;/p>
+&lt;p>它只有两部分：&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>即时奖励&lt;/strong> $R_{t+1}$：这一步马上得到什么；&lt;/li>
+&lt;li>&lt;strong>未来价值&lt;/strong> $\gamma v_\pi(S_{t+1})$：下一状态之后还能得到什么。&lt;/li>
+&lt;/ol>
+&lt;p>如果把动作、奖励和下一状态的全部概率展开，教材中的形式是：&lt;/p>
+\[
+\boxed{
+\begin{aligned}
+v_\pi(s)
+&amp;=\sum_a\pi(a\mid s)\Bigg[
+\sum_r p(r\mid s,a)r\\
+&amp;\qquad+\gamma\sum_{s'}p(s'\mid s,a)v_\pi(s')
+\Bigg],\\
+&amp;\hspace{7em}\forall s\in\mathcal S
+\end{aligned}
+}
+\]&lt;p>从外向内读就不吓人了：&lt;/p>
+&lt;ol>
+&lt;li>策略用 $\pi(a\mid s)$ 对「选哪个动作」取平均；&lt;/li>
+&lt;li>环境用 $p(r\mid s,a)$ 对「立即拿多少奖励」取平均；&lt;/li>
+&lt;li>环境再用 $p(s^{\prime}\mid s,a)$ 对「会到哪个下一状态」取平均；&lt;/li>
+&lt;li>下一状态的价值乘上折扣因子 $\gamma$。&lt;/li>
+&lt;/ol>
+&lt;p>如果奖励与下一状态需要联合描述，也经常写成更紧凑的形式：&lt;/p>
+\[
+\begin{aligned}
+v_\pi(s)
+&amp;=\sum_a\sum_{s',r}
+\pi(a\mid s)p(s',r\mid s,a)\\
+&amp;\qquad\cdot\left[r+\gamma v_\pi(s')\right].
+\end{aligned}
+\]&lt;p>符号长得不一样，但核心还是那八个字：&lt;strong>即时奖励，加上未来价值。&lt;/strong>&lt;/p>
+&lt;h2 id="它不是死循环而是一组联立方程">它不是死循环，而是一组联立方程
+&lt;/h2>&lt;p>初看 Bellman 方程，最容易冒出来的疑问是：&lt;/p>
+&lt;blockquote>
+&lt;p>我就是不知道 $v_\pi(s)$ 才来算它，结果右边又出现了另一个未知的 $v_\pi(s^{\prime})$，这不是循环依赖吗？&lt;/p>
+&lt;/blockquote>
+&lt;p>关键在公式最后的 $\forall s\in\mathcal S$：&lt;strong>Bellman 方程不是某一个状态的一条孤立公式，而是每个状态各有一条方程。&lt;/strong>&lt;/p>
+&lt;p>把所有状态的方程放在一起，它就是一个普通的线性方程组。&lt;/p>
+&lt;h3 id="四状态例子">四状态例子
+&lt;/h3>&lt;p>继续使用教材中的 $2\times2$ 世界：&lt;/p>
+&lt;ul>
+&lt;li>$s_1\rightarrow s_3$：向下，奖励 $0$；&lt;/li>
+&lt;li>$s_1\rightarrow s_2$：向右进入禁区，奖励 $-1$；&lt;/li>
+&lt;li>$s_2\rightarrow s_4$ 与 $s_3\rightarrow s_4$：奖励 $+1$；&lt;/li>
+&lt;li>在 $s_4$ 原地不动：每一步奖励 $+1$。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/four-state-values.svg"
+loading="lazy"
+alt="三个策略在同一状态上得到不同的状态价值"
+>&lt;/p>
+&lt;p>先看确定性向下的策略。四个状态的 Bellman 方程为：&lt;/p>
+\[
+\begin{aligned}
+v_\pi(s_1)&amp;=0+\gamma v_\pi(s_3),\\
+v_\pi(s_2)&amp;=1+\gamma v_\pi(s_4),\\
+v_\pi(s_3)&amp;=1+\gamma v_\pi(s_4),\\
+v_\pi(s_4)&amp;=1+\gamma v_\pi(s_4).
+\end{aligned}
+\]&lt;p>最后一条虽然左右都有 $v_\pi(s_4)$，但移项就能解：&lt;/p>
+\[
+v_\pi(s_4)=\frac{1}{1-\gamma}.
+\]&lt;p>当 $\gamma=0.9$ 时：&lt;/p>
+\[
+\begin{aligned}
+v_\pi(s_4)=v_\pi(s_3)=v_\pi(s_2)&amp;=10,\\
+v_\pi(s_1)&amp;=9.
+\end{aligned}
+\]&lt;p>如果 $s_1$ 以 $0.5$ 概率向右、$0.5$ 概率向下，那么只有第一条变成：&lt;/p>
+\[
+\begin{aligned}
+v_\pi(s_1)
+&amp;=0.5[-1+\gamma v_\pi(s_2)]\\
+&amp;\qquad+0.5[0+\gamma v_\pi(s_3)].
+\end{aligned}
+\]&lt;p>代入 $v_\pi(s_2)=v_\pi(s_3)=10$，得到：&lt;/p>
+\[
+v_\pi(s_1)=0.5\times8+0.5\times9=8.5.
+\]&lt;p>这和前面直接对两种 return 取期望的结果完全一致。只不过 Bellman 方程没有把无限长轨迹从头展开，而是借用了下一状态已经压缩好的价值。&lt;/p>
+&lt;h2 id="矩阵形式把所有状态一次装进去">矩阵形式：把所有状态一次装进去
+&lt;/h2>&lt;p>当状态多起来，一条条手写方程会非常痛苦。于是把它们打包成矩阵：&lt;/p>
+\[
+\boxed{
+\mathbf v_\pi=\mathbf r_\pi+\gamma\mathbf P_\pi\mathbf v_\pi
+}
+\]&lt;p>其中：&lt;/p>
+&lt;ul>
+&lt;li>$\mathbf v_\pi$ 是所有状态价值组成的列向量；&lt;/li>
+&lt;li>$\mathbf r_\pi$ 是策略 $\pi$ 下，每个状态的期望即时奖励；&lt;/li>
+&lt;li>$\mathbf P_\pi$ 是策略 $\pi$ 下的状态转移矩阵；&lt;/li>
+&lt;li>$\mathbf P_\pi$ 每一行的元素之和为 $1$。&lt;/li>
+&lt;/ul>
+&lt;p>对于上面的随机策略：&lt;/p>
+\[
+\mathbf r_\pi=
+\begin{bmatrix}
+-0.5\\1\\1\\1
+\end{bmatrix}.
+\]\[
+\mathbf P_\pi=
+\begin{bmatrix}
+0&amp;0.5&amp;0.5&amp;0\\
+0&amp;0&amp;0&amp;1\\
+0&amp;0&amp;0&amp;1\\
+0&amp;0&amp;0&amp;1
+\end{bmatrix}.
+\]&lt;p>第一行的 $(0.5,0.5)$ 表示从 $s_1$ 出发，有一半概率到 $s_2$，一半概率到 $s_3$。后三行则是确定性转移。&lt;/p>
+&lt;p>移项可以得到闭式解：&lt;/p>
+\[
+(\mathbf I-\gamma\mathbf P_\pi)\mathbf v_\pi
+=\mathbf r_\pi
+\]\[
+\boxed{
+\mathbf v_\pi
+=(\mathbf I-\gamma\mathbf P_\pi)^{-1}\mathbf r_\pi
+}
+\]&lt;p>数学上非常漂亮。但工程上，显式求逆通常不是一个好主意：状态一多，矩阵会大得离谱；而且后面很多任务里，我们连完整的 $\mathbf P_\pi$ 都拿不到。&lt;/p>
+&lt;p>所以，更重要的是下一种解法。&lt;/p>
+&lt;h2 id="迭代策略评估先猜一个再反复-bellman-backup">迭代策略评估：先猜一个，再反复 Bellman backup
+&lt;/h2>&lt;p>定义 Bellman operator：&lt;/p>
+\[
+\mathcal T_\pi(\mathbf v)
+=\mathbf r_\pi+\gamma\mathbf P_\pi\mathbf v.
+\]&lt;p>真正的状态价值就是它的不动点：&lt;/p>
+\[
+\mathbf v_\pi=\mathcal T_\pi(\mathbf v_\pi).
+\]&lt;p>于是我们可以从任意初值 $\mathbf v_0$ 出发，反复更新：&lt;/p>
+\[
+\boxed{
+\mathbf v_{k+1}
+=\mathbf r_\pi+\gamma\mathbf P_\pi\mathbf v_k
+}
+\]&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/policy-evaluation.svg"
+loading="lazy"
+alt="Bellman 迭代从全零初值逐步收敛到真实状态价值"
+>&lt;/p>
+&lt;p>在四状态例子里，从 $\mathbf v_0=\mathbf 0$ 开始：&lt;/p>
+\[
+\begin{aligned}
+\mathbf v_1&amp;=[-0.5,1,1,1]^\mathsf T,\\
+\mathbf v_2&amp;=[0.4,1.9,1.9,1.9]^\mathsf T,\\
+\mathbf v_3&amp;=[1.21,2.71,2.71,2.71]^\mathsf T,\\
+&amp;\ \vdots\\
+\mathbf v_k&amp;\longrightarrow[8.5,10,10,10]^\mathsf T.
+\end{aligned}
+\]&lt;p>这个过程也很好理解：&lt;/p>
+&lt;ul>
+&lt;li>第 1 轮只看见一步奖励；&lt;/li>
+&lt;li>第 2 轮把两步之内的信息传回来；&lt;/li>
+&lt;li>第 3 轮又把更远一步的奖励传回来；&lt;/li>
+&lt;li>不断迭代后，越来越远的未来被逐渐折叠进当前价值。&lt;/li>
+&lt;/ul>
+&lt;p>为什么它会收敛？因为 $0\le\gamma&amp;lt;1$，Bellman operator 会把两个价值估计之间的最大差距至少缩小为原来的 $\gamma$ 倍：&lt;/p>
+\[
+\lVert\mathcal T_\pi(\mathbf u)-\mathcal T_\pi(\mathbf v)\rVert_\infty
+\le\gamma\lVert\mathbf u-\mathbf v\rVert_\infty.
+\]&lt;p>这叫做&lt;strong>压缩映射（Contraction Mapping）&lt;/strong>。你可以把它想成一根不断回弹的橡皮筋：每更新一次，估计值就被拉向唯一的不动点，不会永远在外面乱飘。&lt;/p>
+&lt;h2 id="用-python-真正算一次">用 Python 真正算一次
+&lt;/h2>&lt;p>下面不用 NumPy，直接把 Bellman backup 写出来。&lt;code>MODEL[state]&lt;/code> 中的每一项都是：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">(发生概率, 即时奖励, 下一状态)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>完整代码如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;span class="lnt">52
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">GAMMA&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">0.9&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># s1: 0.5 概率向右进入 s2，0.5 概率向下进入 s3&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># s2、s3: 确定性进入 s4；s4: 原地不动&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">MODEL&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">1&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[(&lt;/span>&lt;span class="mf">0.5&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">2&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="mf">0.5&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="p">)],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">2&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[(&lt;/span>&lt;span class="mf">1.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">4&lt;/span>&lt;span class="p">)],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">3&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[(&lt;/span>&lt;span class="mf">1.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">4&lt;/span>&lt;span class="p">)],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">4&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[(&lt;/span>&lt;span class="mf">1.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">4&lt;/span>&lt;span class="p">)],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">bellman_backup&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">int&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">values&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">dict&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nb">int&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">float&lt;/span>&lt;span class="p">])&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="nb">float&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;用旧的 values 计算状态 state 的一次 Bellman 更新。&amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nb">sum&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">probability&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">reward&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">GAMMA&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="n">values&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">next_state&lt;/span>&lt;span class="p">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="n">probability&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">reward&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">next_state&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">MODEL&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">evaluate_policy&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">tolerance&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">float&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">1e-10&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">values&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mf">0.0&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">state&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">MODEL&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;sweep 0: &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nb">round&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">values&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="mi">6&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">s&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">MODEL&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="n">sweep&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="nb">range&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">10_000&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 同步更新：这一轮的每个新值都只读取上一轮 values&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">new_values&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">state&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">bellman_backup&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">values&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="n">state&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">MODEL&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">delta&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">max&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">abs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">new_values&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">values&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="n">state&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">MODEL&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">values&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">new_values&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="n">sweep&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">10&lt;/span>&lt;span class="p">}:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;sweep &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">sweep&lt;/span>&lt;span class="si">:&lt;/span>&lt;span class="s2">&amp;gt;2&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">: &amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nb">round&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">values&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="mi">6&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">s&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">MODEL&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="n">delta&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="n">tolerance&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">values&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">sweep&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">raise&lt;/span> &lt;span class="ne">RuntimeError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;policy evaluation did not converge&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">values&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">sweeps&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">evaluate_policy&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;converged after &lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">sweeps&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2"> sweeps&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">({&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">round&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">value&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">6&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">state&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">value&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">values&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">items&lt;/span>&lt;span class="p">()})&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>运行结果：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">sweep 0: [0.0, 0.0, 0.0, 0.0]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sweep 1: [-0.5, 1.0, 1.0, 1.0]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sweep 2: [0.4, 1.9, 1.9, 1.9]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sweep 3: [1.21, 2.71, 2.71, 2.71]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sweep 10: [5.013216, 6.513216, 6.513216, 6.513216]
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">converged after 220 sweeps
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">{1: 8.5, 2: 10.0, 3: 10.0, 4: 10.0}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这里故意使用了&lt;strong>同步更新&lt;/strong>：先根据旧的 &lt;code>values&lt;/code> 算完所有 &lt;code>new_values&lt;/code>，再整体替换。这样代码和&lt;/p>
+\[
+\mathbf v_{k+1}=\mathbf r_\pi+\gamma\mathbf P_\pi\mathbf v_k
+\]&lt;p>完全一致。如果在同一轮里一边计算一边覆盖，后面的状态会读到本轮刚更新的值，那会变成另一种同样可能收敛、但顺序相关的更新方式。初学时最好先把两者分清楚。&lt;/p>
+&lt;p>另外，220 轮并不代表这个四状态问题真的很难。我们把误差阈值设成了相当严格的 $10^{-10}$，而且 $\gamma=0.9$ 会让尾部慢慢逼近。只保留三位小数时，远远不需要这么多轮。&lt;/p>
+&lt;h2 id="action-value不只问这个状态怎样还要问这个动作怎样">Action Value：不只问「这个状态怎样」，还要问「这个动作怎样」
+&lt;/h2>&lt;p>状态价值回答的是：&lt;/p>
+&lt;blockquote>
+&lt;p>从状态 $s$ 出发，之后一直按照策略 $\pi$ 行动，平均能拿多少回报？&lt;/p>
+&lt;/blockquote>
+&lt;p>但真正做决策时，我们更想知道：&lt;/p>
+&lt;blockquote>
+&lt;p>在状态 $s$ &lt;strong>先指定执行动作 $a$&lt;/strong>，然后再按照策略 $\pi$ 行动，平均能拿多少回报？&lt;/p>
+&lt;/blockquote>
+&lt;p>这就是&lt;strong>动作价值（Action Value）&lt;/strong>：&lt;/p>
+\[
+\boxed{
+q_\pi(s,a)
+=\mathbb E_\pi[G_t\mid S_t=s,A_t=a]
+}
+\]&lt;p>它的 Bellman 形式是：&lt;/p>
+\[
+\boxed{
+\begin{aligned}
+q_\pi(s,a)
+&amp;=\sum_{s',r}p(s',r\mid s,a)\\
+&amp;\qquad\cdot\left[r+\gamma v_\pi(s')\right]
+\end{aligned}
+}
+\]&lt;p>注意，$q_\pi(s,a)$ 只是把&lt;strong>当前这一步&lt;/strong>的动作钉死为 $a$。从下一状态开始，仍然继续遵循原策略 $\pi$。&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/state-action-value.svg"
+loading="lazy"
+alt="状态价值是当前策略对动作价值的加权平均"
+>&lt;/p>
+&lt;p>在上面的 $s_1$ 中：&lt;/p>
+\[
+q_\pi(s_1,\text{right})=-1+0.9\times10=8,
+\]\[
+q_\pi(s_1,\text{down})=0+0.9\times10=9.
+\]&lt;p>而随机策略各用 $0.5$ 概率选择它们，所以：&lt;/p>
+\[
+\boxed{
+\begin{aligned}
+v_\pi(s_1)
+&amp;=\sum_a\pi(a\mid s_1)q_\pi(s_1,a)\\
+&amp;=0.5\times8+0.5\times9\\
+&amp;=8.5
+\end{aligned}
+}
+\]&lt;p>于是 $v$ 和 $q$ 的关系非常清楚：&lt;/p>
+&lt;ul>
+&lt;li>$q_\pi(s,a)$：先固定当前动作，再看后面的长期回报；&lt;/li>
+&lt;li>$v_\pi(s)$：不固定当前动作，按照策略概率对所有动作价值取平均。&lt;/li>
+&lt;/ul>
+&lt;h3 id="没被当前策略选中的动作也有价值">没被当前策略选中的动作，也有价值
+&lt;/h3>&lt;p>这是教材专门提醒的一个易错点。&lt;/p>
+&lt;p>假设当前策略在 $s_1$ 只会向右或向下，那么向上、向左、原地不动的概率都是 0。它们的 action value 会不会也等于 0？&lt;/p>
+&lt;p>&lt;strong>不会。&lt;/strong>&lt;/p>
+&lt;p>策略不选择某个动作，只说明 $\pi(a\mid s_1)=0$，不代表执行这个动作以后没有回报。比如向上撞墙，得到 $-1$ 并回到 $s_1$，那么：&lt;/p>
+\[
+\begin{aligned}
+q_\pi(s_1,\text{up})
+&amp;=-1+\gamma v_\pi(s_1)\\
+&amp;=-1+0.9\times8.5\\
+&amp;=6.65.
+\end{aligned}
+\]&lt;p>它不是 0，只是没有被当前策略采用。&lt;/p>
+&lt;p>这件事相当重要：当前策略可能本来就不够好。如果把所有未选动作都武断地设成 0，就永远没有机会发现被漏掉的好动作。&lt;/p>
+&lt;h2 id="三个最容易混淆的地方">三个最容易混淆的地方
+&lt;/h2>&lt;h3 id="bellman-方程不是某一种具体算法">Bellman 方程不是某一种具体算法
+&lt;/h3>&lt;p>Bellman 方程首先是价值之间必须满足的&lt;strong>关系&lt;/strong>。&lt;/p>
+&lt;ul>
+&lt;li>直接解线性方程组，是一种求解方法；&lt;/li>
+&lt;li>反复 Bellman backup，是另一种求解方法；&lt;/li>
+&lt;li>后面的 Monte Carlo、TD、DQN，则是在不同信息条件下估计或逼近这个关系。&lt;/li>
+&lt;/ul>
+&lt;p>不要把「方程」和「解方程的算法」混成一个东西。&lt;/p>
+&lt;h3 id="这一篇没有在取最大值">这一篇没有在取最大值
+&lt;/h3>&lt;p>本文一直在评价一个&lt;strong>给定策略&lt;/strong>，所以动作要按照 $\pi(a\mid s)$ 加权平均：&lt;/p>
+\[
+v_\pi(s)=\sum_a\pi(a\mid s)q_\pi(s,a).
+\]&lt;p>如果你在别的资料里看到：&lt;/p>
+\[
+v_*(s)=\max_a q_*(s,a),
+\]&lt;p>那已经是下一章的 &lt;strong>Bellman Optimality Equation&lt;/strong> 了。一个是在问「这套策略有多好」，另一个是在问「能做到的最好结果是多少」，别看到都姓 Bellman 就当成同一条公式。&lt;/p>
+&lt;h3 id="value-高低必须放在同一奖励与折扣设定下比较">Value 高低必须放在同一奖励与折扣设定下比较
+&lt;/h3>&lt;p>状态价值完全由奖励定义、折扣因子、环境模型和策略共同决定。&lt;/p>
+&lt;p>把 reward 或 $\gamma$ 换掉，数值尺度也会变。因此不能拿两个不同任务里的 value 生硬比较，更不能把 value 当成脱离任务设定的某种「绝对幸福指数」。&lt;/p>
+&lt;h2 id="总结">总结
+&lt;/h2>&lt;p>这一篇的公式不少，但真正的主线只有一条：&lt;/p>
+\[
+\boxed{
+G_t=R_{t+1}+\gamma G_{t+1}
+}
+\]&lt;p>从这条递推关系出发，我们得到：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>概念&lt;/th>
+&lt;th>它回答的问题&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>Return $G_t$&lt;/td>
+&lt;td>这一条实际轨迹最终赚了多少？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>State value $v_\pi(s)$&lt;/td>
+&lt;td>从状态 $s$ 出发并遵循 $\pi$，平均能赚多少？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Bellman equation&lt;/td>
+&lt;td>当前价值怎样由一步奖励和下一状态价值组成？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Bootstrapping&lt;/td>
+&lt;td>怎样用后续估计来更新当前估计？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Policy evaluation&lt;/td>
+&lt;td>怎样求出给定策略的所有状态价值？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Action value $q_\pi(s,a)$&lt;/td>
+&lt;td>在 $s$ 先做 $a$，之后遵循 $\pi$，平均能赚多少？&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>最值得记住的三个公式是：&lt;/p>
+\[
+v_\pi(s)=\mathbb E_\pi[G_t\mid S_t=s],
+\]\[
+v_\pi(s)=\mathbb E_\pi[R_{t+1}+\gamma v_\pi(S_{t+1})\mid S_t=s],
+\]\[
+v_\pi(s)=\sum_a\pi(a\mid s)q_\pi(s,a).
+\]&lt;p>到这里，我们已经能评价一个给定策略，但还不会回答「所有可能策略里，哪个才是最好的」。&lt;/p>
+&lt;p>下一篇就进入 &lt;strong>Bellman Optimality Equation&lt;/strong>：把「按照当前策略取平均」换成「从动作中选最大值」，正式定义最优状态价值和最优动作价值。&lt;/p>
+&lt;p>这一次，机器人终于不只是在接受体检，而是准备开始琢磨怎么把分数考高了 hhh。&lt;/p></description></item><item><title>从零开始学强化学习（一）：先把基本概念说人话</title><link>https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/</link><pubDate>Sun, 16 Aug 2026 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/</guid><description>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/cover.svg" alt="Featured image of post 从零开始学强化学习（一）：先把基本概念说人话" />&lt;h2 id="前言">前言
+&lt;/h2>&lt;p>这是「从零开始学强化学习」系列的第一篇。&lt;/p>
+&lt;p>这个系列会跟着赵世钰老师的《强化学习的数学原理》课程和配套教材 &lt;em>Mathematical Foundations of Reinforcement Learning&lt;/em> 往下学。老师的课程从一个很小的网格世界出发，再一步步走到 Bellman 方程、蒙特卡洛、时序差分、DQN、策略梯度和 Actor-Critic，路线相当适合把强化学习的数学地基补完整。&lt;/p>
+&lt;p>&lt;strong>本文书写顺序紧跟教材 Chapter 1 和 Lecture 1，建议配合&lt;a class="link" href="https://shiyuzhao.westlake.edu.cn/Teaching.htm" target="_blank" rel="noopener"
+>赵世钰老师的课程主页&lt;/a>与&lt;a class="link" href="https://github.com/MathFoundationRL/Book-Mathematical-Foundation-of-Reinforcement-Learning" target="_blank" rel="noopener"
+>教材、课件仓库&lt;/a>食用。&lt;/strong>&lt;/p>
+&lt;p>但是！第一章一口气扔出了 state、action、policy、reward、return、episode、MDP 一大堆名词。如果只是把定义背下来，很容易出现一种「每个单词我都认识，连起来就不知道在干嘛」的奇妙状态。&lt;/p>
+&lt;p>所以这一篇先不碰任何高深算法，只做一件事：&lt;strong>用一个 3×3 的小游戏，把强化学习最基础的语言说清楚。&lt;/strong>&lt;/p>
+&lt;p>学完本文，你应该能回答下面几个问题：&lt;/p>
+&lt;ul>
+&lt;li>状态和动作分别是什么？&lt;/li>
+&lt;li>环境、策略和状态转移之间是什么关系？&lt;/li>
+&lt;li>reward 和 return 为什么不是同一个东西？&lt;/li>
+&lt;li>折扣因子 \(\gamma\) 到底在折扣什么？&lt;/li>
+&lt;li>MDP 为什么能把上面这些概念全部装进去？&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>本文配图根据赵世钰老师 Lecture 1 与教材 Chapter 1 的网格世界重新绘制。&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="强化学习到底在学什么">强化学习到底在学什么
+&lt;/h2>&lt;p>先看强化学习最经典的一张图：&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/agent-environment.svg"
+loading="lazy"
+alt="强化学习中的智能体与环境交互闭环"
+>&lt;/p>
+&lt;p>强化学习里有两个主角：&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>智能体（Agent）&lt;/strong>：负责做决定，比如机器人、游戏角色，或者一个推荐系统。&lt;/li>
+&lt;li>&lt;strong>环境（Environment）&lt;/strong>：智能体之外的一切，比如地图、游戏规则和用户反馈。&lt;/li>
+&lt;/ul>
+&lt;p>在第 \(t\) 个时间步，智能体观察到状态 \(S_t\)，根据策略选择动作 \(A_t\)。环境接收动作后，转移到新状态 \(S_{t+1}\)，同时给智能体一个奖励 \(R_{t+1}\)。&lt;/p>
+&lt;p>然后这个过程继续循环：&lt;/p>
+\[
+S_t \longrightarrow A_t \longrightarrow (R_{t+1}, S_{t+1})
+\]&lt;p>它和监督学习最大的区别在于：环境不会直接告诉你「正确答案是向右走」。它只会在你行动后给一点反馈，甚至这个反馈还可能延迟很多步才出现。&lt;/p>
+&lt;p>所以强化学习真正想学的是：&lt;/p>
+&lt;blockquote>
+&lt;p>找到一个策略，让智能体在长期交互中拿到尽可能大的总回报。&lt;/p>
+&lt;/blockquote>
+&lt;p>注意关键词是&lt;strong>长期&lt;/strong>。如果只盯着眼前这一步的奖励，智能体很可能会变成一个相当短视的家伙。&lt;/p>
+&lt;h2 id="从一个-33-网格世界开始">从一个 3×3 网格世界开始
+&lt;/h2>&lt;p>下面这个网格世界会贯穿赵老师整本书，我们也用它来贯穿这一篇。&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/grid-world.svg"
+loading="lazy"
+alt="网格世界中的状态、动作、禁区和目标"
+>&lt;/p>
+&lt;p>游戏规则很简单：&lt;/p>
+&lt;ul>
+&lt;li>机器人一开始位于左上角 \(s_1\)；&lt;/li>
+&lt;li>黄色格子 \(s_6\) 和 \(s_7\) 是禁区；&lt;/li>
+&lt;li>蓝色格子 \(s_9\) 是目标；&lt;/li>
+&lt;li>机器人每一步可以上、右、下、左，或者原地不动；&lt;/li>
+&lt;li>撞到边界会被弹回原来的格子；&lt;/li>
+&lt;li>禁区&lt;strong>可以进入&lt;/strong>，只是会受到惩罚，它不是一堵墙。&lt;/li>
+&lt;/ul>
+&lt;p>我们的目标是让机器人从任意起点出发，都能找到一条「好」的路线到达目标。&lt;/p>
+&lt;p>什么叫好？&lt;/p>
+&lt;p>直觉上，它应该避开禁区、少绕路、不要一直撞墙。但计算机不懂这些人类直觉，因此我们得把「位置」「移动」「惩罚」「到达目标」全部写成数学对象。&lt;/p>
+&lt;p>这就轮到第一批概念登场了。&lt;/p>
+&lt;h2 id="state我现在在哪里">State：我现在在哪里
+&lt;/h2>&lt;p>**状态（State）**描述智能体相对于环境所处的情况。&lt;/p>
+&lt;p>在这个最简单的网格世界里，只要知道机器人在哪个格子，就知道了它的状态：&lt;/p>
+\[
+\mathcal{S} = \{s_1,s_2,\ldots,s_9\}
+\]&lt;p>所有可能状态的集合叫做&lt;strong>状态空间（State Space）&lt;/strong>，记作 \(\mathcal{S}\)。&lt;/p>
+&lt;p>这里的状态只是位置，但真实任务里的状态可以复杂得多：&lt;/p>
+&lt;ul>
+&lt;li>下棋：棋盘上所有棋子的布局；&lt;/li>
+&lt;li>自动驾驶：车辆位置、速度、道路和周围障碍物；&lt;/li>
+&lt;li>游戏 AI：角色血量、装备、地图位置和敌人状态；&lt;/li>
+&lt;li>推荐系统：用户最近的行为、兴趣和当前上下文。&lt;/li>
+&lt;/ul>
+&lt;p>有个很容易忽略的点：状态并不等于「随便挑一些能看到的数据」。一个好的状态应该尽量包含预测未来所需的信息。比如控制一辆车，只知道位置却不知道速度，很多时候就不够用了。&lt;/p>
+&lt;p>这件事后面会被正式写成 &lt;strong>Markov 性质&lt;/strong>。&lt;/p>
+&lt;h2 id="action我接下来能做什么">Action：我接下来能做什么
+&lt;/h2>&lt;p>**动作（Action）**就是智能体可以作出的选择。&lt;/p>
+&lt;p>在网格世界中，我们定义五个动作：&lt;/p>
+\[
+\mathcal{A} = \{a_1,a_2,a_3,a_4,a_5\}
+\]&lt;p>其中：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>动作&lt;/th>
+&lt;th>含义&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>\(a_1\)&lt;/td>
+&lt;td>向上&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>\(a_2\)&lt;/td>
+&lt;td>向右&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>\(a_3\)&lt;/td>
+&lt;td>向下&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>\(a_4\)&lt;/td>
+&lt;td>向左&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>\(a_5\)&lt;/td>
+&lt;td>原地不动&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>所有动作组成&lt;strong>动作空间（Action Space）&lt;/strong>。&lt;/p>
+&lt;p>不同状态当然可以拥有不同的动作空间。比如站在左上角 \(s_1\) 时，也可以直接规定「向上」和「向左」这两个动作不存在。&lt;/p>
+&lt;p>不过赵老师的例子采用了更一般的设定：每个格子都允许五个动作，只是越界后会留在原地并收到惩罚。也就是对任意状态 \(s_i\)，都有：&lt;/p>
+\[
+\mathcal{A}(s_i)=\mathcal{A}
+\]&lt;p>这个设计很有用，因为它把「不能做」改成了「可以尝试，但环境会告诉你这样做不好」。&lt;/p>
+&lt;h2 id="state-transition做完动作会去哪">State Transition：做完动作会去哪
+&lt;/h2>&lt;p>智能体在状态 \(s\) 执行动作 \(a\) 后，环境会给出下一个状态 \(s'\)。这个过程叫做&lt;strong>状态转移（State Transition）&lt;/strong>。&lt;/p>
+&lt;p>比如：&lt;/p>
+\[
+s_1 \xrightarrow{a_2} s_2
+\]&lt;p>表示机器人在 \(s_1\) 向右走，会来到 \(s_2\)。&lt;/p>
+&lt;p>撞墙时：&lt;/p>
+\[
+s_1 \xrightarrow{a_1} s_1
+\]&lt;p>机器人并不会飞出地图，而是仍然留在 \(s_1\)。&lt;/p>
+&lt;p>从 \(s_5\) 向右走则会进入禁区 \(s_6\)：&lt;/p>
+\[
+s_5 \xrightarrow{a_2} s_6
+\]&lt;p>再次强调，禁区在这个例子里是&lt;strong>可进入但有惩罚&lt;/strong>，不是不可达区域。环境规则完全可以换一种定义，但一旦定义好，智能体就得在这套规则里学习。&lt;/p>
+&lt;h3 id="确定性和随机性">确定性和随机性
+&lt;/h3>&lt;p>上面的例子里，给定状态和动作后，下一个状态完全确定。我们可以写成：&lt;/p>
+\[
+p(s_2\mid s_1,a_2)=1
+\]\[
+p(s_i\mid s_1,a_2)=0,\qquad i\neq 2
+\]&lt;p>更一般地，状态转移可以是随机的。假设网格里突然刮起妖风，即使机器人选择向右，也可能被吹到别的格子，那么就会出现：&lt;/p>
+\[
+p(s'\mid s,a)\in[0,1]
+\]&lt;p>并且所有可能下一个状态的概率之和必须为 1：&lt;/p>
+\[
+\sum_{s'\in\mathcal{S}}p(s'\mid s,a)=1
+\]&lt;p>\(p(s'\mid s,a)\) 被称为&lt;strong>状态转移概率&lt;/strong>。所有状态转移概率放在一起，就是环境的 &lt;strong>model&lt;/strong> 或 &lt;strong>dynamics&lt;/strong>。&lt;/p>
+&lt;p>先记住这句话：&lt;strong>动作由智能体选，下一个状态由环境决定。&lt;/strong>&lt;/p>
+&lt;h2 id="policy在每个状态下怎么选动作">Policy：在每个状态下怎么选动作
+&lt;/h2>&lt;p>知道「能做什么」还不够，智能体还需要一套做决定的方法，这就是&lt;strong>策略（Policy）&lt;/strong>。&lt;/p>
+&lt;p>策略通常记作：&lt;/p>
+\[
+\pi(a\mid s)
+\]&lt;p>它表示智能体位于状态 \(s\) 时，选择动作 \(a\) 的概率。&lt;/p>
+&lt;p>如果在 \(s_1\) 时一定向右走，那么：&lt;/p>
+\[
+\pi(a_2\mid s_1)=1
+\]&lt;p>其他动作的概率都是 0。这叫做&lt;strong>确定性策略&lt;/strong>。&lt;/p>
+&lt;p>如果机器人在 \(s_1\) 时有一半概率向右、一半概率向下，那么：&lt;/p>
+\[
+\pi(a_2\mid s_1)=0.5,\qquad
+\pi(a_3\mid s_1)=0.5
+\]&lt;p>这叫做&lt;strong>随机策略&lt;/strong>。&lt;/p>
+&lt;p>无论是哪一种，每个状态下所有动作的概率都要加起来等于 1：&lt;/p>
+\[
+\sum_{a\in\mathcal{A}(s)}\pi(a\mid s)=1
+\]&lt;p>这里最容易混淆的是：&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>策略&lt;/strong>是一整套规则，回答「每个状态下该怎么选动作」；&lt;/li>
+&lt;li>&lt;strong>轨迹&lt;/strong>是实际运行一次以后，真正走出来的那条路。&lt;/li>
+&lt;/ul>
+&lt;p>同一个随机策略运行两次，完全可能产生两条不同的轨迹。&lt;/p>
+&lt;h2 id="reward环境对这一步的评价">Reward：环境对这一步的评价
+&lt;/h2>&lt;p>智能体每执行一个动作，环境就会返回一个实数作为反馈，这就是&lt;strong>奖励（Reward）&lt;/strong>。&lt;/p>
+&lt;p>在网格世界中，我们这样设计奖励：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>情况&lt;/th>
+&lt;th style="text-align: right">奖励&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>试图越过边界&lt;/td>
+&lt;td style="text-align: right">\(-1\)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>进入禁区&lt;/td>
+&lt;td style="text-align: right">\(-1\)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>到达目标&lt;/td>
+&lt;td style="text-align: right">\(+1\)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>其他情况&lt;/td>
+&lt;td style="text-align: right">\(0\)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>奖励可以写成 \(r(s,a)\)。如果奖励本身也带随机性，就用条件概率 \(p(r\mid s,a)\) 来描述。&lt;/p>
+&lt;p>奖励其实是人类和智能体之间的一种接口：我们没告诉它正确路线，但通过奖励表达了「我希望你到达目标，也希望你少撞墙、别踩禁区」。&lt;/p>
+&lt;p>听起来很简单，但 reward design 往往是强化学习里最难的工作之一。奖励写歪一点，智能体就可能钻规则的空子，用一种你完全没想到的方式拿高分。&lt;/p>
+&lt;p>还有两个初学者很容易踩的坑。&lt;/p>
+&lt;h3 id="正奖励不一定代表绝对的好">正奖励不一定代表绝对的好
+&lt;/h3>&lt;p>真正影响行为的是奖励之间的&lt;strong>相对大小&lt;/strong>。把所有奖励同时加上一个常数，在一些设定下不会改变最优策略。&lt;/p>
+&lt;p>所以重点并不是某个数字「看起来正不正能量」，而是不同选择最终能积累多少回报。&lt;/p>
+&lt;h3 id="下一个状态相同奖励也可能不同">下一个状态相同，奖励也可能不同
+&lt;/h3>&lt;p>在 \(s_1\) 向上撞墙和在 \(s_1\) 原地不动，下一状态都是 \(s_1\)，但前者奖励为 \(-1\)，后者奖励为 \(0\)。&lt;/p>
+&lt;p>因此，只看 \(s'\) 不一定能推出奖励。教材用 \(r(s,a)\) 来定义奖励；在很多其他资料里，你也会见到 \(r(s,a,s')\)。两种写法可以通过条件概率互相转换，不用看到符号不同就怀疑自己学错了。&lt;/p>
+&lt;h2 id="trajectory-与-return别只看眼前这一分">Trajectory 与 Return：别只看眼前这一分
+&lt;/h2>&lt;p>状态、动作和奖励按时间串起来，就得到一条&lt;strong>轨迹（Trajectory）&lt;/strong>：&lt;/p>
+\[
+s_0 \xrightarrow{a_0,r_1}
+s_1 \xrightarrow{a_1,r_2}
+s_2 \xrightarrow{a_2,r_3}\cdots
+\]&lt;p>同一起点下，两种策略可能产生下面两条路线：&lt;/p>
+&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/policy-return.svg"
+loading="lazy"
+alt="两条策略产生不同轨迹与回报"
+>&lt;/p>
+&lt;p>策略 A 走：&lt;/p>
+\[
+s_1\rightarrow s_2\rightarrow s_5\rightarrow s_8\rightarrow s_9
+\]&lt;p>得到的奖励为：&lt;/p>
+\[
+0+0+0+1=1
+\]&lt;p>策略 B 会踩到禁区 \(s_7\)：&lt;/p>
+\[
+s_1\rightarrow s_4\rightarrow s_7\rightarrow s_8\rightarrow s_9
+\]&lt;p>得到的奖励为：&lt;/p>
+\[
+0-1+0+1=0
+\]&lt;p>一条轨迹上所有奖励的总和叫做&lt;strong>回报（Return）&lt;/strong>，也叫累计奖励。&lt;/p>
+&lt;p>于是「策略 A 更好」不再只是人类感觉，而有了一个可以比较的数学指标：它获得的 return 更大。&lt;/p>
+&lt;p>这也解释了为什么不能每一步都贪心地选择 immediate reward 最大的动作。某一步暂时吃亏，可能会换来后面更大的奖励；反过来，眼前拿到一点甜头，也可能把自己送进长期陷阱。&lt;/p>
+&lt;p>&lt;strong>Reward 是一步的反馈，Return 是一串未来反馈的总账。&lt;/strong>&lt;/p>
+&lt;h2 id="discounted-return未来的一块钱值多少">Discounted Return：未来的一块钱值多少
+&lt;/h2>&lt;p>如果轨迹是无限长的，直接把奖励相加可能会发散。&lt;/p>
+&lt;p>比如机器人到达 \(s_9\) 后一直原地不动，并且每一步都获得 \(+1\)：&lt;/p>
+\[
+1+1+1+\cdots=\infty
+\]&lt;p>这时候就需要引入折扣因子 \(\gamma\in[0,1)\)，定义&lt;strong>折扣回报（Discounted Return）&lt;/strong>：&lt;/p>
+\[
+\begin{aligned}
+G_t
+&amp;=R_{t+1}+\gamma R_{t+2}\\
+&amp;\quad+\gamma^2R_{t+3}+\cdots\\
+&amp;=\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}
+\end{aligned}
+\]&lt;p>&lt;img src="https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/discounted-return.svg"
+loading="lazy"
+alt="折扣因子让越远的奖励权重越小"
+>&lt;/p>
+&lt;p>\(\gamma\) 有两个非常直观的作用：&lt;/p>
+&lt;ol>
+&lt;li>让无限长奖励序列有机会收敛；&lt;/li>
+&lt;li>控制智能体更在乎眼前还是未来。&lt;/li>
+&lt;/ol>
+&lt;p>当 \(\gamma\) 接近 0 时，智能体非常短视，远处的奖励几乎看不见。&lt;/p>
+&lt;p>当 \(\gamma\) 接近 1 时，智能体更愿意考虑长远收益，甚至可以接受眼前暂时的负奖励。&lt;/p>
+&lt;p>比如奖励 \(+1\) 在 3 步以后才出现，那么它在今天眼里的权重是 \(\gamma^3\)。\(\gamma=0.2\) 时只剩 \(0.008\)，而 \(\gamma=0.9\) 时还有 \(0.729\)，差别相当大。&lt;/p>
+&lt;h2 id="episode一次完整的试验">Episode：一次完整的试验
+&lt;/h2>&lt;p>如果交互到某个终止状态就停止，那么从开始到停止的整条轨迹叫做一个 &lt;strong>episode&lt;/strong>，也可以理解成一局游戏或一次试验。&lt;/p>
+&lt;ul>
+&lt;li>有终止状态、每局长度有限的任务叫 &lt;strong>episodic task&lt;/strong>；&lt;/li>
+&lt;li>没有终止状态、交互一直进行的任务叫 &lt;strong>continuing task&lt;/strong>。&lt;/li>
+&lt;/ul>
+&lt;p>网格世界到达目标后到底要不要停止，其实取决于我们怎样定义任务。&lt;/p>
+&lt;p>一种做法是把 \(s_9\) 设成&lt;strong>吸收状态（absorbing state）&lt;/strong>，进去后永远不再离开；另一种做法是把它当成普通状态，机器人还可以继续行动。&lt;/p>
+&lt;p>赵老师的课程采用第二种方式，这样所有格子都能按照同一套规则处理，也顺手引出了无限轨迹和 discounted return。&lt;/p>
+&lt;h2 id="mdp把所有零件装进同一个框架">MDP：把所有零件装进同一个框架
+&lt;/h2>&lt;p>现在我们已经有：&lt;/p>
+&lt;ul>
+&lt;li>状态空间 \(\mathcal{S}\)；&lt;/li>
+&lt;li>每个状态下的动作空间 \(\mathcal{A}(s)\)；&lt;/li>
+&lt;li>状态转移概率 \(p(s'\mid s,a)\)；&lt;/li>
+&lt;li>奖励概率 \(p(r\mid s,a)\)；&lt;/li>
+&lt;li>策略 \(\pi(a\mid s)\)；&lt;/li>
+&lt;li>回报与折扣因子 \(\gamma\)。&lt;/li>
+&lt;/ul>
+&lt;p>这些东西组合起来，就得到了强化学习里最核心的建模框架：&lt;strong>Markov Decision Process，马尔可夫决策过程，简称 MDP&lt;/strong>。&lt;/p>
+&lt;h3 id="markov-性质">Markov 性质
+&lt;/h3>&lt;p>MDP 中的 M 指的是 Markov，也就是常说的「无记忆性」：&lt;/p>
+&lt;p>把当前时刻之前的全部历史记作 \(H_t=(s_{t-1},a_{t-1},\ldots,s_0,a_0)\)，那么：&lt;/p>
+\[
+\begin{aligned}
+p(s_{t+1}\mid s_t,a_t,H_t)
+&amp;=p(s_{t+1}\mid s_t,a_t),\\
+p(r_{t+1}\mid s_t,a_t,H_t)
+&amp;=p(r_{t+1}\mid s_t,a_t).
+\end{aligned}
+\]&lt;p>人话就是：&lt;/p>
+&lt;blockquote>
+&lt;p>只要当前状态 \(s_t\) 已经描述得足够完整，那么预测下一状态和奖励时，不需要再把整个历史重新翻一遍。&lt;/p>
+&lt;/blockquote>
+&lt;p>它并不是说世界真的没有历史，而是说&lt;strong>历史里对未来有用的信息，应该已经被压进当前状态了&lt;/strong>。&lt;/p>
+&lt;p>比如一辆正在行驶的车，如果状态只有「当前位置」，通常就不满足 Markov 性质；把速度、方向等信息也放进状态后，才更有可能根据当前状态预测下一刻。&lt;/p>
+&lt;h3 id="mdp-和-markov-process-的区别">MDP 和 Markov Process 的区别
+&lt;/h3>&lt;p>MDP 里还有动作选择，智能体可以通过策略影响未来。&lt;/p>
+&lt;p>一旦策略 \(\pi\) 被固定，在每个状态下该采取动作的概率也固定了，MDP 就退化成了一个 Markov Process；如果时间和状态都是离散的，也常叫 Markov Chain。&lt;/p>
+&lt;p>所以你可以这样记：&lt;/p>
+&lt;blockquote>
+&lt;p>MDP = 能做决策的 Markov Process。&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="用-python-把这几个概念跑起来">用 Python 把这几个概念跑起来
+&lt;/h2>&lt;p>概念差不多了，下面用不到 70 行 Python，把这个网格世界真正跑一下。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;span class="lnt">52
+&lt;/span>&lt;span class="lnt">53
+&lt;/span>&lt;span class="lnt">54
+&lt;/span>&lt;span class="lnt">55
+&lt;/span>&lt;span class="lnt">56
+&lt;/span>&lt;span class="lnt">57
+&lt;/span>&lt;span class="lnt">58
+&lt;/span>&lt;span class="lnt">59
+&lt;/span>&lt;span class="lnt">60
+&lt;/span>&lt;span class="lnt">61
+&lt;/span>&lt;span class="lnt">62
+&lt;/span>&lt;span class="lnt">63
+&lt;/span>&lt;span class="lnt">64
+&lt;/span>&lt;span class="lnt">65
+&lt;/span>&lt;span class="lnt">66
+&lt;/span>&lt;span class="lnt">67
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">ACTIONS&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;up&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;right&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;down&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;left&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;stay&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">FORBIDDEN&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="mi">6&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">7&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">TARGET&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">9&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">step&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">int&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">action&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span> &lt;span class="nb">tuple&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nb">int&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">int&lt;/span>&lt;span class="p">]:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;执行一个动作，返回 (next_state, reward)。&amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">row&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">col&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">divmod&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">state&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">d_row&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">d_col&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">ACTIONS&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">action&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">next_row&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">next_col&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">row&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">d_row&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">col&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">d_col&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 越界：留在原地并获得 -1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="mi">0&lt;/span> &lt;span class="o">&amp;lt;=&lt;/span> &lt;span class="n">next_row&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">3&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="mi">0&lt;/span> &lt;span class="o">&amp;lt;=&lt;/span> &lt;span class="n">next_col&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">state&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">next_state&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">next_row&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="mi">3&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">next_col&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># 这个环境是确定性的，因此可以在 step 中直接根据结果计算 r(s, a)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="n">next_state&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">FORBIDDEN&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">reward&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">elif&lt;/span> &lt;span class="n">next_state&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="n">TARGET&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">reward&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">reward&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">next_state&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">reward&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">rollout&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">start&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">int&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">policy&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">dict&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nb">int&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">str&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="n">gamma&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="nb">float&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">0.9&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;按给定策略生成一条 episode。&amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">state&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">start&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">states&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">rewards&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">discounted_return&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">0.0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="n">t&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="nb">range&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">20&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">action&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">policy&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">state&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">reward&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">step&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">action&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">states&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">append&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">rewards&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">append&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">reward&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">discounted_return&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">gamma&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="n">reward&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="n">state&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="n">TARGET&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">break&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">states&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">rewards&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">discounted_return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">good_policy&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">1&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;right&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">2&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;down&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">5&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;down&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">8&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;right&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">bad_policy&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">1&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;down&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">4&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;down&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">7&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;right&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">8&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;right&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">policy&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="p">[(&lt;/span>&lt;span class="s2">&amp;#34;good&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">good_policy&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;bad&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">bad_policy&lt;/span>&lt;span class="p">)]:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">states&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">rewards&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">g&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rollout&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">policy&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="sa">f&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="si">:&lt;/span>&lt;span class="s2">&amp;gt;4&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">: states=&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">states&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">, rewards=&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">rewards&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">, G=&lt;/span>&lt;span class="si">{&lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="si">:&lt;/span>&lt;span class="s2">.3f&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>运行结果：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">good: states=[1, 2, 5, 8, 9], rewards=[0, 0, 0, 1], G=0.729
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> bad: states=[1, 4, 7, 8, 9], rewards=[0, -1, 0, 1], G=-0.171
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这段代码虽然简单，但里面已经出现了一个完整 MDP 的雏形：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>state&lt;/code> 是机器人所在格子；&lt;/li>
+&lt;li>&lt;code>action&lt;/code> 是五种移动方式；&lt;/li>
+&lt;li>&lt;code>step&lt;/code> 定义环境的状态转移和奖励；&lt;/li>
+&lt;li>&lt;code>policy&lt;/code> 定义每个状态下选择什么动作；&lt;/li>
+&lt;li>&lt;code>rollout&lt;/code> 生成轨迹和 episode；&lt;/li>
+&lt;li>&lt;code>discounted_return&lt;/code> 用来评价策略。&lt;/li>
+&lt;/ul>
+&lt;p>不过注意，我们现在是&lt;strong>手写&lt;/strong>了 good policy 和 bad policy，还没有让智能体自己学会策略。&lt;/p>
+&lt;p>真正的强化学习算法，就是接下来要解决这件事。&lt;/p>
+&lt;h2 id="总结">总结
+&lt;/h2>&lt;p>这一篇看起来名词很多，但它们其实都在回答同一条交互链上的不同问题：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>概念&lt;/th>
+&lt;th>它回答的问题&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>State&lt;/td>
+&lt;td>我现在处于什么情况？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Action&lt;/td>
+&lt;td>我能做什么？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>State transition&lt;/td>
+&lt;td>做完以后环境会变成什么样？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Policy&lt;/td>
+&lt;td>我应该怎样选动作？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Reward&lt;/td>
+&lt;td>环境怎样评价这一步？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Trajectory&lt;/td>
+&lt;td>这一次实际经历了什么？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Return&lt;/td>
+&lt;td>这一串经历总共赚了多少？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Episode&lt;/td>
+&lt;td>一次完整试验从哪里开始、在哪里结束？&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>MDP&lt;/td>
+&lt;td>怎样用统一的数学框架描述以上全部内容？&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>到这里，我们还没有学任何「让机器人自动变聪明」的算法，只是把问题定义清楚了。&lt;/p>
+&lt;p>但这一步相当重要。后面不管是 Value Iteration、Q-learning、DQN 还是 PPO，说到底都在这套语言里工作。&lt;/p>
+&lt;p>下一篇我们会进入整本书真正的地基：&lt;strong>Bellman Equation&lt;/strong>。也就是把「长期回报」拆成「眼前一步 + 剩下的未来」，看看一个看似无限的问题，为什么可以被递归地算出来。&lt;/p>
+&lt;p>总之，强化学习的大门已经打开了。现在这个机器人还只会按我们写好的策略走，下一篇开始，就该想办法让它自己学了 hhh。&lt;/p></description></item></channel></rss>

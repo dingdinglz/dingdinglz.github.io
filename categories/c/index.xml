@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>C on Dinglz 's Blog</title><link>https://dingdinglz.github.io/categories/c/</link><description>Recent content in C on Dinglz 's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 22 Nov 2024 02:00:00 +0000</lastBuildDate><atom:link href="https://dingdinglz.github.io/categories/c/index.xml" rel="self" type="application/rss+xml"/><item><title>Learning C语言(2)</title><link>https://dingdinglz.github.io/p/learning-c%E8%AF%AD%E8%A8%802/</link><pubDate>Fri, 22 Nov 2024 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/learning-c%E8%AF%AD%E8%A8%802/</guid><description>&lt;h2 id="回顾">回顾
+&lt;/h2>&lt;p>本系列的第一篇文章写出来后，我发给了几位朋友帮我参考，想得出一些改进的意见，然后我发现，如果对于真正零基础的读者来说，他们要学习的显然还有如何下载安装使用自己的IDE，对此我在第一篇文章中只是浅浅地聊了一下。在本系列的后续文章中，我也&lt;strong>没&lt;/strong>打算讲这部分内容，如果无法让自己的代码跑起来的话请自行百度吧，让我们把重点放在代码本身上。&lt;/p>
+&lt;h2 id="first-try">first try
+&lt;/h2>&lt;p>下面我们将来完成我们的第一个c语言程序。一串命令，至少有一个开始执行的地方，就好像一条线路必须有一个起点。我们的程序将从哪里开始运行？从这里的讲解或许就可以看出本系列文章的思路与常规c语言教程的区别，在这里，我们将首先介绍&lt;strong>函数&lt;/strong>的概念。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="line">&lt;span class="cl">&lt;span class="kt">int&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这是一个最简单的c语言程序，正如我们所见到的，他什么也没有做。&lt;/p>
+&lt;p>这里其实定义了一个函数，即main函数（main中文是主要的意思，main函数是整个程序的入口，我非常推荐这种以单词含义记忆的方式来进行编程学习）那么什么是函数呢？&lt;/p>
+&lt;h3 id="函数">函数
+&lt;/h3>&lt;p>让我们来举一个例子，比如你要开口说话，这在c语言中可能体现为在屏幕上显示一些内容，即&lt;strong>输出&lt;/strong>，那么以我们目前的知识，如何输出呢？&lt;/p>
+&lt;p>很明显，以我们目前的水平什么也做不了。但是c语言为我们提供了一系列工具以达到不同的目的，例如如果目前我们需要输出，我们并不需要知道输出的原理是什么，我们只需要发出指令输出即可，这一个个实现不同功能的工具在c语言里是函数，通过使用不同的函数，便可以实现不同的功能。&lt;/p>
+&lt;p>为了拓展性考虑，函数分为自定义函数和库函数，前者由用户自己编写，或者使用别人写好的，而后者由c语言提供。&lt;/p>
+&lt;p>我们在看回我们刚刚写好的程序，整个程序仅仅做了一件事，就是定义并实现main函数（后面聊函数那块的时候会详细阐述这一部分，现在记住格式即可）我们将代码写在main函数的函数体内（即两个大括号中间，return语句的上面）即可编写主体的功能。&lt;/p>
+&lt;p>main函数就是整个程序的入口，一个程序由main函数开始执行，现阶段初学者们可以理解为程序仅做了一件事，就是调用main函数。&lt;/p>
+&lt;h2 id="c语言的输出">c语言的输出
+&lt;/h2>&lt;p>刚刚介绍到库函数为我们提供了种种功能，那么专职输出的库函数便是&lt;strong>printf&lt;/strong>，那么想要使用函数，我们必须&lt;strong>包含&lt;/strong>函数所在的头文件，&lt;strong>头文件&lt;/strong>是存放函数的地方，把函数理解成一个个工具的话，那么头文件就是存放工具的箱子，想要使用工具之前，我们就得把箱子给拿进来，这个拿箱子的命令就是include。include命令通常写在每个.c文件的最上方，如果你想使用某个函数的话，你必须包含他所在的头文件。&lt;/p>
+&lt;p>比如printf并位于头文件stdio.h中&lt;/p>
+&lt;p>include的具体使用方法如下&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#include&lt;/span>&lt;span class="cpf">&amp;lt;头文件名&amp;gt;&lt;/span>&lt;span class="cp">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>所以我们使用printf之前，必须&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#include&lt;/span>&lt;span class="cpf">&amp;lt;stdio.h&amp;gt;&lt;/span>&lt;span class="cp">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>刚刚所说的，我们应该把代码写在主函数的函数体里，那么我输出Hello,world的代码便如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-c" data-lang="c">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;stdio.h&amp;gt;&lt;/span>&lt;span class="cp">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cp">&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nf">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;Hello,world!&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这个版本可能就是你见到最多的所谓c语言的hello，world。&lt;/p>
+&lt;p>从这个例子中也可以看出，函数的调用方法是函数名(参数1，参数2&amp;hellip;)。&lt;/p>
+&lt;p>同时，每行代码的后面都需要加上;。&lt;/p>
+&lt;p>&amp;ldquo;Hello,world&amp;quot;作为我们的参数1，用双引号扩了起来，表示一个字符串类型的量，这将在我们后面讨论&lt;strong>变量&lt;/strong>的时候说到。&lt;/p>
+&lt;h2 id="总结">总结
+&lt;/h2>&lt;p>看完这一篇，你就学会了输出，也搭建起了程序的基本框架的逻辑。让我们printf一下有意思的东西吧，比如printf(&amp;ldquo;c is the best language&amp;rdquo;); &amp;#x1f602; 让我们尝试输出一些别的有意思的东西吧。&lt;/p></description></item><item><title>Learning C语言(1)</title><link>https://dingdinglz.github.io/p/learning-c%E8%AF%AD%E8%A8%801/</link><pubDate>Thu, 21 Nov 2024 02:00:00 +0000</pubDate><guid>https://dingdinglz.github.io/p/learning-c%E8%AF%AD%E8%A8%801/</guid><description>&lt;h2 id="为什么要写这个系列">为什么要写这个系列
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>身边很多朋友刚开始学c，以前从来没有接触过编程语言，甚至没有接触过计算机，对于c语言存在一种惧怕的心理，把它当成了某种特别高端的东西。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>很多人看似会写c语言，实际上不能理解背后的原理，只能盲目的套代码模板，导致后续的学习卡住，且没有自己的创新能力。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="这个系列想做到什么">这个系列想做到什么？
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>以我的思路从零开始层层深入c语言&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>讲清楚c语言基础代码的概念和编写方法&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="warning">warning
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>本系列以我的思路推进，可能与常见的c语言教程的学习路径&lt;strong>大相径庭&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>建议阅读本文前先掌握一部分c语言知识，以我目前的想法仅仅是解决一些新手只会写不懂道理，不能举一反三的问题。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>那么让我们开始吧&lt;/p>
+&lt;h2 id="c语言简述">c语言简述
+&lt;/h2>&lt;h3 id="用途">用途
+&lt;/h3>&lt;p>任何编程语言都起到了让计算机执行我们想让他执行的命令的作用，也就是说写一个应用，在windows上可能是.exe文件。&lt;/p>
+&lt;p>编程语言绕开了底层的复杂，让我们以一种人类可以理解的方式编写我们想要的程序。c作为一种高级语言，从某种程度上来说，是具有极高的可读性的。&lt;/p>
+&lt;p>想让程序实现我们想要的功能，就需要写出对应的代码。因此，实现一个程序仅仅需要我们把一步一步的代码写在一起，写代码也不是电视里所吹嘘的那样无比高端的东西，他只需要我们写，写一种计算机能够理解的语言，去命令计算机做我们想让他做的事。这也就是为什么编程语言被叫做语言了吧，当然计算机不会违逆我们的命令（在某种程度上），&lt;del>而听你说话的人可不一定&lt;/del>。&lt;/p>
+&lt;h3 id="编译">编译
+&lt;/h3>&lt;p>先去除掉这种编程好厉害啊的思想，那我们开始正式进入这门语言。&lt;/p>
+&lt;p>首先我们要清楚的事，计算机并不能直接读懂编程语言，这很遗憾，我们需要借助某种工具把编程语言给转换成计算机可以直接执行的东西。&lt;/p>
+&lt;p>我们把源码（也就是c语言的代码）都放在c语言的源文件里，也就是.c文件。.c文件本质上就是一个文本文件，里面写着我的代码。我们现在需要一种工具把这个.c文件转换成可执行的文件，也就是windows下的exe文件，就需要用到&lt;strong>编译器&lt;/strong>。&lt;/p>
+&lt;p>编译器的作用目前可以理解为源码-&amp;gt;可执行程序。c语言比较知名的编译器有gcc等。&lt;/p>
+&lt;p>这个时候大家可能就要问了，我平常在ide里写代码，直接就能生成可执行文件，为什么没有用到编译器呢。其实生成的过程是由ide进行了编译器的调用。你们使用的一些ide例如VS和Dev-cpp就是自带编译器的，他们调用了自带的编译器进行生成，因此你可能并没有接触到编译器的使用。如果你用的是VSCODE的话，那么你在配置c语言环境的时候应该经历过了编译器的配置，那么你应该可以理解编译器的作用了&lt;/p>
+&lt;p>也是比较推荐大家使用下vsc，自行配置一下环境可以加深对上述概念的理解，不过新手使用dev或许也是有好处的，因为没有实时提示&lt;strong>或许&lt;/strong>可以提升你对基础知识的理解和记忆吧。&lt;/p>
+&lt;p>还有一点需要注意的是，不少人认为一个应用只能有一个源文件，其实不是的，一个应用可以写成很多个c文件，比如把不同的功能写在不同的文件里，最后用头文件连接，这将在我们后续聊到函数的时候再提这一点。&lt;/p>
+&lt;h4 id="使用gcc编译">使用gcc编译
+&lt;/h4>&lt;p>例如，把1.c文件编译成1.exe&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">gcc 1.c -o 1.exe
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>编译多个文件生成一个应用&lt;/p>
+&lt;p>例如：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">gcc 1.c 2.c 3.c -o 1.exe
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>-o是object的意思，可以理解为生成1.exe&lt;/p>
+&lt;h2 id="总结">总结
+&lt;/h2>&lt;p>本文作为该系列的开坑之作，仅仅唠完了前置的一些东西和我想说的一些话，下一篇文章将开始进入具体的代码。&lt;/p></description></item></channel></rss>

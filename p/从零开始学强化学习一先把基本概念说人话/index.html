@@ -1,0 +1,218 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="从一个 3×3 网格世界出发，理解状态、动作、策略、奖励、回报、episode 与 MDP"><title>从零开始学强化学习（一）：先把基本概念说人话</title>
+<link rel=canonical href=https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/><link rel=stylesheet href=/scss/style.min.81579ea678e30582aa60028bfe3192821d6c0fee666ee279be318fb5b558916b.css><meta property='og:title' content="从零开始学强化学习（一）：先把基本概念说人话"><meta property='og:description' content="从一个 3×3 网格世界出发，理解状态、动作、策略、奖励、回报、episode 与 MDP"><meta property='og:url' content='https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/'><meta property='og:site_name' content="Dinglz 's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='从零开始学强化学习'><meta property='article:tag' content='强化学习'><meta property='article:tag' content='MDP'><meta property='article:tag' content='赵世钰'><meta property='article:published_time' content='2026-08-16T02:00:00+00:00'><meta property='article:modified_time' content='2026-08-16T02:00:00+00:00'><meta property='og:image' content='https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/cover.svg'><meta name=twitter:title content="从零开始学强化学习（一）：先把基本概念说人话"><meta name=twitter:description content="从一个 3×3 网格世界出发，理解状态、动作、策略、奖励、回报、episode 与 MDP"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content='https://dingdinglz.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/cover.svg'><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu9713755695089526605.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Dinglz 's Blog</a></h1><h2 class=site-description>keep learning...</h2></div></header><ol class=menu-social><li><a href=https://github.com/dingdinglz target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>分类</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#前言>前言</a></li><li><a href=#强化学习到底在学什么>强化学习到底在学什么</a></li><li><a href=#从一个-33-网格世界开始>从一个 3×3 网格世界开始</a></li><li><a href=#state我现在在哪里>State：我现在在哪里</a></li><li><a href=#action我接下来能做什么>Action：我接下来能做什么</a></li><li><a href=#state-transition做完动作会去哪>State Transition：做完动作会去哪</a><ol><li><a href=#确定性和随机性>确定性和随机性</a></li></ol></li><li><a href=#policy在每个状态下怎么选动作>Policy：在每个状态下怎么选动作</a></li><li><a href=#reward环境对这一步的评价>Reward：环境对这一步的评价</a><ol><li><a href=#正奖励不一定代表绝对的好>正奖励不一定代表绝对的好</a></li><li><a href=#下一个状态相同奖励也可能不同>下一个状态相同，奖励也可能不同</a></li></ol></li><li><a href=#trajectory-与-return别只看眼前这一分>Trajectory 与 Return：别只看眼前这一分</a></li><li><a href=#discounted-return未来的一块钱值多少>Discounted Return：未来的一块钱值多少</a></li><li><a href=#episode一次完整的试验>Episode：一次完整的试验</a></li><li><a href=#mdp把所有零件装进同一个框架>MDP：把所有零件装进同一个框架</a><ol><li><a href=#markov-性质>Markov 性质</a></li><li><a href=#mdp-和-markov-process-的区别>MDP 和 Markov Process 的区别</a></li></ol></li><li><a href=#用-python-把这几个概念跑起来>用 Python 把这几个概念跑起来</a></li><li><a href=#总结>总结</a></li></ol></nav></div></section></aside><main class="main full-width"><article class="has-image main-article"><header class=article-header><div class=article-image><a href=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/><img src=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/cover.svg loading=lazy alt="Featured image of post 从零开始学强化学习（一）：先把基本概念说人话"></a></div><div class=article-details><header class=article-category><a href=/categories/reinforcement-learning/ style=background-color:#3159d8;color:#fff>强化学习</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/>从零开始学强化学习（一）：先把基本概念说人话</a></h2><h3 class=article-subtitle>从一个 3×3 网格世界出发，理解状态、动作、策略、奖励、回报、episode 与 MDP</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2026-08-16T02:00:00Z>Aug 16, 2026</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>4 minute read</time></div></footer></div></header><section class=article-content><h2 id=前言>前言</h2><p>这是「从零开始学强化学习」系列的第一篇。</p><p>这个系列会跟着赵世钰老师的《强化学习的数学原理》课程和配套教材 <em>Mathematical Foundations of Reinforcement Learning</em> 往下学。老师的课程从一个很小的网格世界出发，再一步步走到 Bellman 方程、蒙特卡洛、时序差分、DQN、策略梯度和 Actor-Critic，路线相当适合把强化学习的数学地基补完整。</p><p><strong>本文书写顺序紧跟教材 Chapter 1 和 Lecture 1，建议配合<a class=link href=https://shiyuzhao.westlake.edu.cn/Teaching.htm target=_blank rel=noopener>赵世钰老师的课程主页</a>与<a class=link href=https://github.com/MathFoundationRL/Book-Mathematical-Foundation-of-Reinforcement-Learning target=_blank rel=noopener>教材、课件仓库</a>食用。</strong></p><p>但是！第一章一口气扔出了 state、action、policy、reward、return、episode、MDP 一大堆名词。如果只是把定义背下来，很容易出现一种「每个单词我都认识，连起来就不知道在干嘛」的奇妙状态。</p><p>所以这一篇先不碰任何高深算法，只做一件事：<strong>用一个 3×3 的小游戏，把强化学习最基础的语言说清楚。</strong></p><p>学完本文，你应该能回答下面几个问题：</p><ul><li>状态和动作分别是什么？</li><li>环境、策略和状态转移之间是什么关系？</li><li>reward 和 return 为什么不是同一个东西？</li><li>折扣因子 \(\gamma\) 到底在折扣什么？</li><li>MDP 为什么能把上面这些概念全部装进去？</li></ul><blockquote><p>本文配图根据赵世钰老师 Lecture 1 与教材 Chapter 1 的网格世界重新绘制。</p></blockquote><h2 id=强化学习到底在学什么>强化学习到底在学什么</h2><p>先看强化学习最经典的一张图：</p><p><img src=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/agent-environment.svg loading=lazy alt=强化学习中的智能体与环境交互闭环></p><p>强化学习里有两个主角：</p><ul><li><strong>智能体（Agent）</strong>：负责做决定，比如机器人、游戏角色，或者一个推荐系统。</li><li><strong>环境（Environment）</strong>：智能体之外的一切，比如地图、游戏规则和用户反馈。</li></ul><p>在第 \(t\) 个时间步，智能体观察到状态 \(S_t\)，根据策略选择动作 \(A_t\)。环境接收动作后，转移到新状态 \(S_{t+1}\)，同时给智能体一个奖励 \(R_{t+1}\)。</p><p>然后这个过程继续循环：</p>\[
+S_t \longrightarrow A_t \longrightarrow (R_{t+1}, S_{t+1})
+\]<p>它和监督学习最大的区别在于：环境不会直接告诉你「正确答案是向右走」。它只会在你行动后给一点反馈，甚至这个反馈还可能延迟很多步才出现。</p><p>所以强化学习真正想学的是：</p><blockquote><p>找到一个策略，让智能体在长期交互中拿到尽可能大的总回报。</p></blockquote><p>注意关键词是<strong>长期</strong>。如果只盯着眼前这一步的奖励，智能体很可能会变成一个相当短视的家伙。</p><h2 id=从一个-33-网格世界开始>从一个 3×3 网格世界开始</h2><p>下面这个网格世界会贯穿赵老师整本书，我们也用它来贯穿这一篇。</p><p><img src=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/grid-world.svg loading=lazy alt=网格世界中的状态、动作、禁区和目标></p><p>游戏规则很简单：</p><ul><li>机器人一开始位于左上角 \(s_1\)；</li><li>黄色格子 \(s_6\) 和 \(s_7\) 是禁区；</li><li>蓝色格子 \(s_9\) 是目标；</li><li>机器人每一步可以上、右、下、左，或者原地不动；</li><li>撞到边界会被弹回原来的格子；</li><li>禁区<strong>可以进入</strong>，只是会受到惩罚，它不是一堵墙。</li></ul><p>我们的目标是让机器人从任意起点出发，都能找到一条「好」的路线到达目标。</p><p>什么叫好？</p><p>直觉上，它应该避开禁区、少绕路、不要一直撞墙。但计算机不懂这些人类直觉，因此我们得把「位置」「移动」「惩罚」「到达目标」全部写成数学对象。</p><p>这就轮到第一批概念登场了。</p><h2 id=state我现在在哪里>State：我现在在哪里</h2><p>**状态（State）**描述智能体相对于环境所处的情况。</p><p>在这个最简单的网格世界里，只要知道机器人在哪个格子，就知道了它的状态：</p>\[
+\mathcal{S} = \{s_1,s_2,\ldots,s_9\}
+\]<p>所有可能状态的集合叫做<strong>状态空间（State Space）</strong>，记作 \(\mathcal{S}\)。</p><p>这里的状态只是位置，但真实任务里的状态可以复杂得多：</p><ul><li>下棋：棋盘上所有棋子的布局；</li><li>自动驾驶：车辆位置、速度、道路和周围障碍物；</li><li>游戏 AI：角色血量、装备、地图位置和敌人状态；</li><li>推荐系统：用户最近的行为、兴趣和当前上下文。</li></ul><p>有个很容易忽略的点：状态并不等于「随便挑一些能看到的数据」。一个好的状态应该尽量包含预测未来所需的信息。比如控制一辆车，只知道位置却不知道速度，很多时候就不够用了。</p><p>这件事后面会被正式写成 <strong>Markov 性质</strong>。</p><h2 id=action我接下来能做什么>Action：我接下来能做什么</h2><p>**动作（Action）**就是智能体可以作出的选择。</p><p>在网格世界中，我们定义五个动作：</p>\[
+\mathcal{A} = \{a_1,a_2,a_3,a_4,a_5\}
+\]<p>其中：</p><div class=table-wrapper><table><thead><tr><th>动作</th><th>含义</th></tr></thead><tbody><tr><td>\(a_1\)</td><td>向上</td></tr><tr><td>\(a_2\)</td><td>向右</td></tr><tr><td>\(a_3\)</td><td>向下</td></tr><tr><td>\(a_4\)</td><td>向左</td></tr><tr><td>\(a_5\)</td><td>原地不动</td></tr></tbody></table></div><p>所有动作组成<strong>动作空间（Action Space）</strong>。</p><p>不同状态当然可以拥有不同的动作空间。比如站在左上角 \(s_1\) 时，也可以直接规定「向上」和「向左」这两个动作不存在。</p><p>不过赵老师的例子采用了更一般的设定：每个格子都允许五个动作，只是越界后会留在原地并收到惩罚。也就是对任意状态 \(s_i\)，都有：</p>\[
+\mathcal{A}(s_i)=\mathcal{A}
+\]<p>这个设计很有用，因为它把「不能做」改成了「可以尝试，但环境会告诉你这样做不好」。</p><h2 id=state-transition做完动作会去哪>State Transition：做完动作会去哪</h2><p>智能体在状态 \(s\) 执行动作 \(a\) 后，环境会给出下一个状态 \(s'\)。这个过程叫做<strong>状态转移（State Transition）</strong>。</p><p>比如：</p>\[
+s_1 \xrightarrow{a_2} s_2
+\]<p>表示机器人在 \(s_1\) 向右走，会来到 \(s_2\)。</p><p>撞墙时：</p>\[
+s_1 \xrightarrow{a_1} s_1
+\]<p>机器人并不会飞出地图，而是仍然留在 \(s_1\)。</p><p>从 \(s_5\) 向右走则会进入禁区 \(s_6\)：</p>\[
+s_5 \xrightarrow{a_2} s_6
+\]<p>再次强调，禁区在这个例子里是<strong>可进入但有惩罚</strong>，不是不可达区域。环境规则完全可以换一种定义，但一旦定义好，智能体就得在这套规则里学习。</p><h3 id=确定性和随机性>确定性和随机性</h3><p>上面的例子里，给定状态和动作后，下一个状态完全确定。我们可以写成：</p>\[
+p(s_2\mid s_1,a_2)=1
+\]\[
+p(s_i\mid s_1,a_2)=0,\qquad i\neq 2
+\]<p>更一般地，状态转移可以是随机的。假设网格里突然刮起妖风，即使机器人选择向右，也可能被吹到别的格子，那么就会出现：</p>\[
+p(s'\mid s,a)\in[0,1]
+\]<p>并且所有可能下一个状态的概率之和必须为 1：</p>\[
+\sum_{s'\in\mathcal{S}}p(s'\mid s,a)=1
+\]<p>\(p(s'\mid s,a)\) 被称为<strong>状态转移概率</strong>。所有状态转移概率放在一起，就是环境的 <strong>model</strong> 或 <strong>dynamics</strong>。</p><p>先记住这句话：<strong>动作由智能体选，下一个状态由环境决定。</strong></p><h2 id=policy在每个状态下怎么选动作>Policy：在每个状态下怎么选动作</h2><p>知道「能做什么」还不够，智能体还需要一套做决定的方法，这就是<strong>策略（Policy）</strong>。</p><p>策略通常记作：</p>\[
+\pi(a\mid s)
+\]<p>它表示智能体位于状态 \(s\) 时，选择动作 \(a\) 的概率。</p><p>如果在 \(s_1\) 时一定向右走，那么：</p>\[
+\pi(a_2\mid s_1)=1
+\]<p>其他动作的概率都是 0。这叫做<strong>确定性策略</strong>。</p><p>如果机器人在 \(s_1\) 时有一半概率向右、一半概率向下，那么：</p>\[
+\pi(a_2\mid s_1)=0.5,\qquad
+\pi(a_3\mid s_1)=0.5
+\]<p>这叫做<strong>随机策略</strong>。</p><p>无论是哪一种，每个状态下所有动作的概率都要加起来等于 1：</p>\[
+\sum_{a\in\mathcal{A}(s)}\pi(a\mid s)=1
+\]<p>这里最容易混淆的是：</p><ul><li><strong>策略</strong>是一整套规则，回答「每个状态下该怎么选动作」；</li><li><strong>轨迹</strong>是实际运行一次以后，真正走出来的那条路。</li></ul><p>同一个随机策略运行两次，完全可能产生两条不同的轨迹。</p><h2 id=reward环境对这一步的评价>Reward：环境对这一步的评价</h2><p>智能体每执行一个动作，环境就会返回一个实数作为反馈，这就是<strong>奖励（Reward）</strong>。</p><p>在网格世界中，我们这样设计奖励：</p><div class=table-wrapper><table><thead><tr><th>情况</th><th style=text-align:right>奖励</th></tr></thead><tbody><tr><td>试图越过边界</td><td style=text-align:right>\(-1\)</td></tr><tr><td>进入禁区</td><td style=text-align:right>\(-1\)</td></tr><tr><td>到达目标</td><td style=text-align:right>\(+1\)</td></tr><tr><td>其他情况</td><td style=text-align:right>\(0\)</td></tr></tbody></table></div><p>奖励可以写成 \(r(s,a)\)。如果奖励本身也带随机性，就用条件概率 \(p(r\mid s,a)\) 来描述。</p><p>奖励其实是人类和智能体之间的一种接口：我们没告诉它正确路线，但通过奖励表达了「我希望你到达目标，也希望你少撞墙、别踩禁区」。</p><p>听起来很简单，但 reward design 往往是强化学习里最难的工作之一。奖励写歪一点，智能体就可能钻规则的空子，用一种你完全没想到的方式拿高分。</p><p>还有两个初学者很容易踩的坑。</p><h3 id=正奖励不一定代表绝对的好>正奖励不一定代表绝对的好</h3><p>真正影响行为的是奖励之间的<strong>相对大小</strong>。把所有奖励同时加上一个常数，在一些设定下不会改变最优策略。</p><p>所以重点并不是某个数字「看起来正不正能量」，而是不同选择最终能积累多少回报。</p><h3 id=下一个状态相同奖励也可能不同>下一个状态相同，奖励也可能不同</h3><p>在 \(s_1\) 向上撞墙和在 \(s_1\) 原地不动，下一状态都是 \(s_1\)，但前者奖励为 \(-1\)，后者奖励为 \(0\)。</p><p>因此，只看 \(s'\) 不一定能推出奖励。教材用 \(r(s,a)\) 来定义奖励；在很多其他资料里，你也会见到 \(r(s,a,s')\)。两种写法可以通过条件概率互相转换，不用看到符号不同就怀疑自己学错了。</p><h2 id=trajectory-与-return别只看眼前这一分>Trajectory 与 Return：别只看眼前这一分</h2><p>状态、动作和奖励按时间串起来，就得到一条<strong>轨迹（Trajectory）</strong>：</p>\[
+s_0 \xrightarrow{a_0,r_1}
+s_1 \xrightarrow{a_1,r_2}
+s_2 \xrightarrow{a_2,r_3}\cdots
+\]<p>同一起点下，两种策略可能产生下面两条路线：</p><p><img src=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/policy-return.svg loading=lazy alt=两条策略产生不同轨迹与回报></p><p>策略 A 走：</p>\[
+s_1\rightarrow s_2\rightarrow s_5\rightarrow s_8\rightarrow s_9
+\]<p>得到的奖励为：</p>\[
+0+0+0+1=1
+\]<p>策略 B 会踩到禁区 \(s_7\)：</p>\[
+s_1\rightarrow s_4\rightarrow s_7\rightarrow s_8\rightarrow s_9
+\]<p>得到的奖励为：</p>\[
+0-1+0+1=0
+\]<p>一条轨迹上所有奖励的总和叫做<strong>回报（Return）</strong>，也叫累计奖励。</p><p>于是「策略 A 更好」不再只是人类感觉，而有了一个可以比较的数学指标：它获得的 return 更大。</p><p>这也解释了为什么不能每一步都贪心地选择 immediate reward 最大的动作。某一步暂时吃亏，可能会换来后面更大的奖励；反过来，眼前拿到一点甜头，也可能把自己送进长期陷阱。</p><p><strong>Reward 是一步的反馈，Return 是一串未来反馈的总账。</strong></p><h2 id=discounted-return未来的一块钱值多少>Discounted Return：未来的一块钱值多少</h2><p>如果轨迹是无限长的，直接把奖励相加可能会发散。</p><p>比如机器人到达 \(s_9\) 后一直原地不动，并且每一步都获得 \(+1\)：</p>\[
+1+1+1+\cdots=\infty
+\]<p>这时候就需要引入折扣因子 \(\gamma\in[0,1)\)，定义<strong>折扣回报（Discounted Return）</strong>：</p>\[
+\begin{aligned}
+G_t
+&=R_{t+1}+\gamma R_{t+2}\\
+&\quad+\gamma^2R_{t+3}+\cdots\\
+&=\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}
+\end{aligned}
+\]<p><img src=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%80%E5%85%88%E6%8A%8A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%AF%B4%E4%BA%BA%E8%AF%9D/discounted-return.svg loading=lazy alt=折扣因子让越远的奖励权重越小></p><p>\(\gamma\) 有两个非常直观的作用：</p><ol><li>让无限长奖励序列有机会收敛；</li><li>控制智能体更在乎眼前还是未来。</li></ol><p>当 \(\gamma\) 接近 0 时，智能体非常短视，远处的奖励几乎看不见。</p><p>当 \(\gamma\) 接近 1 时，智能体更愿意考虑长远收益，甚至可以接受眼前暂时的负奖励。</p><p>比如奖励 \(+1\) 在 3 步以后才出现，那么它在今天眼里的权重是 \(\gamma^3\)。\(\gamma=0.2\) 时只剩 \(0.008\)，而 \(\gamma=0.9\) 时还有 \(0.729\)，差别相当大。</p><h2 id=episode一次完整的试验>Episode：一次完整的试验</h2><p>如果交互到某个终止状态就停止，那么从开始到停止的整条轨迹叫做一个 <strong>episode</strong>，也可以理解成一局游戏或一次试验。</p><ul><li>有终止状态、每局长度有限的任务叫 <strong>episodic task</strong>；</li><li>没有终止状态、交互一直进行的任务叫 <strong>continuing task</strong>。</li></ul><p>网格世界到达目标后到底要不要停止，其实取决于我们怎样定义任务。</p><p>一种做法是把 \(s_9\) 设成<strong>吸收状态（absorbing state）</strong>，进去后永远不再离开；另一种做法是把它当成普通状态，机器人还可以继续行动。</p><p>赵老师的课程采用第二种方式，这样所有格子都能按照同一套规则处理，也顺手引出了无限轨迹和 discounted return。</p><h2 id=mdp把所有零件装进同一个框架>MDP：把所有零件装进同一个框架</h2><p>现在我们已经有：</p><ul><li>状态空间 \(\mathcal{S}\)；</li><li>每个状态下的动作空间 \(\mathcal{A}(s)\)；</li><li>状态转移概率 \(p(s'\mid s,a)\)；</li><li>奖励概率 \(p(r\mid s,a)\)；</li><li>策略 \(\pi(a\mid s)\)；</li><li>回报与折扣因子 \(\gamma\)。</li></ul><p>这些东西组合起来，就得到了强化学习里最核心的建模框架：<strong>Markov Decision Process，马尔可夫决策过程，简称 MDP</strong>。</p><h3 id=markov-性质>Markov 性质</h3><p>MDP 中的 M 指的是 Markov，也就是常说的「无记忆性」：</p><p>把当前时刻之前的全部历史记作 \(H_t=(s_{t-1},a_{t-1},\ldots,s_0,a_0)\)，那么：</p>\[
+\begin{aligned}
+p(s_{t+1}\mid s_t,a_t,H_t)
+&=p(s_{t+1}\mid s_t,a_t),\\
+p(r_{t+1}\mid s_t,a_t,H_t)
+&=p(r_{t+1}\mid s_t,a_t).
+\end{aligned}
+\]<p>人话就是：</p><blockquote><p>只要当前状态 \(s_t\) 已经描述得足够完整，那么预测下一状态和奖励时，不需要再把整个历史重新翻一遍。</p></blockquote><p>它并不是说世界真的没有历史，而是说<strong>历史里对未来有用的信息，应该已经被压进当前状态了</strong>。</p><p>比如一辆正在行驶的车，如果状态只有「当前位置」，通常就不满足 Markov 性质；把速度、方向等信息也放进状态后，才更有可能根据当前状态预测下一刻。</p><h3 id=mdp-和-markov-process-的区别>MDP 和 Markov Process 的区别</h3><p>MDP 里还有动作选择，智能体可以通过策略影响未来。</p><p>一旦策略 \(\pi\) 被固定，在每个状态下该采取动作的概率也固定了，MDP 就退化成了一个 Markov Process；如果时间和状态都是离散的，也常叫 Markov Chain。</p><p>所以你可以这样记：</p><blockquote><p>MDP = 能做决策的 Markov Process。</p></blockquote><h2 id=用-python-把这几个概念跑起来>用 Python 把这几个概念跑起来</h2><p>概念差不多了，下面用不到 70 行 Python，把这个网格世界真正跑一下。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>ACTIONS</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;up&#34;</span><span class=p>:</span> <span class=p>(</span><span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=mi>0</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;right&#34;</span><span class=p>:</span> <span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=mi>1</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;down&#34;</span><span class=p>:</span> <span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>0</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;left&#34;</span><span class=p>:</span> <span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;stay&#34;</span><span class=p>:</span> <span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>),</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>FORBIDDEN</span> <span class=o>=</span> <span class=p>{</span><span class=mi>6</span><span class=p>,</span> <span class=mi>7</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=n>TARGET</span> <span class=o>=</span> <span class=mi>9</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>step</span><span class=p>(</span><span class=n>state</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>action</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>int</span><span class=p>,</span> <span class=nb>int</span><span class=p>]:</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;执行一个动作，返回 (next_state, reward)。&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>row</span><span class=p>,</span> <span class=n>col</span> <span class=o>=</span> <span class=nb>divmod</span><span class=p>(</span><span class=n>state</span> <span class=o>-</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>d_row</span><span class=p>,</span> <span class=n>d_col</span> <span class=o>=</span> <span class=n>ACTIONS</span><span class=p>[</span><span class=n>action</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=n>next_row</span><span class=p>,</span> <span class=n>next_col</span> <span class=o>=</span> <span class=n>row</span> <span class=o>+</span> <span class=n>d_row</span><span class=p>,</span> <span class=n>col</span> <span class=o>+</span> <span class=n>d_col</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># 越界：留在原地并获得 -1</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=ow>not</span> <span class=p>(</span><span class=mi>0</span> <span class=o>&lt;=</span> <span class=n>next_row</span> <span class=o>&lt;</span> <span class=mi>3</span> <span class=ow>and</span> <span class=mi>0</span> <span class=o>&lt;=</span> <span class=n>next_col</span> <span class=o>&lt;</span> <span class=mi>3</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>state</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>next_state</span> <span class=o>=</span> <span class=n>next_row</span> <span class=o>*</span> <span class=mi>3</span> <span class=o>+</span> <span class=n>next_col</span> <span class=o>+</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># 这个环境是确定性的，因此可以在 step 中直接根据结果计算 r(s, a)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>next_state</span> <span class=ow>in</span> <span class=n>FORBIDDEN</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>reward</span> <span class=o>=</span> <span class=o>-</span><span class=mi>1</span>
+</span></span><span class=line><span class=cl>    <span class=k>elif</span> <span class=n>next_state</span> <span class=o>==</span> <span class=n>TARGET</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>reward</span> <span class=o>=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>reward</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>next_state</span><span class=p>,</span> <span class=n>reward</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>rollout</span><span class=p>(</span><span class=n>start</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>policy</span><span class=p>:</span> <span class=nb>dict</span><span class=p>[</span><span class=nb>int</span><span class=p>,</span> <span class=nb>str</span><span class=p>],</span> <span class=n>gamma</span><span class=p>:</span> <span class=nb>float</span> <span class=o>=</span> <span class=mf>0.9</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;按给定策略生成一条 episode。&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>state</span> <span class=o>=</span> <span class=n>start</span>
+</span></span><span class=line><span class=cl>    <span class=n>states</span> <span class=o>=</span> <span class=p>[</span><span class=n>state</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=n>rewards</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>    <span class=n>discounted_return</span> <span class=o>=</span> <span class=mf>0.0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>t</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>20</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>action</span> <span class=o>=</span> <span class=n>policy</span><span class=p>[</span><span class=n>state</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=n>state</span><span class=p>,</span> <span class=n>reward</span> <span class=o>=</span> <span class=n>step</span><span class=p>(</span><span class=n>state</span><span class=p>,</span> <span class=n>action</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>states</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>state</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>rewards</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>reward</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>discounted_return</span> <span class=o>+=</span> <span class=p>(</span><span class=n>gamma</span><span class=o>**</span><span class=n>t</span><span class=p>)</span> <span class=o>*</span> <span class=n>reward</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>state</span> <span class=o>==</span> <span class=n>TARGET</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>states</span><span class=p>,</span> <span class=n>rewards</span><span class=p>,</span> <span class=n>discounted_return</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>good_policy</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=mi>1</span><span class=p>:</span> <span class=s2>&#34;right&#34;</span><span class=p>,</span> <span class=mi>2</span><span class=p>:</span> <span class=s2>&#34;down&#34;</span><span class=p>,</span> <span class=mi>5</span><span class=p>:</span> <span class=s2>&#34;down&#34;</span><span class=p>,</span> <span class=mi>8</span><span class=p>:</span> <span class=s2>&#34;right&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>bad_policy</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=mi>1</span><span class=p>:</span> <span class=s2>&#34;down&#34;</span><span class=p>,</span> <span class=mi>4</span><span class=p>:</span> <span class=s2>&#34;down&#34;</span><span class=p>,</span> <span class=mi>7</span><span class=p>:</span> <span class=s2>&#34;right&#34;</span><span class=p>,</span> <span class=mi>8</span><span class=p>:</span> <span class=s2>&#34;right&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>name</span><span class=p>,</span> <span class=n>policy</span> <span class=ow>in</span> <span class=p>[(</span><span class=s2>&#34;good&#34;</span><span class=p>,</span> <span class=n>good_policy</span><span class=p>),</span> <span class=p>(</span><span class=s2>&#34;bad&#34;</span><span class=p>,</span> <span class=n>bad_policy</span><span class=p>)]:</span>
+</span></span><span class=line><span class=cl>    <span class=n>states</span><span class=p>,</span> <span class=n>rewards</span><span class=p>,</span> <span class=n>g</span> <span class=o>=</span> <span class=n>rollout</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=n>policy</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;</span><span class=si>{</span><span class=n>name</span><span class=si>:</span><span class=s2>&gt;4</span><span class=si>}</span><span class=s2>: states=</span><span class=si>{</span><span class=n>states</span><span class=si>}</span><span class=s2>, rewards=</span><span class=si>{</span><span class=n>rewards</span><span class=si>}</span><span class=s2>, G=</span><span class=si>{</span><span class=n>g</span><span class=si>:</span><span class=s2>.3f</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>运行结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>good: states=[1, 2, 5, 8, 9], rewards=[0, 0, 0, 1], G=0.729
+</span></span><span class=line><span class=cl> bad: states=[1, 4, 7, 8, 9], rewards=[0, -1, 0, 1], G=-0.171
+</span></span></code></pre></td></tr></table></div></div><p>这段代码虽然简单，但里面已经出现了一个完整 MDP 的雏形：</p><ul><li><code>state</code> 是机器人所在格子；</li><li><code>action</code> 是五种移动方式；</li><li><code>step</code> 定义环境的状态转移和奖励；</li><li><code>policy</code> 定义每个状态下选择什么动作；</li><li><code>rollout</code> 生成轨迹和 episode；</li><li><code>discounted_return</code> 用来评价策略。</li></ul><p>不过注意，我们现在是<strong>手写</strong>了 good policy 和 bad policy，还没有让智能体自己学会策略。</p><p>真正的强化学习算法，就是接下来要解决这件事。</p><h2 id=总结>总结</h2><p>这一篇看起来名词很多，但它们其实都在回答同一条交互链上的不同问题：</p><div class=table-wrapper><table><thead><tr><th>概念</th><th>它回答的问题</th></tr></thead><tbody><tr><td>State</td><td>我现在处于什么情况？</td></tr><tr><td>Action</td><td>我能做什么？</td></tr><tr><td>State transition</td><td>做完以后环境会变成什么样？</td></tr><tr><td>Policy</td><td>我应该怎样选动作？</td></tr><tr><td>Reward</td><td>环境怎样评价这一步？</td></tr><tr><td>Trajectory</td><td>这一次实际经历了什么？</td></tr><tr><td>Return</td><td>这一串经历总共赚了多少？</td></tr><tr><td>Episode</td><td>一次完整试验从哪里开始、在哪里结束？</td></tr><tr><td>MDP</td><td>怎样用统一的数学框架描述以上全部内容？</td></tr></tbody></table></div><p>到这里，我们还没有学任何「让机器人自动变聪明」的算法，只是把问题定义清楚了。</p><p>但这一步相当重要。后面不管是 Value Iteration、Q-learning、DQN 还是 PPO，说到底都在这套语言里工作。</p><p>下一篇我们会进入整本书真正的地基：<strong>Bellman Equation</strong>。也就是把「长期回报」拆成「眼前一步 + 剩下的未来」，看看一个看似无限的问题，为什么可以被递归地算出来。</p><p>总之，强化学习的大门已经打开了。现在这个机器人还只会按我们写好的策略走，下一篇开始，就该想办法让它自己学了 hhh。</p></section><footer class=article-footer><section class=article-tags><a href=/tags/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/>从零开始学强化学习</a>
+<a href=/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/>强化学习</a>
+<a href=/tags/mdp/>MDP</a>
+<a href=/tags/%E8%B5%B5%E4%B8%96%E9%92%B0/>赵世钰</a></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>Last updated on Aug 16, 2026 02:00 UTC</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{const e=[".main-article",".widget--toc"];e.forEach(e=>{const t=document.querySelector(e);t&&renderMathInElement(t,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],ignoredClasses:["gist"]})})})</script></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article class=has-image><a href=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/><div class=article-image><img src=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/cover.svg loading=lazy data-key data-hash=/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%BA%8Cbellman-%E6%96%B9%E7%A8%8B%E6%8A%8A%E6%97%A0%E9%99%90%E6%9C%AA%E6%9D%A5%E6%8A%98%E5%8F%A0%E6%88%90%E4%B8%80%E6%AD%A5/cover.svg></div><div class=article-details><h2 class=article-title>从零开始学强化学习（二）：Bellman 方程，把无限未来折叠成一步</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2024 -
+2026 Dinglz 's Blog</section><section class=powerby>copyright &copy; dinglz<br>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.33.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

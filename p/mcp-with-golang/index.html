@@ -1,0 +1,308 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="golang如何与mcp server交互，如何用eino将mcp集成到llm的工作流中"><title>Mcp with golang</title>
+<link rel=canonical href=https://dingdinglz.github.io/p/mcp-with-golang/><link rel=stylesheet href=/scss/style.min.81579ea678e30582aa60028bfe3192821d6c0fee666ee279be318fb5b558916b.css><meta property='og:title' content="Mcp with golang"><meta property='og:description' content="golang如何与mcp server交互，如何用eino将mcp集成到llm的工作流中"><meta property='og:url' content='https://dingdinglz.github.io/p/mcp-with-golang/'><meta property='og:site_name' content="Dinglz 's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='golang'><meta property='article:tag' content='mcp'><meta property='article:published_time' content='2025-03-29T02:00:00+00:00'><meta property='article:modified_time' content='2025-03-29T02:00:00+00:00'><meta name=twitter:title content="Mcp with golang"><meta name=twitter:description content="golang如何与mcp server交互，如何用eino将mcp集成到llm的工作流中"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu9713755695089526605.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Dinglz 's Blog</a></h1><h2 class=site-description>keep learning...</h2></div></header><ol class=menu-social><li><a href=https://github.com/dingdinglz target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>分类</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#什么是mcp>什么是mcp</a></li><li><a href=#如何寻找mcp-servers>如何寻找mcp servers</a></li><li><a href=#前置准备>前置准备</a></li><li><a href=#mcp-server-构成>mcp server 构成</a></li><li><a href=#获取tool-list>获取tool list</a></li><li><a href=#利用mcp-server实现截图特定网页>利用mcp server实现截图特定网页</a></li><li><a href=#回顾>回顾</a></li><li><a href=#eino引入>eino引入</a></li><li><a href=#结尾>结尾</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/go/ style=background-color:#c71585;color:#fff>Go
+</a><a href=/categories/github/ style=background-color:#ee9a00;color:#fff>Github项目分享</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/mcp-with-golang/>Mcp with golang</a></h2><h3 class=article-subtitle>golang如何与mcp server交互，如何用eino将mcp集成到llm的工作流中</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2025-03-29T02:00:00Z>Mar 29, 2025</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>3 minute read</time></div></footer></div></header><section class=article-content><h2 id=什么是mcp>什么是mcp</h2><p><a class=link href=https://modelcontextprotocol.io/ target=_blank rel=noopener>MCP</a> 是一种开放协议，通过标准化的服务器实现，使 AI 模型能够安全地与本地和远程资源进行交互。此列表重点关注可用于生产和实验性的 MCP 服务器，这些服务器通过文件访问、数据库连接、API 集成和其他上下文服务来扩展 AI 功能。</p><p>mcp最近如此之火，已经成为这几天llm界最大的话题（不是），市面上也涌现了一批功能强大，覆盖各个方面的mcp server，本文主要介绍如何调用这些mcp server，以及如何把mcp server集成到<a class=link href=https://www.cloudwego.io/zh/docs/eino/ target=_blank rel=noopener>Eino</a>（字节跳动开源的大模型应用开发框架）中，使我们的ai也可以调用mcp的能力。</p><p>Let‘s start</p><h2 id=如何寻找mcp-servers>如何寻找mcp servers</h2><p>这里有一份非常棒的mcp server列表，你可以寻找任何你想要的功能：https://github.com/punkpeye/awesome-mcp-servers</p><p>另外，各大api厂商，在原有http api的基础上，陆续开放了mcp server，例如百度地图，更方便ai的接入</p><p>下文，我们以https://github.com/blackwhite084/playwright-plus-python-mcp为例，进行mcp的调用，使用的client包是：https://github.com/mark3labs/mcp-go</p><h2 id=前置准备>前置准备</h2><p>现有的mcp servers大部分都是基于npx，uvx或者直接一个可执行文件，我们要用到的这个mcp server基于uvx，<a class=link href=https://docs.astral.sh/uv/ target=_blank rel=noopener>点我安装uv</a></p><p>playwright是一个浏览器自动化工具，playwright-plus-python-mcp基于其实现功能，<a class=link href=https://playwright.dev/docs/intro target=_blank rel=noopener>点我安装playwright</a></p><h2 id=mcp-server-构成>mcp server 构成</h2><p>一个mcp server会提供一个tool list，也就是支持的能力，并介绍对应tool的功能和需要传入的参数，以及返回的参数</p><h2 id=获取tool-list>获取tool list</h2><p>根据文档，可以轻松的把获取tool list的功能写出来</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;log&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;github.com/mark3labs/mcp-go/client&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;github.com/mark3labs/mcp-go/mcp&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>client</span><span class=p>.</span><span class=nf>NewStdioMCPClient</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;uvx&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>[]</span><span class=kt>string</span><span class=p>{},</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;playwright-server&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Failed to create client: %v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>initRequest</span> <span class=o>:=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>InitializeRequest</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>initRequest</span><span class=p>.</span><span class=nx>Params</span><span class=p>.</span><span class=nx>ProtocolVersion</span> <span class=p>=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>LATEST_PROTOCOL_VERSION</span>
+</span></span><span class=line><span class=cl>    <span class=nx>initRequest</span><span class=p>.</span><span class=nx>Params</span><span class=p>.</span><span class=nx>ClientInfo</span> <span class=p>=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>Implementation</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Name</span><span class=p>:</span>    <span class=s>&#34;example-client&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Version</span><span class=p>:</span> <span class=s>&#34;1.0.0&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>initResult</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nf>Initialize</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>initRequest</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Failed to initialize: %v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;Initialized with server: %s %s\n\n&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>initResult</span><span class=p>.</span><span class=nx>ServerInfo</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>initResult</span><span class=p>.</span><span class=nx>ServerInfo</span><span class=p>.</span><span class=nx>Version</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Listing available tools...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>toolsRequest</span> <span class=o>:=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>ListToolsRequest</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>tools</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nf>ListTools</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>toolsRequest</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Failed to list tools: %v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>tool</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>tools</span><span class=p>.</span><span class=nx>Tools</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;- %s: %s\n&#34;</span><span class=p>,</span> <span class=nx>tool</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span> <span class=nx>tool</span><span class=p>.</span><span class=nx>Description</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>主要的流程也就是新建一个mcp的client，然后指定连接的方式，然后进行初始化，获取到工具列表</p><p>可以看到，支持的功能如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>- playwright_navigate: Navigate to a URL,thip op will auto create a session
+</span></span><span class=line><span class=cl>- playwright_screenshot: Take a screenshot of the current page or a specific element
+</span></span><span class=line><span class=cl>- playwright_click: Click an element on the page using CSS selector
+</span></span><span class=line><span class=cl>- playwright_fill: Fill out an input field
+</span></span><span class=line><span class=cl>- playwright_evaluate: Execute JavaScript in the browser console
+</span></span><span class=line><span class=cl>- playwright_click_text: Click an element on the page by its text content
+</span></span><span class=line><span class=cl>- playwright_get_text_content: Get the text content of all elements
+</span></span><span class=line><span class=cl>- playwright_get_html_content: Get the HTML content of the page
+</span></span></code></pre></td></tr></table></div></div><p>当然，这部分的内容在mcp-server的文档中也可以查询到</p><h2 id=利用mcp-server实现截图特定网页>利用mcp server实现截图特定网页</h2><p>那么，让我们利用这些tool实现一个简单的功能，对github.com进行截图，我们需要用到两个tool，<code>playwright_navigate</code>和<code>playwright_screenshot</code>，也就是先导航到对应网站，再进行截图，实现如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span><span class=lnt>80
+</span><span class=lnt>81
+</span><span class=lnt>82
+</span><span class=lnt>83
+</span><span class=lnt>84
+</span><span class=lnt>85
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;encoding/base64&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;encoding/json&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;log&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;os&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;github.com/mark3labs/mcp-go/client&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;github.com/mark3labs/mcp-go/mcp&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>c</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>client</span><span class=p>.</span><span class=nf>NewStdioMCPClient</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;uvx&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>[]</span><span class=kt>string</span><span class=p>{},</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;playwright-server&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Failed to create client: %v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>initRequest</span> <span class=o>:=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>InitializeRequest</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>initRequest</span><span class=p>.</span><span class=nx>Params</span><span class=p>.</span><span class=nx>ProtocolVersion</span> <span class=p>=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>LATEST_PROTOCOL_VERSION</span>
+</span></span><span class=line><span class=cl>    <span class=nx>initRequest</span><span class=p>.</span><span class=nx>Params</span><span class=p>.</span><span class=nx>ClientInfo</span> <span class=p>=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>Implementation</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Name</span><span class=p>:</span>    <span class=s>&#34;example-client&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>Version</span><span class=p>:</span> <span class=s>&#34;1.0.0&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>initResult</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nf>Initialize</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>initRequest</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Failed to initialize: %v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;Initialized with server: %s %s\n\n&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>initResult</span><span class=p>.</span><span class=nx>ServerInfo</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nx>initResult</span><span class=p>.</span><span class=nx>ServerInfo</span><span class=p>.</span><span class=nx>Version</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Listing available tools...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>toolsRequest</span> <span class=o>:=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>ListToolsRequest</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>tools</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nf>ListTools</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>toolsRequest</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Failed to list tools: %v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>tool</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>tools</span><span class=p>.</span><span class=nx>Tools</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;- %s: %s\n&#34;</span><span class=p>,</span> <span class=nx>tool</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span> <span class=nx>tool</span><span class=p>.</span><span class=nx>Description</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=nx>navigateRequest</span> <span class=o>:=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>CallToolRequest</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>navigateRequest</span><span class=p>.</span><span class=nx>Params</span><span class=p>.</span><span class=nx>Name</span> <span class=p>=</span> <span class=s>&#34;playwright_navigate&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=nx>navigateRequest</span><span class=p>.</span><span class=nx>Params</span><span class=p>.</span><span class=nx>Arguments</span> <span class=p>=</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;url&#34;</span><span class=p>:</span> <span class=s>&#34;https://github.com/&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>result</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nf>CallTool</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>navigateRequest</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Failed to navigate: %v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nf>printToolResult</span><span class=p>(</span><span class=nx>result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>jRequest</span> <span class=o>:=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nx>CallToolRequest</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>jRequest</span><span class=p>.</span><span class=nx>Params</span><span class=p>.</span><span class=nx>Name</span> <span class=p>=</span> <span class=s>&#34;playwright_screenshot&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=nx>jRequest</span><span class=p>.</span><span class=nx>Params</span><span class=p>.</span><span class=nx>Arguments</span> <span class=p>=</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>        <span class=s>&#34;name&#34;</span><span class=p>:</span> <span class=s>&#34;test.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>result</span><span class=p>,</span> <span class=nx>err</span> <span class=p>=</span> <span class=nx>c</span><span class=p>.</span><span class=nf>CallTool</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>jRequest</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Failed to navigate: %v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nf>printToolResult</span><span class=p>(</span><span class=nx>result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>image</span> <span class=o>:=</span> <span class=nx>result</span><span class=p>.</span><span class=nx>Content</span><span class=p>[</span><span class=mi>0</span><span class=p>].(</span><span class=nx>mcp</span><span class=p>.</span><span class=nx>ImageContent</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>resPng</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>base64</span><span class=p>.</span><span class=nx>StdEncoding</span><span class=p>.</span><span class=nf>DecodeString</span><span class=p>(</span><span class=nx>image</span><span class=p>.</span><span class=nx>Data</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>os</span><span class=p>.</span><span class=nf>WriteFile</span><span class=p>(</span><span class=s>&#34;test.png&#34;</span><span class=p>,</span> <span class=nx>resPng</span><span class=p>,</span> <span class=nx>os</span><span class=p>.</span><span class=nx>ModePerm</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>printToolResult</span><span class=p>(</span><span class=nx>result</span> <span class=o>*</span><span class=nx>mcp</span><span class=p>.</span><span class=nx>CallToolResult</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>content</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>result</span><span class=p>.</span><span class=nx>Content</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=nx>textContent</span><span class=p>,</span> <span class=nx>ok</span> <span class=o>:=</span> <span class=nx>content</span><span class=p>.(</span><span class=nx>mcp</span><span class=p>.</span><span class=nx>TextContent</span><span class=p>);</span> <span class=nx>ok</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>textContent</span><span class=p>.</span><span class=nx>Text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>jsonBytes</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>MarshalIndent</span><span class=p>(</span><span class=nx>content</span><span class=p>,</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=s>&#34;  &#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nb>string</span><span class=p>(</span><span class=nx>jsonBytes</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过mcp.CallToolRequest进行调用，可以看到，返回的调用结果是mcp.Content的形式，根据文档的说明可以转成mcp.TextContent，mcp.ImageContent等等</p><p>运行完后本地的test.png图片已经保存：</p><p><img src=/p/mcp-with-golang/test.png width=1265 height=11079 srcset="/p/mcp-with-golang/test_hu14397875362322982686.png 480w, /p/mcp-with-golang/test_hu6455001507509786742.png 1024w" loading=lazy alt=test.png class=gallery-image data-flex-grow=11 data-flex-basis=27px></p><h2 id=回顾>回顾</h2><p>上述利用mcp-server的能力简单实现了一个浏览器自动化的例子，如果吧这个mcp server接入到ai中，允许llm使用的话，可以实现一系列浏览器自动化操作，像cursor等等以及支持了mcp协议的引入，让我们看看go中如何与外部llm集成，也就是利用eino框架，让mcp去代替原有的function calling的功能。</p><h2 id=eino引入>eino引入</h2><p>官方引入介绍：<a class=link href=https://www.cloudwego.io/zh/docs/eino/ecosystem_integration/tool/tool_mcp/ target=_blank rel=noopener>Tool - MCP | CloudWeGo</a></p><p>eino原本实现类似langchain的功能相对来说就比较轻松，官方给出的mcp接入方法感觉像是把mcp的tools转换成了原本的function tool。</p><p>通过：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>import</span> <span class=s>&#34;github.com/cloudwego/eino-ext/components/tool/mcp&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>tools</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>mcp</span><span class=p>.</span><span class=nf>GetTools</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>mcp</span><span class=p>.</span><span class=nx>Config</span><span class=p>{</span><span class=nx>Cli</span><span class=p>:</span> <span class=nx>cli</span><span class=p>})</span>
+</span></span></code></pre></td></tr></table></div></div><p>然后再把tools加入Tool Node节点，就能跟以前的function call一样去使用mcp，也算是给出了一种简洁的接入方法吧</p><p>本文主要介绍mcp，就不再赘述eino的使用方式了</p><h2 id=结尾>结尾</h2><p>咕咕爽啊（不是），有时间再详细介绍一下eino框架吧，golang自己的langchain</p></section><footer class=article-footer><section class=article-tags><a href=/tags/golang/>Golang</a>
+<a href=/tags/mcp/>Mcp</a></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>Last updated on Mar 29, 2025 02:00 UTC</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%BB%98%E5%88%B6mcp%E7%89%88/><div class=article-details><h2 class=article-title>思维导图绘制（mcp版）</h2></div></a></article><article><a href=/p/etcd%E7%9A%84%E5%8A%9F%E8%83%BD%E4%B8%8E%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>etcd的功能与应用</h2></div></a></article><article><a href=/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>JWT的应用</h2></div></a></article><article><a href=/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-go-1.23-iter-%E5%8C%85/><div class=article-details><h2 class=article-title>深入理解 Go 1.23 iter 包</h2></div></a></article><article><a href=/p/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%AB%98%E6%95%88%E7%9A%84%E7%BD%91%E7%AB%99%E5%90%8E%E7%AB%AF%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>如何构建一个高效的网站后端应用</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2024 -
+2026 Dinglz 's Blog</section><section class=powerby>copyright &copy; dinglz<br>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.33.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

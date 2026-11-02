@@ -1,0 +1,419 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="类型篇：流"><title>Redis学习之旅(6) Streams</title>
+<link rel=canonical href=https://dingdinglz.github.io/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%856-streams/><link rel=stylesheet href=/scss/style.min.81579ea678e30582aa60028bfe3192821d6c0fee666ee279be318fb5b558916b.css><meta property='og:title' content="Redis学习之旅(6) Streams"><meta property='og:description' content="类型篇：流"><meta property='og:url' content='https://dingdinglz.github.io/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%856-streams/'><meta property='og:site_name' content="Dinglz 's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='golang'><meta property='article:tag' content='redis'><meta property='article:published_time' content='2025-02-23T02:00:00+00:00'><meta property='article:modified_time' content='2025-02-23T02:00:00+00:00'><meta name=twitter:title content="Redis学习之旅(6) Streams"><meta name=twitter:description content="类型篇：流"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu9713755695089526605.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Dinglz 's Blog</a></h1><h2 class=site-description>keep learning...</h2></div></header><ol class=menu-social><li><a href=https://github.com/dingdinglz target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>分类</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#stream>Stream</a></li><li><a href=#xadd>XADD</a><ol><li><a href=#redis-cli>redis-cli</a></li><li><a href=#go-redis>go-redis</a></li></ol></li><li><a href=#xdel>XDEL</a><ol><li><a href=#redis-cli-1>redis-cli</a></li><li><a href=#go-redis-1>go-redis</a></li></ol></li><li><a href=#xrange>XRANGE</a><ol><li><a href=#go-redis-example>go-redis example</a></li></ol></li><li><a href=#xgroup-create>XGROUP CREATE</a></li><li><a href=#xreadgroup>XREADGROUP</a><ol><li><a href=#redis-cli-2>redis-cli</a></li><li><a href=#go-redis-2>go-redis</a></li></ol></li><li><a href=#xack--xpending>XACK && XPENDING</a></li><li><a href=#用例>用例</a></li><li><a href=#回顾>回顾</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/go/ style=background-color:#c71585;color:#fff>Go</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%856-streams/>Redis学习之旅(6) Streams</a></h2><h3 class=article-subtitle>类型篇：流</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2025-02-23T02:00:00Z>Feb 23, 2025</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>4 minute read</time></div></footer></div></header><section class=article-content><h2 id=stream>Stream</h2><p>Redis流是一种数据结构，其行为类似于仅追加日志，同时实现了多项突破常规仅追加日志局限性的操作。这些特性包括支持常量时间复杂度(O(1))的随机访问，以及实现诸如消费者组等复杂的消息消费策略。通过流结构，开发者能够实时记录并同步分发事件。其典型应用场景包括：</p><ul><li><p>事件溯源（例如跟踪用户操作、点击等行为）</p></li><li><p>传感器监测（例如来自现场设备的读数数据）</p></li><li><p>通知功能（例如为每位用户的通知记录单独创建独立事件流存储）</p></li></ul><p>流是一个非常强大的类型，因此它的特性也就非常复杂，首先流可以理解成一个列表，但是其中的每个元素是带有先后顺序的一个Hash表，流与之前提到的List相比，最突出的一个特性是监听，通过消费者组，可以去实时地收到流中传来的最新的消息（或者未处理的消息）</p><p>因此，流比List更适合实现消息队列</p><h2 id=xadd>XADD</h2><p>XADD用于向流中添加一个元素，注意，这个元素是一个hash表的形式，所以它类似于<code>map[string]interface{}</code>，XADD的用法是<code>XADD 流名 ID key value ...</code></p><p>XADD会返回一个ID对应这个元素，XADD中的id你即可以手动指定（需要注意的是，你添加的元素一定要比上一次添加的元素的ID新），或者用*让redis自动帮你生成，redis生成的id是和时间相绑定的</p><p>比如我们要往person流中添加一个人，这个人具有name、age这两个字段</p><h3 id=redis-cli>redis-cli</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>XADD person * name dinglz age 18
+</span></span></code></pre></td></tr></table></div></div><h3 id=go-redis>go-redis</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;github.com/redis/go-redis/v9&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span> <span class=o>:=</span> <span class=nx>redis</span><span class=p>.</span><span class=nf>NewClient</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Options</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span><span class=p>.</span><span class=nf>XAdd</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>XAddArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Stream</span><span class=p>:</span> <span class=s>&#34;person&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>ID</span><span class=p>:</span>     <span class=s>&#34;*&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Values</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;name&#34;</span><span class=p>:</span> <span class=s>&#34;dinglz&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;age&#34;</span><span class=p>:</span>  <span class=mi>18</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=xdel>XDEL</h2><p>删除流中的一个元素，用法是<code>XDEL 流名 ID</code></p><h3 id=redis-cli-1>redis-cli</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>XDEL person ID
+</span></span></code></pre></td></tr></table></div></div><h3 id=go-redis-1>go-redis</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;github.com/redis/go-redis/v9&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span> <span class=o>:=</span> <span class=nx>redis</span><span class=p>.</span><span class=nf>NewClient</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Options</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span><span class=p>.</span><span class=nf>XDel</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;person&#34;</span><span class=p>,</span> <span class=s>&#34;id&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=xrange>XRANGE</h2><p>按范围查询流的内容，用法是<code>XRANGE 流名 开始 结束 [COUNT 获取个数]</code></p><p>[]内是可选内容，开始id和结束id有一个特殊写法，就是<code>-</code>和<code>+</code>，前者代表最老一个流内容，后者代表最新一个流内容，也就是说，要获取刚刚流里所有内容，我们就可以<code>XRANGE person - +</code></p><p>如果我们想获取最初加入的三个元素，我们就可以用COUNT限定最多取到的元素个数，可以这么写：<code>XRANGE person - + COUNT 3</code></p><p>如果我们一直一个ID，想获取它的内容，我们就可以<code>XRANGE person id id</code></p><h3 id=go-redis-example>go-redis example</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;github.com/redis/go-redis/v9&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span> <span class=o>:=</span> <span class=nx>redis</span><span class=p>.</span><span class=nf>NewClient</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Options</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>res</span><span class=p>,</span> <span class=nx>e</span> <span class=o>:=</span> <span class=nx>client</span><span class=p>.</span><span class=nf>XRange</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;person&#34;</span><span class=p>,</span> <span class=s>&#34;-&#34;</span><span class=p>,</span> <span class=s>&#34;+&#34;</span><span class=p>).</span><span class=nf>Result</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>e</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nb>panic</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>i</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>res</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>i</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=xgroup-create>XGROUP CREATE</h2><p>新建一个监听组，用法是<code>XGROUP CREATE 流名 组名 开始监听的id</code>, 这个id可以填成$，表示监听从新建以后新增的id。</p><p>配合下面要说的XREADGROUP命令可以完成对消息的监听</p><h2 id=xreadgroup>XREADGROUP</h2><p>从监听的流里获取新消息，用法是<code>XREADGROUP GROUP 监听组名 监听者 COUNT 最多获取消息数 STREAMS 流名 ></code></p><p>最后一个>表示获取从来没有被其他监听者听到过的消息，也就保证了消息不会重复分发</p><p>下面我们来添加三个人，然后尝试获取两次次</p><h3 id=redis-cli-2>redis-cli</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>XGROUP CREATE person test $
+</span></span><span class=line><span class=cl>XADD person * name dinglz age 18
+</span></span><span class=line><span class=cl>XADD person * name jack age 20
+</span></span><span class=line><span class=cl>XADD person * name alice age 22
+</span></span><span class=line><span class=cl>XREADGROUP GROUP test listener COUNT 1 STREAMS person &gt;
+</span></span><span class=line><span class=cl>XREADGROUP GROUP test listener COUNT 1 STREAMS person &gt;
+</span></span></code></pre></td></tr></table></div></div><p>可以看到是从新到老获取</p><h3 id=go-redis-2>go-redis</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;github.com/redis/go-redis/v9&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span> <span class=o>:=</span> <span class=nx>redis</span><span class=p>.</span><span class=nf>NewClient</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Options</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span><span class=p>.</span><span class=nf>XGroupCreateMkStream</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;person&#34;</span><span class=p>,</span> <span class=s>&#34;test&#34;</span><span class=p>,</span> <span class=s>&#34;$&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span><span class=p>.</span><span class=nf>XAdd</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>XAddArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Stream</span><span class=p>:</span> <span class=s>&#34;person&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>ID</span><span class=p>:</span>     <span class=s>&#34;*&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Values</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;name&#34;</span><span class=p>:</span> <span class=s>&#34;dinglz&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;age&#34;</span><span class=p>:</span>  <span class=mi>18</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span><span class=p>.</span><span class=nf>XAdd</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>XAddArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Stream</span><span class=p>:</span> <span class=s>&#34;person&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>ID</span><span class=p>:</span>     <span class=s>&#34;*&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Values</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;name&#34;</span><span class=p>:</span> <span class=s>&#34;jack&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;age&#34;</span><span class=p>:</span>  <span class=mi>20</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span><span class=p>.</span><span class=nf>XAdd</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>XAddArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Stream</span><span class=p>:</span> <span class=s>&#34;person&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>ID</span><span class=p>:</span>     <span class=s>&#34;*&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Values</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;name&#34;</span><span class=p>:</span> <span class=s>&#34;alice&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;age&#34;</span><span class=p>:</span>  <span class=mi>20</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>res</span><span class=p>,</span> <span class=nx>e</span> <span class=o>:=</span> <span class=nx>client</span><span class=p>.</span><span class=nf>XReadGroup</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>XReadGroupArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Group</span><span class=p>:</span>    <span class=s>&#34;test&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Consumer</span><span class=p>:</span> <span class=s>&#34;listener&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Streams</span><span class=p>:</span>  <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;person&#34;</span><span class=p>,</span> <span class=s>&#34;&gt;&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Count</span><span class=p>:</span>    <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=p>}).</span><span class=nf>Result</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>e</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nb>panic</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>res</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>Messages</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>Values</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=xack--xpending>XACK && XPENDING</h2><p>XACK和XPENDING是一组命令，XPENDING用于获取被获取，但没被处理的流里的数据，XACK用于标记该数据已被处理。</p><p>XPENDING的用法是<code>XPENDING 流名 监听组名</code>，XACK的用法是<code>XACK 流名 监听组名 ID</code></p><p>详细的用法直接参考用例吧</p><h2 id=用例>用例</h2><p>这里我们用stream实现一个更完善的消息队列，实现了以下功能</p><ul><li><p>三个workers去认领任务</p></li><li><p>三个workers一共最多拥有十个处理任务的goroutine</p></li><li><p>每3s做一次剩余任务量的通报</p></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span><span class=lnt>80
+</span><span class=lnt>81
+</span><span class=lnt>82
+</span><span class=lnt>83
+</span><span class=lnt>84
+</span><span class=lnt>85
+</span><span class=lnt>86
+</span><span class=lnt>87
+</span><span class=lnt>88
+</span><span class=lnt>89
+</span><span class=lnt>90
+</span><span class=lnt>91
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;context&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;strconv&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;sync&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;math/rand&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;github.com/redis/go-redis/v9&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>waitGroup</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>WaitGroup</span>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>processLock</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>Mutex</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>taskMaker</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>client</span> <span class=o>*</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Client</span><span class=p>,</span> <span class=nx>counts</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;=</span> <span class=nx>counts</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>client</span><span class=p>.</span><span class=nf>XAdd</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>XAddArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Stream</span><span class=p>:</span> <span class=s>&#34;tasks&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Values</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>				<span class=s>&#34;name&#34;</span><span class=p>:</span> <span class=s>&#34;task&#34;</span> <span class=o>+</span> <span class=nx>strconv</span><span class=p>.</span><span class=nf>Itoa</span><span class=p>(</span><span class=nx>i</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>			<span class=p>},</span>
+</span></span><span class=line><span class=cl>		<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>workerMaker</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>client</span> <span class=o>*</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Client</span><span class=p>,</span> <span class=nx>name</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>resW</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>client</span><span class=p>.</span><span class=nf>XReadGroup</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>XReadGroupArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Group</span><span class=p>:</span>    <span class=s>&#34;worker&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Consumer</span><span class=p>:</span> <span class=nx>name</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Count</span><span class=p>:</span>    <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Streams</span><span class=p>:</span>  <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;tasks&#34;</span><span class=p>,</span> <span class=s>&#34;&gt;&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>			<span class=nx>Block</span><span class=p>:</span>    <span class=mi>1</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=p>}).</span><span class=nf>Result</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>resW</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>name</span> <span class=o>+</span> <span class=s>&#34;认领工作完成&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=k>break</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=nx>processLock</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>				<span class=nx>res</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>client</span><span class=p>.</span><span class=nf>Get</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;worker-count&#34;</span><span class=p>).</span><span class=nf>Int</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>				<span class=k>if</span> <span class=nx>res</span> <span class=p>&lt;</span> <span class=mi>10</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>					<span class=nx>client</span><span class=p>.</span><span class=nf>Incr</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;worker-count&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>					<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>						<span class=nx>max</span> <span class=o>:=</span> <span class=nb>int64</span><span class=p>(</span><span class=mi>3</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>						<span class=nx>ns</span> <span class=o>:=</span> <span class=nx>rand</span><span class=p>.</span><span class=nf>Int63n</span><span class=p>(</span><span class=nx>max</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>						<span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nf>Duration</span><span class=p>(</span><span class=nx>ns</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>						<span class=nx>client</span><span class=p>.</span><span class=nf>XAck</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;tasks&#34;</span><span class=p>,</span> <span class=s>&#34;worker&#34;</span><span class=p>,</span> <span class=nx>resW</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>Messages</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>						<span class=nx>client</span><span class=p>.</span><span class=nf>XDel</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;tasks&#34;</span><span class=p>,</span> <span class=nx>resW</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>Messages</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>						<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>resW</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>Messages</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>Values</span><span class=p>[</span><span class=s>&#34;name&#34;</span><span class=p>],</span> <span class=s>&#34;由&#34;</span><span class=p>,</span> <span class=nx>name</span><span class=p>,</span> <span class=s>&#34;完成&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>						<span class=nx>client</span><span class=p>.</span><span class=nf>Decr</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;worker-count&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>					<span class=p>}()</span>
+</span></span><span class=line><span class=cl>					<span class=nx>processLock</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>					<span class=k>break</span>
+</span></span><span class=line><span class=cl>				<span class=p>}</span>
+</span></span><span class=line><span class=cl>				<span class=nx>processLock</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}()</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span> <span class=o>:=</span> <span class=nx>redis</span><span class=p>.</span><span class=nf>NewClient</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>redis</span><span class=p>.</span><span class=nx>Options</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span><span class=p>.</span><span class=nf>Set</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;worker-count&#34;</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=nf>taskMaker</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>client</span><span class=p>,</span> <span class=mi>100</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>client</span><span class=p>.</span><span class=nf>XGroupCreateMkStream</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;tasks&#34;</span><span class=p>,</span> <span class=s>&#34;worker&#34;</span><span class=p>,</span> <span class=s>&#34;$&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>waitGroup</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;=</span> <span class=mi>3</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>go</span> <span class=nf>workerMaker</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>client</span><span class=p>,</span> <span class=s>&#34;worker&#34;</span><span class=o>+</span><span class=nx>strconv</span><span class=p>.</span><span class=nf>Itoa</span><span class=p>(</span><span class=nx>i</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>3</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=nx>res</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>client</span><span class=p>.</span><span class=nf>XPending</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;tasks&#34;</span><span class=p>,</span> <span class=s>&#34;worker&#34;</span><span class=p>).</span><span class=nf>Result</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>			<span class=nx>resText</span> <span class=o>:=</span> <span class=s>&#34;&#34;</span>
+</span></span><span class=line><span class=cl>			<span class=k>for</span> <span class=nx>name</span><span class=p>,</span> <span class=nx>last</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>res</span><span class=p>.</span><span class=nx>Consumers</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=nx>resText</span> <span class=o>+=</span> <span class=nx>name</span> <span class=o>+</span> <span class=s>&#34;:&#34;</span> <span class=o>+</span> <span class=nx>strconv</span><span class=p>.</span><span class=nf>FormatInt</span><span class=p>(</span><span class=nx>last</span><span class=p>,</span> <span class=mi>10</span><span class=p>)</span> <span class=o>+</span> <span class=s>&#34; &#34;</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>resText</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=k>if</span> <span class=nx>res</span><span class=p>.</span><span class=nx>Count</span> <span class=o>==</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=nx>waitGroup</span><span class=p>.</span><span class=nf>Done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>waitGroup</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=回顾>回顾</h2><p>Stream非常强大，从我们上面实现的消费队列就可以看出，大家可以详细研究一下Stream相关的，我们未提到的其他命令，今天聊到了这些命令：</p><ul><li><p>XADD</p></li><li><p>XDEL</p></li><li><p>XRANGE</p></li><li><p>XGROUP CREATE</p></li><li><p>XREADGROUP</p></li><li><p>XACK && XPENDING</p></li></ul><p><a class=link href="https://redis.io/docs/latest/commands/?group=stream" target=_blank rel=noopener>更多stream相关的命令</a></p></section><footer class=article-footer><section class=article-tags><a href=/tags/golang/>Golang</a>
+<a href=/tags/redis/>Redis</a></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>Last updated on Feb 23, 2025 02:00 UTC</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%857-geospatial/><div class=article-details><h2 class=article-title>Redis学习之旅(7) Geospatial</h2></div></a></article><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%855-sorted-sets/><div class=article-details><h2 class=article-title>Redis学习之旅(5) Sorted sets</h2></div></a></article><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%854-hash/><div class=article-details><h2 class=article-title>Redis学习之旅(4) Hash</h2></div></a></article><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%853-sets/><div class=article-details><h2 class=article-title>Redis学习之旅(3) Sets</h2></div></a></article><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%852-lists/><div class=article-details><h2 class=article-title>Redis学习之旅(2) Lists</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2024 -
+2026 Dinglz 's Blog</section><section class=powerby>copyright &copy; dinglz<br>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.33.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

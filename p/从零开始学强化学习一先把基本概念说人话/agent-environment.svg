@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">强化学习中的智能体与环境交互闭环</title>
+  <desc id="desc">智能体根据状态和策略选择动作，环境返回奖励和下一状态</desc>
+  <defs>
+    <linearGradient id="panelAgent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3159d8"/>
+      <stop offset="1" stop-color="#5945c8"/>
+    </linearGradient>
+    <linearGradient id="panelEnv" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d9488"/>
+      <stop offset="1" stop-color="#087b83"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#1e293b" flood-opacity="0.18"/>
+    </filter>
+    <marker id="blueArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#365ed8"/>
+    </marker>
+    <marker id="greenArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0d9488"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="620" rx="32" fill="#f6f8fc"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="600" y="58" text-anchor="middle" fill="#17233f" font-size="34" font-weight="800">强化学习不是一次计算，而是一个不断循环的交互过程</text>
+
+    <g transform="translate(90 136)" filter="url(#shadow)">
+      <rect width="330" height="270" rx="34" fill="url(#panelAgent)"/>
+      <circle cx="165" cy="76" r="42" fill="#ffffff" opacity="0.96"/>
+      <circle cx="150" cy="70" r="5" fill="#3159d8"/>
+      <circle cx="180" cy="70" r="5" fill="#3159d8"/>
+      <path d="M145 91 Q165 106 185 91" fill="none" stroke="#3159d8" stroke-width="6" stroke-linecap="round"/>
+      <path d="M165 34 V20" stroke="#ffffff" stroke-width="5"/>
+      <circle cx="165" cy="14" r="7" fill="#a5f3fc"/>
+      <text x="165" y="154" text-anchor="middle" fill="#ffffff" font-size="34" font-weight="800">智能体 Agent</text>
+      <text x="165" y="197" text-anchor="middle" fill="#dde8ff" font-size="23">维护策略并选择动作</text>
+      <rect x="65" y="218" width="200" height="38" rx="19" fill="#ffffff" opacity="0.13"/>
+      <text x="165" y="245" text-anchor="middle" fill="#ffffff" font-size="23" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">π(a | s)</text>
+    </g>
+
+    <g transform="translate(780 136)" filter="url(#shadow)">
+      <rect width="330" height="270" rx="34" fill="url(#panelEnv)"/>
+      <g transform="translate(121 34)">
+        <rect x="0" y="0" width="88" height="88" rx="18" fill="#ffffff" opacity="0.95"/>
+        <path d="M18 62 C28 39 39 77 51 42 C60 18 68 44 72 27" fill="none" stroke="#0d9488" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="18" cy="62" r="5" fill="#0d9488"/>
+        <circle cx="51" cy="42" r="5" fill="#0d9488"/>
+        <circle cx="72" cy="27" r="5" fill="#0d9488"/>
+      </g>
+      <text x="165" y="154" text-anchor="middle" fill="#ffffff" font-size="34" font-weight="800">环境 Environment</text>
+      <text x="165" y="197" text-anchor="middle" fill="#d7fffa" font-size="23">执行转移并给出反馈</text>
+      <rect x="24" y="218" width="282" height="38" rx="19" fill="#ffffff" opacity="0.13"/>
+      <text x="165" y="244" text-anchor="middle" fill="#ffffff" font-size="17" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">p(s' | s, a), p(r | s, a)</text>
+    </g>
+
+    <path d="M432 218 C535 151 665 151 768 218" fill="none" stroke="#365ed8" stroke-width="7" stroke-linecap="round" marker-end="url(#blueArrow)"/>
+    <rect x="518" y="134" width="164" height="49" rx="24" fill="#e7edff" stroke="#9eb0ed" stroke-width="2"/>
+    <text x="600" y="167" text-anchor="middle" fill="#2647aa" font-size="24" font-weight="750">动作 Aₜ</text>
+
+    <path d="M768 331 C665 398 535 398 432 331" fill="none" stroke="#0d9488" stroke-width="7" stroke-linecap="round" marker-end="url(#greenArrow)"/>
+    <rect x="473" y="372" width="254" height="49" rx="24" fill="#ddf8f4" stroke="#81d8cc" stroke-width="2"/>
+    <text x="600" y="405" text-anchor="middle" fill="#087b72" font-size="24" font-weight="750">状态 Sₜ₊₁ + 奖励 Rₜ₊₁</text>
+
+    <g transform="translate(118 488)">
+      <rect width="964" height="88" rx="24" fill="#ffffff" stroke="#dbe3f0" stroke-width="2"/>
+      <circle cx="46" cy="44" r="24" fill="#eef2ff"/>
+      <text x="46" y="53" text-anchor="middle" fill="#365ed8" font-size="25" font-weight="900">1</text>
+      <text x="83" y="52" fill="#334155" font-size="23">观察状态</text>
+      <path d="M220 44 H284" stroke="#9aa9bd" stroke-width="3" marker-end="url(#blueArrow)"/>
+      <circle cx="327" cy="44" r="24" fill="#eef2ff"/>
+      <text x="327" y="53" text-anchor="middle" fill="#365ed8" font-size="25" font-weight="900">2</text>
+      <text x="364" y="52" fill="#334155" font-size="23">选择动作</text>
+      <path d="M500 44 H564" stroke="#9aa9bd" stroke-width="3" marker-end="url(#blueArrow)"/>
+      <circle cx="607" cy="44" r="24" fill="#e4faf6"/>
+      <text x="607" y="53" text-anchor="middle" fill="#0d9488" font-size="25" font-weight="900">3</text>
+      <text x="644" y="52" fill="#334155" font-size="23">环境转移</text>
+      <path d="M780 44 H844" stroke="#9aa9bd" stroke-width="3" marker-end="url(#greenArrow)"/>
+      <circle cx="887" cy="44" r="24" fill="#e4faf6"/>
+      <text x="887" y="53" text-anchor="middle" fill="#0d9488" font-size="25" font-weight="900">4</text>
+      <text x="924" y="52" fill="#334155" font-size="23">获得反馈</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">从零开始学强化学习：状态价值与 Bellman 方程</title>
+  <desc id="desc">Bellman 方程将无限未来递归地折叠成即时奖励与下一状态价值</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101a3c"/>
+      <stop offset="0.55" stop-color="#23366f"/>
+      <stop offset="1" stop-color="#087b78"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6f8cff"/>
+      <stop offset="1" stop-color="#4864dc"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#73f0dc"/>
+      <stop offset="1" stop-color="#24b9ae"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe08a"/>
+      <stop offset="1" stop-color="#f2a844"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#06112d" flood-opacity="0.42"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#7df3d2"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="105" cy="96" r="260" fill="#7790ff" opacity="0.09"/>
+  <circle cx="1510" cy="810" r="350" fill="#54efd6" opacity="0.08"/>
+  <path d="M0 735C300 590 515 795 800 682C1060 580 1300 615 1600 500V900H0Z" fill="#071329" opacity="0.34"/>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <g transform="translate(105 112)">
+      <rect width="128" height="52" rx="26" fill="#6ee7f2" opacity="0.15" stroke="#7df3d2" stroke-width="2"/>
+      <text x="64" y="35" text-anchor="middle" fill="#a5f8e9" font-size="24" font-weight="700">SERIES 02</text>
+
+      <text y="166" fill="#ffffff" font-size="70" font-weight="800" letter-spacing="2">从零开始学</text>
+      <text y="258" fill="#ffffff" font-size="90" font-weight="900" letter-spacing="3">强化学习</text>
+
+      <rect y="310" width="605" height="88" rx="18" fill="#ffffff" opacity="0.10" stroke="#ffffff" stroke-opacity="0.16"/>
+      <text x="28" y="367" fill="#def8ff" font-size="33" font-weight="700">第二篇 · Bellman 方程</text>
+
+      <text y="460" fill="#b9cee9" font-size="27">STATE VALUE · BOOTSTRAPPING · POLICY EVALUATION</text>
+
+      <g transform="translate(0 522)">
+        <rect width="565" height="78" rx="20" fill="#0d1c3d" stroke="#5c78a7" stroke-width="2"/>
+        <text x="282.5" y="50" text-anchor="middle" fill="#bce8ff" font-size="29" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">Gₜ = Rₜ₊₁ + γGₜ₊₁</text>
+      </g>
+      <text y="652" fill="#d5e8f3" font-size="29" font-weight="650">把无限未来，折叠成眼前一步</text>
+    </g>
+
+    <g transform="translate(900 118)" filter="url(#shadow)">
+      <rect x="-35" y="-35" width="625" height="625" rx="46" fill="#ffffff" opacity="0.08" stroke="#ffffff" stroke-opacity="0.14" stroke-width="2"/>
+
+      <g transform="translate(18 30)">
+        <rect width="220" height="126" rx="28" fill="url(#blue)"/>
+        <text x="110" y="48" text-anchor="middle" fill="#eaf0ff" font-size="22" font-weight="700">当前状态</text>
+        <text x="110" y="92" text-anchor="middle" fill="#ffffff" font-size="42" font-weight="900">vπ(s)</text>
+      </g>
+
+      <path d="M248 93H342" stroke="#7df3d2" stroke-width="8" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+      <g transform="translate(360 30)">
+        <rect width="190" height="126" rx="28" fill="url(#gold)"/>
+        <text x="95" y="48" text-anchor="middle" fill="#6f4209" font-size="22" font-weight="750">即时奖励</text>
+        <text x="95" y="93" text-anchor="middle" fill="#553007" font-size="40" font-weight="900">Rₜ₊₁</text>
+      </g>
+
+      <g transform="translate(78 244)">
+        <rect width="420" height="128" rx="30" fill="#0c1c3d" stroke="#7da0d0" stroke-width="2"/>
+        <text x="210" y="48" text-anchor="middle" fill="#a9c9ea" font-size="22" font-weight="700">折扣后的下一状态价值</text>
+        <text x="210" y="94" text-anchor="middle" fill="#a9fff0" font-size="42" font-weight="900">γ · vπ(s′)</text>
+      </g>
+
+      <path d="M455 165C455 205 425 218 397 242" fill="none" stroke="#f4c66e" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow)"/>
+      <path d="M286 374C205 425 118 371 113 277C108 222 144 186 198 167" fill="none" stroke="#7df3d2" stroke-width="7" stroke-linecap="round" stroke-dasharray="14 12" marker-end="url(#arrow)"/>
+
+      <g transform="translate(38 430)">
+        <rect width="500" height="105" rx="25" fill="url(#teal)"/>
+        <text x="250" y="43" text-anchor="middle" fill="#075851" font-size="21" font-weight="750">BELLMAN BACKUP</text>
+        <text x="250" y="78" text-anchor="middle" fill="#064e49" font-size="30" font-weight="900">现在 = 一步 + 未来</text>
+      </g>
+    </g>
+  </g>
+</svg>

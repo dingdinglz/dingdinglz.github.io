@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
+  <title id="title">迭代策略评估的收敛过程</title>
+  <desc id="desc">状态价值从全零初值经过多轮 Bellman backup，逐渐收敛到八点五、十、十、十</desc>
+  <defs>
+    <linearGradient id="start" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9edf5"/>
+      <stop offset="1" stop-color="#d7deeb"/>
+    </linearGradient>
+    <linearGradient id="middle" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dfe7ff"/>
+      <stop offset="1" stop-color="#bdcbff"/>
+    </linearGradient>
+    <linearGradient id="late" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c9f5ed"/>
+      <stop offset="1" stop-color="#8ee1d4"/>
+    </linearGradient>
+    <linearGradient id="fixed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3dcebd"/>
+      <stop offset="1" stop-color="#118e87"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="9" stdDeviation="13" flood-color="#334155" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#5369d0"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="660" rx="32" fill="#f6f8fc"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="600" y="57" text-anchor="middle" fill="#17233f" font-size="36" font-weight="850">每做一次 Bellman backup，未来就多传回来一点</text>
+    <text x="600" y="95" text-anchor="middle" fill="#64748b" font-size="22">从任意初值出发，反复应用  vₖ₊₁ = rπ + γPπvₖ</text>
+
+    <path d="M80 420H1115" stroke="#ced7e6" stroke-width="10" stroke-linecap="round"/>
+    <path d="M80 420H1098" stroke="#5369d0" stroke-width="5" stroke-linecap="round" stroke-dasharray="12 12" marker-end="url(#arrow)"/>
+
+    <g transform="translate(35 150)" filter="url(#shadow)">
+      <rect width="200" height="250" rx="27" fill="url(#start)" stroke="#c7d0df" stroke-width="2"/>
+      <rect x="24" y="20" width="152" height="43" rx="21.5" fill="#ffffff" opacity="0.82"/>
+      <text x="100" y="49" text-anchor="middle" fill="#58667a" font-size="21" font-weight="850">初始 k = 0</text>
+      <text x="100" y="104" text-anchor="middle" fill="#354156" font-size="18">还没看见奖励</text>
+      <text x="100" y="150" text-anchor="middle" fill="#26344c" font-size="31" font-weight="900">0.0</text>
+      <text x="100" y="188" text-anchor="middle" fill="#26344c" font-size="31" font-weight="900">0.0</text>
+      <text x="100" y="225" text-anchor="middle" fill="#6a7688" font-size="17">v₁ · v₂=v₃=v₄</text>
+    </g>
+
+    <g transform="translate(267 150)" filter="url(#shadow)">
+      <rect width="200" height="250" rx="27" fill="url(#middle)" stroke="#aebded" stroke-width="2"/>
+      <rect x="24" y="20" width="152" height="43" rx="21.5" fill="#ffffff" opacity="0.82"/>
+      <text x="100" y="49" text-anchor="middle" fill="#4659b5" font-size="21" font-weight="850">第 1 轮</text>
+      <text x="100" y="104" text-anchor="middle" fill="#4d5c82" font-size="18">只看一步奖励</text>
+      <text x="100" y="150" text-anchor="middle" fill="#3349aa" font-size="31" font-weight="900">-0.5</text>
+      <text x="100" y="188" text-anchor="middle" fill="#3349aa" font-size="31" font-weight="900">1.0</text>
+      <text x="100" y="225" text-anchor="middle" fill="#596889" font-size="17">v₁ · v₂=v₃=v₄</text>
+    </g>
+
+    <g transform="translate(499 150)" filter="url(#shadow)">
+      <rect width="200" height="250" rx="27" fill="url(#middle)" stroke="#aebded" stroke-width="2"/>
+      <rect x="24" y="20" width="152" height="43" rx="21.5" fill="#ffffff" opacity="0.82"/>
+      <text x="100" y="49" text-anchor="middle" fill="#4659b5" font-size="21" font-weight="850">第 2 轮</text>
+      <text x="100" y="104" text-anchor="middle" fill="#4d5c82" font-size="18">两步信息回来</text>
+      <text x="100" y="150" text-anchor="middle" fill="#3349aa" font-size="31" font-weight="900">0.4</text>
+      <text x="100" y="188" text-anchor="middle" fill="#3349aa" font-size="31" font-weight="900">1.9</text>
+      <text x="100" y="225" text-anchor="middle" fill="#596889" font-size="17">v₁ · v₂=v₃=v₄</text>
+    </g>
+
+    <g transform="translate(731 150)" filter="url(#shadow)">
+      <rect width="200" height="250" rx="27" fill="url(#late)" stroke="#87d7cc" stroke-width="2"/>
+      <rect x="24" y="20" width="152" height="43" rx="21.5" fill="#ffffff" opacity="0.82"/>
+      <text x="100" y="49" text-anchor="middle" fill="#08766f" font-size="21" font-weight="850">第 10 轮</text>
+      <text x="100" y="104" text-anchor="middle" fill="#426963" font-size="18">远期奖励逐渐进入</text>
+      <text x="100" y="150" text-anchor="middle" fill="#08766f" font-size="31" font-weight="900">5.013</text>
+      <text x="100" y="188" text-anchor="middle" fill="#08766f" font-size="31" font-weight="900">6.513</text>
+      <text x="100" y="225" text-anchor="middle" fill="#4f746f" font-size="17">v₁ · v₂=v₃=v₄</text>
+    </g>
+
+    <g transform="translate(963 135)" filter="url(#shadow)">
+      <rect width="202" height="280" rx="30" fill="url(#fixed)"/>
+      <rect x="23" y="20" width="156" height="43" rx="21.5" fill="#ffffff" opacity="0.19"/>
+      <text x="101" y="49" text-anchor="middle" fill="#ffffff" font-size="21" font-weight="850">唯一不动点</text>
+      <text x="101" y="100" text-anchor="middle" fill="#d9fffa" font-size="18">k → ∞</text>
+      <text x="101" y="153" text-anchor="middle" fill="#ffffff" font-size="35" font-weight="900">8.5</text>
+      <text x="101" y="197" text-anchor="middle" fill="#ffffff" font-size="35" font-weight="900">10.0</text>
+      <text x="101" y="234" text-anchor="middle" fill="#d9fffa" font-size="17">v₁ · v₂=v₃=v₄</text>
+      <text x="101" y="262" text-anchor="middle" fill="#d9fffa" font-size="16">Tπ(vπ) = vπ</text>
+    </g>
+
+    <g transform="translate(75 480)">
+      <rect width="1050" height="125" rx="27" fill="#ffffff" stroke="#d9e2ef" stroke-width="2"/>
+      <g transform="translate(32 27)">
+        <circle cx="28" cy="28" r="28" fill="#e9edff"/>
+        <text x="28" y="37" text-anchor="middle" fill="#4559ba" font-size="25" font-weight="900">1</text>
+        <text x="72" y="21" fill="#334155" font-size="20" font-weight="800">当前估计</text>
+        <text x="72" y="50" fill="#718096" font-size="18">先从 v₀ 猜起</text>
+      </g>
+      <path d="M285 55H355" stroke="#98a7bb" stroke-width="4" marker-end="url(#arrow)"/>
+      <g transform="translate(382 27)">
+        <circle cx="28" cy="28" r="28" fill="#e9edff"/>
+        <text x="28" y="37" text-anchor="middle" fill="#4559ba" font-size="25" font-weight="900">2</text>
+        <text x="72" y="21" fill="#334155" font-size="20" font-weight="800">Bellman backup</text>
+        <text x="72" y="50" fill="#718096" font-size="18">加入一步奖励与未来估计</text>
+      </g>
+      <path d="M690 55H760" stroke="#98a7bb" stroke-width="4" marker-end="url(#arrow)"/>
+      <g transform="translate(788 27)">
+        <circle cx="28" cy="28" r="28" fill="#dcf8f3"/>
+        <text x="28" y="37" text-anchor="middle" fill="#08766f" font-size="25" font-weight="900">3</text>
+        <text x="72" y="21" fill="#334155" font-size="20" font-weight="800">检查误差</text>
+        <text x="72" y="50" fill="#718096" font-size="18">没收敛就继续</text>
+      </g>
+    </g>
+  </g>
+</svg>

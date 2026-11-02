@@ -1,0 +1,176 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="一个网站后端或许并不是仅仅启动一个server就结束了，让我们用cobra和pterm走进结构、高效化的网站后端"><title>如何构建一个高效的网站后端应用</title>
+<link rel=canonical href=https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%AB%98%E6%95%88%E7%9A%84%E7%BD%91%E7%AB%99%E5%90%8E%E7%AB%AF%E5%BA%94%E7%94%A8/><link rel=stylesheet href=/scss/style.min.81579ea678e30582aa60028bfe3192821d6c0fee666ee279be318fb5b558916b.css><meta property='og:title' content="如何构建一个高效的网站后端应用"><meta property='og:description' content="一个网站后端或许并不是仅仅启动一个server就结束了，让我们用cobra和pterm走进结构、高效化的网站后端"><meta property='og:url' content='https://dingdinglz.github.io/p/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%AB%98%E6%95%88%E7%9A%84%E7%BD%91%E7%AB%99%E5%90%8E%E7%AB%AF%E5%BA%94%E7%94%A8/'><meta property='og:site_name' content="Dinglz 's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='golang'><meta property='article:published_time' content='2025-05-13T02:00:00+00:00'><meta property='article:modified_time' content='2025-05-13T02:00:00+00:00'><meta name=twitter:title content="如何构建一个高效的网站后端应用"><meta name=twitter:description content="一个网站后端或许并不是仅仅启动一个server就结束了，让我们用cobra和pterm走进结构、高效化的网站后端"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu9713755695089526605.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Dinglz 's Blog</a></h1><h2 class=site-description>keep learning...</h2></div></header><ol class=menu-social><li><a href=https://github.com/dingdinglz target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>分类</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#前言>前言</a></li><li><a href=#命令框架>命令框架</a></li><li><a href=#美化输出>美化输出</a></li><li><a href=#后记>后记</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/go/ style=background-color:#c71585;color:#fff>Go</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%AB%98%E6%95%88%E7%9A%84%E7%BD%91%E7%AB%99%E5%90%8E%E7%AB%AF%E5%BA%94%E7%94%A8/>如何构建一个高效的网站后端应用</a></h2><h3 class=article-subtitle>一个网站后端或许并不是仅仅启动一个server就结束了，让我们用cobra和pterm走进结构、高效化的网站后端</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2025-05-13T02:00:00Z>May 13, 2025</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>2 minute read</time></div></footer></div></header><section class=article-content><h2 id=前言>前言</h2><p>一个网站后端的核心功能当然是一个http server，但除了server之外还有其他需要设计的部分，比如生成配置文件啊，第一次使用引导安装啊，重新初始化，迁移数据，导出数据等等，直接运行应用后就启动一个http server并不是最优秀的选择。</p><p>因此，本篇blog将带领大家利用<a class=link href=https://cobra.dev/ target=_blank rel=noopener>Cobra</a>（Cobra 是一个用于创建强大的现代 CLI 应用程序的库。）和<a class=link href=https://pterm.sh/ target=_blank rel=noopener>Pterm</a>（PTerm 是一个现代的 Go 模块，可轻松美化控制台输出）来构建应用</p><p>我们需要实现的效果如下（应用名是test）：</p><ul><li><code>test version</code>显示版本号</li><li><code>test server</code>启动服务器</li></ul><h2 id=命令框架>命令框架</h2><p>cobra的使用方法请大家自行参阅文档～</p><p>首先，我们构建基础命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>rootCmd</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Use</span><span class=p>:</span>   <span class=s>&#34;test&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Short</span><span class=p>:</span> <span class=s>&#34;一个测试应用&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Long</span><span class=p>:</span>  <span class=s>&#34;一个测试应用，用来演示&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>Version命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>versionCmd</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Use</span><span class=p>:</span>   <span class=s>&#34;version&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Short</span><span class=p>:</span> <span class=s>&#34;版本号&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Long</span><span class=p>:</span>  <span class=s>`获取test的版本信息`</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Run</span><span class=p>:</span> <span class=kd>func</span><span class=p>(</span><span class=nx>cmd</span> <span class=o>*</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>,</span> <span class=nx>args</span> <span class=p>[]</span><span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;test v0.1 beta&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>},</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>Server命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>serverCmd</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Use</span><span class=p>:</span>   <span class=s>&#34;server&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Short</span><span class=p>:</span> <span class=s>&#34;启动服务器&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Long</span><span class=p>:</span>  <span class=s>&#34;启动test的服务器服务&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Run</span><span class=p>:</span> <span class=kd>func</span><span class=p>(</span><span class=nx>cmd</span> <span class=o>*</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>,</span> <span class=nx>args</span> <span class=p>[]</span><span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=c1>// 启动服务器...
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=p>},</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>添加到基础命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>rootCmd</span><span class=p>.</span><span class=nf>AddCommand</span><span class=p>(</span><span class=nx>versionCmd</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nx>rootCmd</span><span class=p>.</span><span class=nf>AddCommand</span><span class=p>(</span><span class=nx>serverCmd</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>解析</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>rootCmd</span><span class=p>.</span><span class=nf>Execute</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>当前完整代码</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;github.com/spf13/cobra&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>rootCmd</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Use</span><span class=p>:</span>   <span class=s>&#34;test&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Short</span><span class=p>:</span> <span class=s>&#34;一个测试应用&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Long</span><span class=p>:</span>  <span class=s>&#34;一个测试应用，用来演示&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>versionCmd</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Use</span><span class=p>:</span>   <span class=s>&#34;version&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Short</span><span class=p>:</span> <span class=s>&#34;版本号&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Long</span><span class=p>:</span>  <span class=s>`获取test的版本信息`</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Run</span><span class=p>:</span> <span class=kd>func</span><span class=p>(</span><span class=nx>cmd</span> <span class=o>*</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>,</span> <span class=nx>args</span> <span class=p>[]</span><span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;test v0.1 beta&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>serverCmd</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Use</span><span class=p>:</span>   <span class=s>&#34;server&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Short</span><span class=p>:</span> <span class=s>&#34;启动服务器&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Long</span><span class=p>:</span>  <span class=s>&#34;启动test的服务器服务&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Run</span><span class=p>:</span> <span class=kd>func</span><span class=p>(</span><span class=nx>cmd</span> <span class=o>*</span><span class=nx>cobra</span><span class=p>.</span><span class=nx>Command</span><span class=p>,</span> <span class=nx>args</span> <span class=p>[]</span><span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=c1>// 启动服务器...
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>rootCmd</span><span class=p>.</span><span class=nf>AddCommand</span><span class=p>(</span><span class=nx>versionCmd</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>rootCmd</span><span class=p>.</span><span class=nf>AddCommand</span><span class=p>(</span><span class=nx>serverCmd</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>rootCmd</span><span class=p>.</span><span class=nf>Execute</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>编译并运行<code>./test</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>一个测试应用，用来演示
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage:
+</span></span><span class=line><span class=cl>  test [command]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Available Commands:
+</span></span><span class=line><span class=cl>  completion  Generate the autocompletion script for the specified shell
+</span></span><span class=line><span class=cl>  help        Help about any command
+</span></span><span class=line><span class=cl>  server      启动服务器
+</span></span><span class=line><span class=cl>  version     版本号
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Flags:
+</span></span><span class=line><span class=cl>  -h, --help   help for test
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Use &#34;test [command] --help&#34; for more information about a command.
+</span></span></code></pre></td></tr></table></div></div><p>可以看到，基础的命令框架已经搭建完成，我们可以通过<code>./test help</code>，<code>./test version</code>来测试一下，那么，我们要添加额外的功能只需要添加到子命令中即可，<code>./test server</code>则是启动主服务的方式</p><h2 id=美化输出>美化输出</h2><p>后端的信息展示和日志等也是非常重要的，可以帮助我们进行溯源等等，因此我们引入<code>pterm</code>来美化输出，比如version命令我们可以先用大字美化。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>pterm</span><span class=p>.</span><span class=nx>DefaultBigText</span><span class=p>.</span><span class=nf>WithLetters</span><span class=p>(</span><span class=nx>putils</span><span class=p>.</span><span class=nf>LettersFromString</span><span class=p>(</span><span class=s>&#34;test&#34;</span><span class=p>)).</span><span class=nf>Render</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;test v0.1 beta&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>又或者是将日志替换成pterm的logger</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>logger</span> <span class=o>:=</span> <span class=nx>pterm</span><span class=p>.</span><span class=nx>DefaultLogger</span><span class=p>.</span><span class=nf>WithLevel</span><span class=p>(</span><span class=nx>pterm</span><span class=p>.</span><span class=nx>LogLevelTrace</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nx>logger</span><span class=p>.</span><span class=nf>WithCaller</span><span class=p>().</span><span class=nf>Debug</span><span class=p>(</span><span class=s>&#34;我是Debug&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nx>logger</span><span class=p>.</span><span class=nf>Info</span><span class=p>(</span><span class=s>&#34;你好呀&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nx>logger</span><span class=p>.</span><span class=nf>Debug</span><span class=p>(</span><span class=s>&#34;我是Debug&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>更多妙用如进度条，选择器，表格等等命令行美化请查找pterm文档，本文仅提供部分思路</p><h2 id=后记>后记</h2><p>本文介绍了构建后端服务器的结构，将单一服务器启动变成支持多功能，大家在开发自己的应用之前就要考虑好架构的设计，功能的拓展，随着时间的堆积才不会让代码越来越臃肿。</p></section><footer class=article-footer><section class=article-tags><a href=/tags/golang/>Golang</a></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>Last updated on May 13, 2025 02:00 UTC</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-go-1.23-iter-%E5%8C%85/><div class=article-details><h2 class=article-title>深入理解 Go 1.23 iter 包</h2></div></a></article><article><a href=/p/mcp-with-golang/><div class=article-details><h2 class=article-title>Mcp with golang</h2></div></a></article><article><a href=/p/etcd%E7%9A%84%E5%8A%9F%E8%83%BD%E4%B8%8E%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>etcd的功能与应用</h2></div></a></article><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%857-geospatial/><div class=article-details><h2 class=article-title>Redis学习之旅(7) Geospatial</h2></div></a></article><article><a href=/p/redis%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%856-streams/><div class=article-details><h2 class=article-title>Redis学习之旅(6) Streams</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2024 -
+2026 Dinglz 's Blog</section><section class=powerby>copyright &copy; dinglz<br>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.33.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

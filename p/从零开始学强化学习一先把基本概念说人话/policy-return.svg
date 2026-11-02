@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="690" viewBox="0 0 1200 690" role="img" aria-labelledby="title desc">
+  <title id="title">两条策略产生不同的轨迹和回报</title>
+  <desc id="desc">策略一避开禁区获得回报一，策略二经过禁区获得回报零</desc>
+  <defs>
+    <linearGradient id="good" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3159d8"/>
+      <stop offset="1" stop-color="#5747c7"/>
+    </linearGradient>
+    <linearGradient id="bad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f59e42"/>
+      <stop offset="1" stop-color="#e76f51"/>
+    </linearGradient>
+    <linearGradient id="target" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#2dd4bf"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#334155" flood-opacity="0.15"/>
+    </filter>
+    <marker id="goodArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3159d8"/>
+    </marker>
+    <marker id="badArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#e76f51"/>
+    </marker>
+    <g id="grid">
+      <g stroke="#aab8ca" stroke-width="2.5">
+        <rect x="0" y="0" width="96" height="96" rx="10" fill="#fbfdff"/>
+        <rect x="102" y="0" width="96" height="96" rx="10" fill="#fbfdff"/>
+        <rect x="204" y="0" width="96" height="96" rx="10" fill="#fbfdff"/>
+        <rect x="0" y="102" width="96" height="96" rx="10" fill="#fbfdff"/>
+        <rect x="102" y="102" width="96" height="96" rx="10" fill="#fbfdff"/>
+        <rect x="204" y="102" width="96" height="96" rx="10" fill="#ffd166" stroke="#e6962f"/>
+        <rect x="0" y="204" width="96" height="96" rx="10" fill="#ffd166" stroke="#e6962f"/>
+        <rect x="102" y="204" width="96" height="96" rx="10" fill="#fbfdff"/>
+        <rect x="204" y="204" width="96" height="96" rx="10" fill="url(#target)" stroke="#18a999"/>
+      </g>
+      <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif" font-size="18" font-weight="750" fill="#475569">
+        <text x="10" y="24">s₁</text><text x="112" y="24">s₂</text><text x="214" y="24">s₃</text>
+        <text x="10" y="126">s₄</text><text x="112" y="126">s₅</text><text x="214" y="126" fill="#754307">s₆</text>
+        <text x="10" y="228" fill="#754307">s₇</text><text x="112" y="228">s₈</text><text x="214" y="228" fill="#075e58">s₉</text>
+      </g>
+      <circle cx="48" cy="48" r="17" fill="#ffffff" stroke="#64748b" stroke-width="3"/>
+      <circle cx="42" cy="45" r="2.5" fill="#475569"/>
+      <circle cx="54" cy="45" r="2.5" fill="#475569"/>
+      <path d="M41 54 Q48 60 55 54" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="252" cy="252" r="24" fill="#ffffff" opacity="0.93"/>
+      <path d="M240 252 L249 261 L264 242" fill="none" stroke="#0f766e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </defs>
+
+  <rect width="1200" height="690" rx="32" fill="#f6f8fc"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="600" y="60" text-anchor="middle" fill="#17233f" font-size="36" font-weight="850">Policy 是规则，Trajectory 是实际走出来的路</text>
+    <text x="600" y="98" text-anchor="middle" fill="#64748b" font-size="22">从同一个起点出发，不同策略会积累出不同的 Return</text>
+
+    <g transform="translate(60 126)" filter="url(#shadow)">
+      <rect width="510" height="510" rx="30" fill="#ffffff" stroke="#dce5ef" stroke-width="2"/>
+      <rect x="26" y="25" width="112" height="45" rx="22" fill="#e9eeff"/>
+      <text x="82" y="56" text-anchor="middle" fill="#3159d8" font-size="22" font-weight="850">策略 A</text>
+      <text x="260" y="57" text-anchor="middle" fill="#24324b" font-size="25" font-weight="800">避开禁区</text>
+      <rect x="392" y="25" width="92" height="45" rx="22" fill="#e7faf6"/>
+      <text x="438" y="56" text-anchor="middle" fill="#0d857a" font-size="22" font-weight="850">G = 1</text>
+
+      <g transform="translate(105 92)">
+        <use href="#grid"/>
+        <polyline points="48,48 150,48 150,150 150,252 252,252" fill="none" stroke="#3159d8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#goodArrow)"/>
+        <g fill="#ffffff" stroke="#3159d8" stroke-width="4">
+          <circle cx="48" cy="48" r="10"/><circle cx="150" cy="48" r="10"/><circle cx="150" cy="150" r="10"/><circle cx="150" cy="252" r="10"/>
+        </g>
+      </g>
+
+      <text x="255" y="432" text-anchor="middle" fill="#334155" font-size="22">奖励序列：0，0，0，+1</text>
+      <rect x="80" y="453" width="350" height="38" rx="19" fill="#f4f6fb"/>
+      <text x="255" y="480" text-anchor="middle" fill="#3159d8" font-size="23" font-weight="800">Return = 0 + 0 + 0 + 1 = 1</text>
+    </g>
+
+    <g transform="translate(630 126)" filter="url(#shadow)">
+      <rect width="510" height="510" rx="30" fill="#ffffff" stroke="#dce5ef" stroke-width="2"/>
+      <rect x="26" y="25" width="112" height="45" rx="22" fill="#fff2e4"/>
+      <text x="82" y="56" text-anchor="middle" fill="#d7653f" font-size="22" font-weight="850">策略 B</text>
+      <text x="260" y="57" text-anchor="middle" fill="#24324b" font-size="25" font-weight="800">踩到禁区</text>
+      <rect x="392" y="25" width="92" height="45" rx="22" fill="#fff0ec"/>
+      <text x="438" y="56" text-anchor="middle" fill="#c44d32" font-size="22" font-weight="850">G = 0</text>
+
+      <g transform="translate(105 92)">
+        <use href="#grid"/>
+        <polyline points="48,48 48,150 48,252 150,252 252,252" fill="none" stroke="#e76f51" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#badArrow)"/>
+        <g fill="#ffffff" stroke="#e76f51" stroke-width="4">
+          <circle cx="48" cy="48" r="10"/><circle cx="48" cy="150" r="10"/><circle cx="48" cy="252" r="10"/><circle cx="150" cy="252" r="10"/>
+        </g>
+        <rect x="-3" y="270" width="102" height="30" rx="15" fill="#fff7ed" stroke="#c85f31" stroke-width="2"/>
+        <text x="48" y="291" text-anchor="middle" fill="#a94725" font-size="16" font-weight="850">进入禁区 -1</text>
+      </g>
+
+      <text x="255" y="432" text-anchor="middle" fill="#334155" font-size="22">奖励序列：0，-1，0，+1</text>
+      <rect x="80" y="453" width="350" height="38" rx="19" fill="#fff5f1"/>
+      <text x="255" y="480" text-anchor="middle" fill="#d65f3f" font-size="23" font-weight="800">Return = 0 - 1 + 0 + 1 = 0</text>
+    </g>
+  </g>
+</svg>

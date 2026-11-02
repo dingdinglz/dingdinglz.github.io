@@ -1,0 +1,187 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="JWT的生成与使用，在golang中的应用"><title>JWT的应用</title>
+<link rel=canonical href=https://dingdinglz.github.io/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/><link rel=stylesheet href=/scss/style.min.81579ea678e30582aa60028bfe3192821d6c0fee666ee279be318fb5b558916b.css><meta property='og:title' content="JWT的应用"><meta property='og:description' content="JWT的生成与使用，在golang中的应用"><meta property='og:url' content='https://dingdinglz.github.io/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/'><meta property='og:site_name' content="Dinglz 's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='golang'><meta property='article:published_time' content='2024-11-29T02:00:00+00:00'><meta property='article:modified_time' content='2024-11-29T02:00:00+00:00'><meta name=twitter:title content="JWT的应用"><meta name=twitter:description content="JWT的生成与使用，在golang中的应用"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu9713755695089526605.png width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Dinglz 's Blog</a></h1><h2 class=site-description>keep learning...</h2></div></header><ol class=menu-social><li><a href=https://github.com/dingdinglz target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>分类</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>搜索</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#什么是jwt>什么是JWT</a></li><li><a href=#jwt的用途>JWT的用途</a></li><li><a href=#安装>安装</a></li><li><a href=#生成>生成</a><ol><li><a href=#完整示例>完整示例</a></li></ol></li><li><a href=#解析>解析</a><ol><li><a href=#完整示例-1>完整示例</a></li></ol></li><li><a href=#实际应用>实际应用</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/go/ style=background-color:#c71585;color:#fff>Go
+</a><a href=/categories/github/ style=background-color:#ee9a00;color:#fff>Github项目分享</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/>JWT的应用</a></h2><h3 class=article-subtitle>JWT的生成与使用，在golang中的应用</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2024-11-29T02:00:00Z>Nov 29, 2024</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>2 minute read</time></div></footer></div></header><section class=article-content><h2 id=什么是jwt>什么是JWT</h2><p>jwt，全称<a class=link href=https://datatracker.ietf.org/doc/html/rfc7519 target=_blank rel=noopener>JSON Web Token</a>，是一种开放标准（RFC 7519），用于在网络应用环境间安全地传输信息。这些信息可以被验证和信任，因为它们是数字签名的。JWT可以使用秘密（使用HMAC算法）或使用RSA或ECDSA的公钥/私钥对进行签名。</p><h2 id=jwt的用途>JWT的用途</h2><p>JWT的主要目的是在各方之间传递声明。声明是对实体（通常是用户）的某些属性的断言，例如身份、访问权限等。这些声明以紧凑的形式编码为一个字符串，非常适合在Web环境中使用，尤其是在HTTP头部中作为承载令牌（Bearer Token）。</p><p>在我们设计网站时，经常应用jwt用来鉴权，判断用户的登录状态，今天主要介绍利用<a class=link href=https://github.com/golang-jwt/jwt target=_blank rel=noopener>GitHub - golang-jwt/jwt: Go implementation of JSON Web Tokens (JWT).</a>包，实现Go语言下的jwt生成和解析。</p><p>例如，在中间件中，我们可以通过设置过期日期，然后解析jwt，来判断用户的登录状态。</p><h2 id=安装>安装</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go get -u github.com/golang-jwt/jwt/v5
+</span></span></code></pre></td></tr></table></div></div><h2 id=生成>生成</h2><p>本文介绍如何编码和解码一个自定义结构体</p><p>为模拟真实使用环境，我们首先定义一个结构体类型，如下，包含用户名和id字段</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>UserJWTModel</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ID</span>       <span class=kt>int</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Username</span> <span class=kt>string</span>
+</span></span><span class=line><span class=cl>	<span class=nx>jwt</span><span class=p>.</span><span class=nx>RegisteredClaims</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>jwt.RegisteredClaims</strong>里包含了一些jwt约定好的字段，比如<strong>ExpiresAt</strong>，可以约定jwt的过期时间。以及其他字段，下面我们仅仅用到了<strong>ExpiresAt</strong>，更详细的请查阅jwt的文档。</p><p>然后新建一个token，填入数据</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>token</span> <span class=o>:=</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>NewWithClaims</span><span class=p>(</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>SigningMethodHS256</span><span class=p>,</span> <span class=nx>UserJWTModel</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=s>&#34;dinglz&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>jwt</span><span class=p>.</span><span class=nx>RegisteredClaims</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>ExpiresAt</span><span class=p>:</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>NewNumericDate</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>().</span><span class=nf>Add</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Minute</span> <span class=o>*</span> <span class=mi>10</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里约定好过期时间是十分钟后</p><p>然后用一个password生成jwt</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>t</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>token</span><span class=p>.</span><span class=nf>SignedString</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;password&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>t</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=完整示例>完整示例</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;github.com/golang-jwt/jwt/v5&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>UserJWTModel</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ID</span>       <span class=kt>int</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Username</span> <span class=kt>string</span>
+</span></span><span class=line><span class=cl>	<span class=nx>jwt</span><span class=p>.</span><span class=nx>RegisteredClaims</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>token</span> <span class=o>:=</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>NewWithClaims</span><span class=p>(</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>SigningMethodHS256</span><span class=p>,</span> <span class=nx>UserJWTModel</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=s>&#34;dinglz&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>jwt</span><span class=p>.</span><span class=nx>RegisteredClaims</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>ExpiresAt</span><span class=p>:</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>NewNumericDate</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>().</span><span class=nf>Add</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Minute</span> <span class=o>*</span> <span class=mi>10</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>t</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>token</span><span class=p>.</span><span class=nf>SignedString</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;password&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>t</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=解析>解析</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>tokenAfter</span><span class=p>,</span> <span class=nx>e</span> <span class=o>:=</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>ParseWithClaims</span><span class=p>(</span><span class=nx>t</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>UserJWTModel</span><span class=p>{},</span> <span class=kd>func</span><span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>Token</span><span class=p>)</span> <span class=p>(</span><span class=kd>interface</span><span class=p>{},</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=p>[]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;password&#34;</span><span class=p>),</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>e</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nb>panic</span><span class=p>(</span><span class=nx>e</span><span class=p>.</span><span class=nf>Error</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>t是我们上面生成的字符串，然后选择解析的模型，最后在传回加密时的密码，即可得到解析后的token，如果过期或者密码错误等会使<strong>e!=nil</strong>，因此可以通过是否错误来判断登录是否过期。</p><p>取回我们解析后的结构体</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>cliamAfter</span> <span class=o>:=</span> <span class=nx>tokenAfter</span><span class=p>.</span><span class=nx>Claims</span><span class=p>.(</span><span class=o>*</span><span class=nx>UserJWTModel</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>经验证，我们取出了传进去的数据。</p><h3 id=完整示例-1>完整示例</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;github.com/golang-jwt/jwt/v5&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>UserJWTModel</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>ID</span>       <span class=kt>int</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Username</span> <span class=kt>string</span>
+</span></span><span class=line><span class=cl>	<span class=nx>jwt</span><span class=p>.</span><span class=nx>RegisteredClaims</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>token</span> <span class=o>:=</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>NewWithClaims</span><span class=p>(</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>SigningMethodHS256</span><span class=p>,</span> <span class=nx>UserJWTModel</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=s>&#34;dinglz&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>jwt</span><span class=p>.</span><span class=nx>RegisteredClaims</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>ExpiresAt</span><span class=p>:</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>NewNumericDate</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>().</span><span class=nf>Add</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Minute</span> <span class=o>*</span> <span class=mi>10</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>t</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>token</span><span class=p>.</span><span class=nf>SignedString</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;password&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>t</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>tokenAfter</span><span class=p>,</span> <span class=nx>e</span> <span class=o>:=</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>ParseWithClaims</span><span class=p>(</span><span class=nx>t</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>UserJWTModel</span><span class=p>{},</span> <span class=kd>func</span><span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>Token</span><span class=p>)</span> <span class=p>(</span><span class=kd>interface</span><span class=p>{},</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=p>[]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;password&#34;</span><span class=p>),</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>e</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nb>panic</span><span class=p>(</span><span class=nx>e</span><span class=p>.</span><span class=nf>Error</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>cliamAfter</span> <span class=o>:=</span> <span class=nx>tokenAfter</span><span class=p>.</span><span class=nx>Claims</span><span class=p>.(</span><span class=o>*</span><span class=nx>UserJWTModel</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>cliamAfter</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=实际应用>实际应用</h2><p>比如我们可以在登录后往cookie中存入jwt，然后在需要鉴权的地方用中间件解析他，如果能成功则不用验证其他内容，因为在某种程度上我们可以认为jwt不会被伪造。</p><p><img src=/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/code.png width=1372 height=2992 srcset="/p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/code_hu12339575156293060034.png 480w, /p/jwt%E7%9A%84%E5%BA%94%E7%94%A8/code_hu1836534231745251428.png 1024w" loading=lazy alt=code class=gallery-image data-flex-grow=45 data-flex-basis=110px></p></section><footer class=article-footer><section class=article-tags><a href=/tags/golang/>Golang</a></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>Last updated on Nov 29, 2024 02:00 UTC</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/mcp-with-golang/><div class=article-details><h2 class=article-title>Mcp with golang</h2></div></a></article><article><a href=/p/etcd%E7%9A%84%E5%8A%9F%E8%83%BD%E4%B8%8E%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>etcd的功能与应用</h2></div></a></article><article><a href=/p/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%E7%BB%98%E5%88%B6mcp%E7%89%88/><div class=article-details><h2 class=article-title>思维导图绘制（mcp版）</h2></div></a></article><article><a href=/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-go-1.23-iter-%E5%8C%85/><div class=article-details><h2 class=article-title>深入理解 Go 1.23 iter 包</h2></div></a></article><article><a href=/p/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%AB%98%E6%95%88%E7%9A%84%E7%BD%91%E7%AB%99%E5%90%8E%E7%AB%AF%E5%BA%94%E7%94%A8/><div class=article-details><h2 class=article-title>如何构建一个高效的网站后端应用</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2024 -
+2026 Dinglz 's Blog</section><section class=powerby>copyright &copy; dinglz<br>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.33.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="690" viewBox="0 0 1200 690" role="img" aria-labelledby="title desc">
+  <title id="title">Bellman backup 的两层期望</title>
+  <desc id="desc">策略先对动作取平均，环境再对即时奖励和下一状态取平均，合成当前状态价值</desc>
+  <defs>
+    <linearGradient id="state" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4968df"/>
+      <stop offset="1" stop-color="#5445bd"/>
+    </linearGradient>
+    <linearGradient id="action" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8eeff"/>
+      <stop offset="1" stop-color="#cfd9ff"/>
+    </linearGradient>
+    <linearGradient id="future" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d8fbf4"/>
+      <stop offset="1" stop-color="#a8eee2"/>
+    </linearGradient>
+    <linearGradient id="reward" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe2a1"/>
+      <stop offset="1" stop-color="#f6b957"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#334155" flood-opacity="0.14"/>
+    </filter>
+    <marker id="blueArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#5268cf"/>
+    </marker>
+    <marker id="greenArrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#14998f"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="690" rx="32" fill="#f6f8fc"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="600" y="56" text-anchor="middle" fill="#17233f" font-size="36" font-weight="850">Bellman 方程，其实就是两层加权平均</text>
+    <text x="600" y="94" text-anchor="middle" fill="#64748b" font-size="22">策略负责选动作，环境负责给奖励和下一状态</text>
+
+    <g transform="translate(58 238)" filter="url(#shadow)">
+      <circle cx="92" cy="92" r="88" fill="url(#state)"/>
+      <text x="92" y="73" text-anchor="middle" fill="#dfe8ff" font-size="21" font-weight="700">当前状态</text>
+      <text x="92" y="122" text-anchor="middle" fill="#ffffff" font-size="43" font-weight="900">vπ(s)</text>
+    </g>
+
+    <path d="M245 302C312 231 336 208 405 195" fill="none" stroke="#5268cf" stroke-width="6" marker-end="url(#blueArrow)"/>
+    <path d="M245 348C312 419 336 442 405 455" fill="none" stroke="#5268cf" stroke-width="6" marker-end="url(#blueArrow)"/>
+    <rect x="276" y="291" width="112" height="40" rx="20" fill="#e9edff"/>
+    <text x="332" y="318" text-anchor="middle" fill="#4055b5" font-size="19" font-weight="800">π(a | s)</text>
+
+    <g transform="translate(420 130)" filter="url(#shadow)">
+      <rect width="205" height="130" rx="27" fill="url(#action)" stroke="#aab8ef" stroke-width="2"/>
+      <text x="102.5" y="47" text-anchor="middle" fill="#52608b" font-size="20">动作分支</text>
+      <text x="102.5" y="92" text-anchor="middle" fill="#3449a7" font-size="35" font-weight="900">a₁</text>
+    </g>
+    <g transform="translate(420 390)" filter="url(#shadow)">
+      <rect width="205" height="130" rx="27" fill="url(#action)" stroke="#aab8ef" stroke-width="2"/>
+      <text x="102.5" y="47" text-anchor="middle" fill="#52608b" font-size="20">动作分支</text>
+      <text x="102.5" y="92" text-anchor="middle" fill="#3449a7" font-size="35" font-weight="900">a₂</text>
+    </g>
+
+    <path d="M633 184C694 149 720 144 776 146" fill="none" stroke="#14998f" stroke-width="6" marker-end="url(#greenArrow)"/>
+    <path d="M633 212C694 249 720 255 776 254" fill="none" stroke="#14998f" stroke-width="6" marker-end="url(#greenArrow)"/>
+    <path d="M633 444C694 407 720 402 776 404" fill="none" stroke="#14998f" stroke-width="6" marker-end="url(#greenArrow)"/>
+    <path d="M633 472C694 508 720 514 776 512" fill="none" stroke="#14998f" stroke-width="6" marker-end="url(#greenArrow)"/>
+    <rect x="664" y="301" width="130" height="40" rx="20" fill="#dff8f3"/>
+    <text x="729" y="328" text-anchor="middle" fill="#08766f" font-size="17" font-weight="800">p(s′,r | s,a)</text>
+
+    <g transform="translate(790 90)" filter="url(#shadow)">
+      <rect width="350" height="120" rx="25" fill="#ffffff" stroke="#b9e4dc" stroke-width="2"/>
+      <circle cx="55" cy="60" r="34" fill="url(#reward)"/>
+      <text x="55" y="68" text-anchor="middle" fill="#75470c" font-size="25" font-weight="900">r₁</text>
+      <text x="110" y="48" fill="#48625f" font-size="19">下一状态 s′₁</text>
+      <text x="110" y="82" fill="#08766f" font-size="25" font-weight="850">r₁ + γvπ(s′₁)</text>
+    </g>
+    <g transform="translate(790 225)" filter="url(#shadow)">
+      <rect width="350" height="120" rx="25" fill="#ffffff" stroke="#b9e4dc" stroke-width="2"/>
+      <circle cx="55" cy="60" r="34" fill="url(#reward)"/>
+      <text x="55" y="68" text-anchor="middle" fill="#75470c" font-size="25" font-weight="900">r₂</text>
+      <text x="110" y="48" fill="#48625f" font-size="19">下一状态 s′₂</text>
+      <text x="110" y="82" fill="#08766f" font-size="25" font-weight="850">r₂ + γvπ(s′₂)</text>
+    </g>
+    <g transform="translate(790 360)" filter="url(#shadow)">
+      <rect width="350" height="120" rx="25" fill="#ffffff" stroke="#b9e4dc" stroke-width="2"/>
+      <circle cx="55" cy="60" r="34" fill="url(#reward)"/>
+      <text x="55" y="68" text-anchor="middle" fill="#75470c" font-size="25" font-weight="900">r₃</text>
+      <text x="110" y="48" fill="#48625f" font-size="19">下一状态 s′₃</text>
+      <text x="110" y="82" fill="#08766f" font-size="25" font-weight="850">r₃ + γvπ(s′₃)</text>
+    </g>
+    <g transform="translate(790 495)" filter="url(#shadow)">
+      <rect width="350" height="90" rx="25" fill="#ffffff" stroke="#b9e4dc" stroke-width="2"/>
+      <text x="175" y="56" text-anchor="middle" fill="#5d756f" font-size="25" font-weight="800">更多可能结果 ···</text>
+    </g>
+
+    <g transform="translate(95 585)">
+      <rect width="1010" height="72" rx="22" fill="#17264b"/>
+      <text x="505" y="46" text-anchor="middle" fill="#ffffff" font-size="26" font-weight="800">vπ(s) = Σₐ π(a|s) Σₛ′,ᵣ p(s′,r|s,a) [ r + γvπ(s′) ]</text>
+    </g>
+  </g>
+</svg>

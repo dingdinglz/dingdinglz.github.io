@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" role="img" aria-labelledby="title desc">
+  <title id="title">三乘三网格世界</title>
+  <desc id="desc">机器人从状态一出发，避开状态六和状态七两个禁区，最终到达状态九</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#eff5fb"/>
+    </linearGradient>
+    <linearGradient id="forbidden" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffcd68"/>
+      <stop offset="1" stop-color="#f59e42"/>
+    </linearGradient>
+    <linearGradient id="target" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#2dd4bf"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#334155" flood-opacity="0.18"/>
+    </filter>
+    <marker id="pathArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3159d8"/>
+    </marker>
+    <marker id="smallArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="780" rx="32" fill="url(#bg)"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="70" y="77" fill="#17233f" font-size="38" font-weight="850">一个小世界，装下强化学习的全部基础概念</text>
+    <text x="70" y="118" fill="#64748b" font-size="23">状态是格子，动作是移动，环境规则决定下一步，奖励负责表达“什么才算好”</text>
+
+    <g transform="translate(70 171)">
+      <rect width="350" height="508" rx="28" fill="#ffffff" stroke="#dce5ef" stroke-width="2"/>
+      <text x="30" y="54" fill="#24324b" font-size="27" font-weight="800">环境设定</text>
+
+      <g transform="translate(30 84)">
+        <rect width="68" height="68" rx="15" fill="#eef2ff"/>
+        <circle cx="34" cy="31" r="19" fill="#ffffff" stroke="#3159d8" stroke-width="3"/>
+        <circle cx="27" cy="28" r="3" fill="#3159d8"/>
+        <circle cx="41" cy="28" r="3" fill="#3159d8"/>
+        <path d="M26 38 Q34 45 42 38" fill="none" stroke="#3159d8" stroke-width="3" stroke-linecap="round"/>
+        <text x="91" y="29" fill="#334155" font-size="22" font-weight="700">起点 s₁</text>
+        <text x="91" y="58" fill="#718096" font-size="19">机器人从这里开始</text>
+      </g>
+
+      <g transform="translate(30 174)">
+        <rect width="68" height="68" rx="15" fill="url(#forbidden)"/>
+        <path d="M23 19 L45 49 M45 19 L23 49" stroke="#7c4708" stroke-width="7" stroke-linecap="round"/>
+        <text x="91" y="29" fill="#334155" font-size="22" font-weight="700">禁区 s₆、s₇</text>
+        <text x="91" y="58" fill="#718096" font-size="19">可进入，但奖励为 -1</text>
+      </g>
+
+      <g transform="translate(30 264)">
+        <rect width="68" height="68" rx="15" fill="url(#target)"/>
+        <path d="M19 36 L30 47 L50 23" fill="none" stroke="#075e58" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="91" y="29" fill="#334155" font-size="22" font-weight="700">目标 s₉</text>
+        <text x="91" y="58" fill="#718096" font-size="19">到达时奖励为 +1</text>
+      </g>
+
+      <line x1="30" y1="364" x2="320" y2="364" stroke="#e2e8f0" stroke-width="2"/>
+      <text x="30" y="407" fill="#24324b" font-size="23" font-weight="800">动作空间 A(s)</text>
+      <g transform="translate(91 436)" stroke="#0f766e" stroke-width="5" stroke-linecap="round">
+        <circle cx="84" cy="24" r="19" fill="#e6fffb" stroke="none"/>
+        <circle cx="84" cy="24" r="5" fill="#0f766e" stroke="none"/>
+        <path d="M84 18 V-12" marker-end="url(#smallArrow)"/>
+        <path d="M90 24 H120" marker-end="url(#smallArrow)"/>
+        <path d="M84 30 V60" marker-end="url(#smallArrow)"/>
+        <path d="M78 24 H48" marker-end="url(#smallArrow)"/>
+      </g>
+      <text x="175" y="490" text-anchor="middle" fill="#64748b" font-size="18">上 / 右 / 下 / 左 / 不动</text>
+    </g>
+
+    <g transform="translate(540 170)" filter="url(#shadow)">
+      <rect x="-34" y="-34" width="584" height="584" rx="34" fill="#ffffff"/>
+
+      <g stroke="#aab8ca" stroke-width="3">
+        <rect x="0" y="0" width="170" height="170" rx="15" fill="#fbfdff"/>
+        <rect x="180" y="0" width="170" height="170" rx="15" fill="#fbfdff"/>
+        <rect x="360" y="0" width="170" height="170" rx="15" fill="#fbfdff"/>
+        <rect x="0" y="180" width="170" height="170" rx="15" fill="#fbfdff"/>
+        <rect x="180" y="180" width="170" height="170" rx="15" fill="#fbfdff"/>
+        <rect x="360" y="180" width="170" height="170" rx="15" fill="url(#forbidden)" stroke="#e58b2c"/>
+        <rect x="0" y="360" width="170" height="170" rx="15" fill="url(#forbidden)" stroke="#e58b2c"/>
+        <rect x="180" y="360" width="170" height="170" rx="15" fill="#fbfdff"/>
+        <rect x="360" y="360" width="170" height="170" rx="15" fill="url(#target)" stroke="#18a999"/>
+      </g>
+
+      <g font-size="25" font-weight="750">
+        <text x="18" y="36" fill="#334155">s₁</text><text x="198" y="36" fill="#334155">s₂</text><text x="378" y="36" fill="#334155">s₃</text>
+        <text x="18" y="216" fill="#334155">s₄</text><text x="198" y="216" fill="#334155">s₅</text><text x="378" y="216" fill="#6b3c05">s₆</text>
+        <text x="18" y="396" fill="#6b3c05">s₇</text><text x="198" y="396" fill="#334155">s₈</text><text x="378" y="396" fill="#075e58">s₉</text>
+      </g>
+
+      <polyline points="85,85 265,85 265,265 265,445 445,445" fill="none" stroke="#3159d8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="18 13" marker-end="url(#pathArrow)"/>
+
+      <g transform="translate(85 85)">
+        <circle r="37" fill="#ffffff" stroke="#3159d8" stroke-width="5"/>
+        <circle cx="-12" cy="-6" r="4" fill="#3159d8"/>
+        <circle cx="12" cy="-6" r="4" fill="#3159d8"/>
+        <path d="M-14 11 Q0 24 14 11" fill="none" stroke="#3159d8" stroke-width="5" stroke-linecap="round"/>
+        <path d="M0 -37 V-51" stroke="#3159d8" stroke-width="5"/>
+        <circle cy="-57" r="6" fill="#2dd4bf"/>
+      </g>
+
+      <g transform="translate(445 445)">
+        <circle r="42" fill="#ffffff" opacity="0.94"/>
+        <path d="M-19 1 L-5 16 L22 -15" fill="none" stroke="#0f766e" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+
+      <g transform="translate(394 226)">
+        <rect width="102" height="42" rx="21" fill="#fff7e7" stroke="#a96008" stroke-width="2"/>
+        <text x="51" y="29" text-anchor="middle" fill="#8a4d06" font-size="19" font-weight="800">reward -1</text>
+      </g>
+      <g transform="translate(395 480)">
+        <rect width="102" height="42" rx="21" fill="#e9fffb" stroke="#0f766e" stroke-width="2"/>
+        <text x="51" y="29" text-anchor="middle" fill="#08766e" font-size="19" font-weight="800">reward +1</text>
+      </g>
+    </g>
+  </g>
+</svg>
